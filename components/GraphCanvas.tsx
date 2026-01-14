@@ -150,6 +150,8 @@ export const GraphCanvas: React.FC = () => {
   const nodePositions = useRef<Map<string, { x: number, y: number, vx?: number, vy?: number }>>(new Map());
   // Store the zoom transform to prevent reset on data updates
   const zoomTransform = useRef<d3.ZoomTransform>(d3.zoomIdentity);
+  // Track dragging state to prevent click events (which trigger view resets via re-render)
+  const isDragging = useRef<boolean>(false);
 
   const flowNodeIds = useMemo(() => {
     if (!selectedNode) return null;
@@ -279,7 +281,15 @@ export const GraphCanvas: React.FC = () => {
             });
         });
     } else {
+        // Only clear fixed positions if NOT in hierarchical mode (where we might have dragged nodes)
+        // AND if we are switching FROM structured mode. 
+        // Actually, for now, re-calculating visibleNodes always resets d3 objects unless we persisted them carefully.
+        // We persist x/y/vx/vy via nodePositions ref, but not fx/fy.
+        // If we want to persist dragging in hierarchical mode, we'd need to save fx/fy too.
+        // For now, simpler approach: Just clear fx/fy unless dragging is active. 
         visibleNodes.forEach(n => {
+            // If the node was previously fixed (dragged) and we are just re-rendering, we might want to keep it?
+            // But visibleNodes are fresh objects. 
             n.fx = null;
             n.fy = null;
         });
@@ -396,6 +406,11 @@ export const GraphCanvas: React.FC = () => {
       .style("cursor", "pointer")
       .on("click", (event, d) => {
         event.stopPropagation();
+        // Prevent selection if we just finished dragging
+        if (isDragging.current) {
+            isDragging.current = false;
+            return;
+        }
         setSelectedNode(d.id === selectedNode?.id ? null : d);
       })
       .on("mouseover", (event, d) => setHoveredNode(d))
@@ -438,7 +453,6 @@ export const GraphCanvas: React.FC = () => {
     }
 
     // Boxes for Hierarchical Mode
-    // We create the selection but update attributes in tick
     let groupRects: d3.Selection<SVGRectElement, string, SVGGElement, unknown>;
     let groupLabels: d3.Selection<SVGTextElement, string, SVGGElement, unknown>;
 
@@ -473,14 +487,8 @@ export const GraphCanvas: React.FC = () => {
       // Update Links with Curves if Hierarchical
       link.attr("d", (d: any) => {
           if (viewMode === 'hierarchical') {
-             // Step-like curve for diagram feel
              const x1 = d.source.x, y1 = d.source.y;
              const x2 = d.target.x, y2 = d.target.y;
-             // Simple Bezier
-             const dx = x2 - x1;
-             const dy = y2 - y1;
-             const dr = Math.sqrt(dx * dx + dy * dy);
-             // Use Q (Quadratic Bezier) for cleaner lines in grid
              return `M${x1},${y1}Q${(x1+x2)/2},${y1} ${x2},${y2}`;
           }
           return `M${d.source.x},${d.source.y}L${d.target.x},${d.target.y}`;
@@ -503,16 +511,11 @@ export const GraphCanvas: React.FC = () => {
                   if (n.y > maxY) maxY = n.y;
               });
 
-              // Add Padding
               const pad = 25;
               const boxX = minX - pad;
-              const boxY = minY - pad - 10; // Extra top padding for label
+              const boxY = minY - pad - 10;
               const boxW = Math.max(50, (maxX - minX) + (pad * 2));
               const boxH = Math.max(50, (maxY - minY) + (pad * 2) + 10);
-
-              // Update DOM via D3 selection mapping
-              // Note: D3 data binding is by index if not keyed, so we find by data content or index
-              // Since modules array is static during render, index matches.
               
               const rect = groupRects.filter((d: any) => d === mod);
               rect.attr("x", boxX).attr("y", boxY).attr("width", boxW).attr("height", boxH);
@@ -531,11 +534,14 @@ export const GraphCanvas: React.FC = () => {
     });
 
     function dragstarted(event: any, d: any) {
+      isDragging.current = false;
       d.fx = d.x;
       d.fy = d.y;
     }
 
     function dragged(event: any, d: any) {
+      // Small threshold to distinguish click from drag
+      isDragging.current = true;
       if (viewMode !== 'structured') {
           simulation.alphaTarget(0.3).restart();
       }
@@ -545,10 +551,19 @@ export const GraphCanvas: React.FC = () => {
 
     function dragended(event: any, d: any) {
       if (!event.active && viewMode !== 'structured') simulation.alphaTarget(0);
-      if (viewMode !== 'structured') {
+      
+      // Behavior Change: 
+      // In 'force' view: Unfix (float back) to allow simulation to settle naturally.
+      // In 'hierarchical' view: Keep FIXED (pin) so user can rearrange the grid manually.
+      if (viewMode === 'force') {
         d.fx = null;
         d.fy = null;
       }
+      // Note: In hierarchical, we leave d.fx/d.fy set, keeping the node pinned.
+      
+      // We don't reset isDragging here immediately to allow click handler to check it
+      // Click event fires after dragended.
+      setTimeout(() => { isDragging.current = false; }, 100);
     }
 
     svg.on("click", () => {
