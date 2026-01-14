@@ -1,0 +1,3891 @@
+{
+  "edges": [
+    {
+      "from": "route:/",
+      "to": "page:skillmeat/web/app/page.tsx",
+      "type": "route_to_page"
+    },
+    {
+      "from": "route:/settings",
+      "to": "page:skillmeat/web/app/settings/page.tsx",
+      "type": "route_to_page"
+    },
+    {
+      "from": "route:/collection",
+      "to": "page:skillmeat/web/app/collection/page.tsx",
+      "type": "route_to_page"
+    },
+    {
+      "from": "page:skillmeat/web/app/collection/page.tsx",
+      "to": "hook:useCollectionContext",
+      "type": "uses_hook"
+    },
+    {
+      "from": "page:skillmeat/web/app/collection/page.tsx",
+      "to": "hook:useInfiniteArtifacts",
+      "type": "uses_hook"
+    },
+    {
+      "from": "page:skillmeat/web/app/collection/page.tsx",
+      "to": "hook:useInfiniteCollectionArtifacts",
+      "type": "uses_hook"
+    },
+    {
+      "from": "page:skillmeat/web/app/collection/page.tsx",
+      "to": "hook:useIntersectionObserver",
+      "type": "uses_hook"
+    },
+    {
+      "from": "page:skillmeat/web/app/collection/page.tsx",
+      "to": "hook:useEditArtifactParameters",
+      "type": "uses_hook"
+    },
+    {
+      "from": "page:skillmeat/web/app/collection/page.tsx",
+      "to": "hook:useToast",
+      "type": "uses_hook"
+    },
+    {
+      "from": "route:/sharing",
+      "to": "page:skillmeat/web/app/sharing/page.tsx",
+      "type": "route_to_page"
+    },
+    {
+      "from": "route:/projects",
+      "to": "page:skillmeat/web/app/projects/page.tsx",
+      "type": "route_to_page"
+    },
+    {
+      "from": "page:skillmeat/web/app/projects/page.tsx",
+      "to": "hook:useProjectCache",
+      "type": "uses_hook"
+    },
+    {
+      "from": "page:skillmeat/web/app/projects/page.tsx",
+      "to": "hook:useOutdatedArtifacts",
+      "type": "uses_hook"
+    },
+    {
+      "from": "route:/marketplace",
+      "to": "page:skillmeat/web/app/marketplace/page.tsx",
+      "type": "route_to_page"
+    },
+    {
+      "from": "page:skillmeat/web/app/marketplace/page.tsx",
+      "to": "hook:useListings",
+      "type": "uses_hook"
+    },
+    {
+      "from": "page:skillmeat/web/app/marketplace/page.tsx",
+      "to": "hook:useBrokers",
+      "type": "uses_hook"
+    },
+    {
+      "from": "page:skillmeat/web/app/marketplace/page.tsx",
+      "to": "hook:useInstallListing",
+      "type": "uses_hook"
+    },
+    {
+      "from": "route:/mcp",
+      "to": "page:skillmeat/web/app/mcp/page.tsx",
+      "type": "route_to_page"
+    },
+    {
+      "from": "page:skillmeat/web/app/mcp/page.tsx",
+      "to": "hook:useToast",
+      "type": "uses_hook"
+    },
+    {
+      "from": "page:skillmeat/web/app/mcp/page.tsx",
+      "to": "hook:useMcpServers",
+      "type": "uses_hook"
+    },
+    {
+      "from": "page:skillmeat/web/app/mcp/page.tsx",
+      "to": "hook:useCreateMcpServer",
+      "type": "uses_hook"
+    },
+    {
+      "from": "route:/context-entities",
+      "to": "page:skillmeat/web/app/context-entities/page.tsx",
+      "type": "route_to_page"
+    },
+    {
+      "from": "page:skillmeat/web/app/context-entities/page.tsx",
+      "to": "hook:useContextEntities",
+      "type": "uses_hook"
+    },
+    {
+      "from": "page:skillmeat/web/app/context-entities/page.tsx",
+      "to": "hook:useCreateContextEntity",
+      "type": "uses_hook"
+    },
+    {
+      "from": "page:skillmeat/web/app/context-entities/page.tsx",
+      "to": "hook:useDeleteContextEntity",
+      "type": "uses_hook"
+    },
+    {
+      "from": "page:skillmeat/web/app/context-entities/page.tsx",
+      "to": "hook:useToast",
+      "type": "uses_hook"
+    },
+    {
+      "from": "route:/templates",
+      "to": "page:skillmeat/web/app/templates/page.tsx",
+      "type": "route_to_page"
+    },
+    {
+      "from": "page:skillmeat/web/app/templates/page.tsx",
+      "to": "hook:useTemplates",
+      "type": "uses_hook"
+    },
+    {
+      "from": "page:skillmeat/web/app/templates/page.tsx",
+      "to": "hook:useToast",
+      "type": "uses_hook"
+    },
+    {
+      "from": "route:/manage",
+      "to": "page:skillmeat/web/app/manage/page.tsx",
+      "type": "route_to_page"
+    },
+    {
+      "from": "route:/deployments",
+      "to": "page:skillmeat/web/app/deployments/page.tsx",
+      "type": "route_to_page"
+    },
+    {
+      "from": "page:skillmeat/web/app/deployments/page.tsx",
+      "to": "hook:useDeploymentList",
+      "type": "uses_hook"
+    },
+    {
+      "from": "page:skillmeat/web/app/deployments/page.tsx",
+      "to": "hook:useDeploymentSummary",
+      "type": "uses_hook"
+    },
+    {
+      "from": "page:skillmeat/web/app/deployments/page.tsx",
+      "to": "hook:useRefreshDeployments",
+      "type": "uses_hook"
+    },
+    {
+      "from": "route:/projects/[id]",
+      "to": "page:skillmeat/web/app/projects/[id]/page.tsx",
+      "type": "route_to_page"
+    },
+    {
+      "from": "page:skillmeat/web/app/projects/[id]/page.tsx",
+      "to": "hook:useProject",
+      "type": "uses_hook"
+    },
+    {
+      "from": "page:skillmeat/web/app/projects/[id]/page.tsx",
+      "to": "hook:useArtifacts",
+      "type": "uses_hook"
+    },
+    {
+      "from": "page:skillmeat/web/app/projects/[id]/page.tsx",
+      "to": "hook:useProjectDiscovery",
+      "type": "uses_hook"
+    },
+    {
+      "from": "page:skillmeat/web/app/projects/[id]/page.tsx",
+      "to": "hook:useToast",
+      "type": "uses_hook"
+    },
+    {
+      "from": "route:/projects/[id]/settings",
+      "to": "page:skillmeat/web/app/projects/[id]/settings/page.tsx",
+      "type": "route_to_page"
+    },
+    {
+      "from": "page:skillmeat/web/app/projects/[id]/settings/page.tsx",
+      "to": "hook:useProject",
+      "type": "uses_hook"
+    },
+    {
+      "from": "page:skillmeat/web/app/projects/[id]/settings/page.tsx",
+      "to": "hook:useUpdateProject",
+      "type": "uses_hook"
+    },
+    {
+      "from": "page:skillmeat/web/app/projects/[id]/settings/page.tsx",
+      "to": "hook:useToast",
+      "type": "uses_hook"
+    },
+    {
+      "from": "route:/projects/[id]/manage",
+      "to": "page:skillmeat/web/app/projects/[id]/manage/page.tsx",
+      "type": "route_to_page"
+    },
+    {
+      "from": "page:skillmeat/web/app/projects/[id]/manage/page.tsx",
+      "to": "hook:useProject",
+      "type": "uses_hook"
+    },
+    {
+      "from": "route:/marketplace/[listing_id]",
+      "to": "page:skillmeat/web/app/marketplace/[listing_id]/page.tsx",
+      "type": "route_to_page"
+    },
+    {
+      "from": "page:skillmeat/web/app/marketplace/[listing_id]/page.tsx",
+      "to": "hook:useListing",
+      "type": "uses_hook"
+    },
+    {
+      "from": "page:skillmeat/web/app/marketplace/[listing_id]/page.tsx",
+      "to": "hook:useInstallListing",
+      "type": "uses_hook"
+    },
+    {
+      "from": "route:/marketplace/publish",
+      "to": "page:skillmeat/web/app/marketplace/publish/page.tsx",
+      "type": "route_to_page"
+    },
+    {
+      "from": "page:skillmeat/web/app/marketplace/publish/page.tsx",
+      "to": "hook:useBrokers",
+      "type": "uses_hook"
+    },
+    {
+      "from": "page:skillmeat/web/app/marketplace/publish/page.tsx",
+      "to": "hook:usePublishBundle",
+      "type": "uses_hook"
+    },
+    {
+      "from": "route:/marketplace/sources",
+      "to": "page:skillmeat/web/app/marketplace/sources/page.tsx",
+      "type": "route_to_page"
+    },
+    {
+      "from": "page:skillmeat/web/app/marketplace/sources/page.tsx",
+      "to": "hook:useSources",
+      "type": "uses_hook"
+    },
+    {
+      "from": "page:skillmeat/web/app/marketplace/sources/page.tsx",
+      "to": "hook:useToast",
+      "type": "uses_hook"
+    },
+    {
+      "from": "route:/marketplace/sources/[id]",
+      "to": "page:skillmeat/web/app/marketplace/sources/[id]/page.tsx",
+      "type": "route_to_page"
+    },
+    {
+      "from": "page:skillmeat/web/app/marketplace/sources/[id]/page.tsx",
+      "to": "hook:useSource",
+      "type": "uses_hook"
+    },
+    {
+      "from": "page:skillmeat/web/app/marketplace/sources/[id]/page.tsx",
+      "to": "hook:useSourceCatalog",
+      "type": "uses_hook"
+    },
+    {
+      "from": "page:skillmeat/web/app/marketplace/sources/[id]/page.tsx",
+      "to": "hook:useRescanSource",
+      "type": "uses_hook"
+    },
+    {
+      "from": "page:skillmeat/web/app/marketplace/sources/[id]/page.tsx",
+      "to": "hook:useImportArtifacts",
+      "type": "uses_hook"
+    },
+    {
+      "from": "page:skillmeat/web/app/marketplace/sources/[id]/page.tsx",
+      "to": "hook:useExcludeCatalogEntry",
+      "type": "uses_hook"
+    },
+    {
+      "from": "page:skillmeat/web/app/marketplace/sources/[id]/page.tsx",
+      "to": "hook:useUpdateSource",
+      "type": "uses_hook"
+    },
+    {
+      "from": "page:skillmeat/web/app/marketplace/sources/[id]/page.tsx",
+      "to": "hook:useToast",
+      "type": "uses_hook"
+    },
+    {
+      "from": "route:/mcp/[name]",
+      "to": "page:skillmeat/web/app/mcp/[name]/page.tsx",
+      "type": "route_to_page"
+    },
+    {
+      "from": "page:skillmeat/web/app/mcp/[name]/page.tsx",
+      "to": "hook:useToast",
+      "type": "uses_hook"
+    },
+    {
+      "from": "page:skillmeat/web/app/mcp/[name]/page.tsx",
+      "to": "hook:useMcpServer",
+      "type": "uses_hook"
+    },
+    {
+      "from": "page:skillmeat/web/app/mcp/[name]/page.tsx",
+      "to": "hook:useMcpDeploymentStatus",
+      "type": "uses_hook"
+    },
+    {
+      "from": "page:skillmeat/web/app/mcp/[name]/page.tsx",
+      "to": "hook:useUpdateMcpServer",
+      "type": "uses_hook"
+    },
+    {
+      "from": "page:skillmeat/web/app/mcp/[name]/page.tsx",
+      "to": "hook:useDeleteMcpServer",
+      "type": "uses_hook"
+    },
+    {
+      "from": "page:skillmeat/web/app/mcp/[name]/page.tsx",
+      "to": "hook:useDeployMcpServer",
+      "type": "uses_hook"
+    },
+    {
+      "from": "page:skillmeat/web/app/mcp/[name]/page.tsx",
+      "to": "hook:useUndeployMcpServer",
+      "type": "uses_hook"
+    },
+    {
+      "file": "skillmeat/web/hooks/useDiscovery.ts",
+      "from": "hook:skillmeat/web/hooks/useDiscovery.ts::useDiscovery",
+      "to": "api_endpoint:POST /api/v1/artifacts/discover",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useDiscovery.ts",
+      "from": "hook:skillmeat/web/hooks/useDiscovery.ts::useDiscovery",
+      "to": "api_endpoint:POST /api/v1/artifacts/discover/import",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useDiscovery.ts",
+      "from": "hook:skillmeat/web/hooks/useDiscovery.ts::useDiscovery",
+      "to": "api_endpoint:GET /api/v1/artifacts/metadata/github",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useDiscovery.ts",
+      "from": "hook:skillmeat/web/hooks/useDiscovery.ts::useDiscovery",
+      "to": "api_endpoint:PUT /api/v1/artifacts/{encodedId}/parameters",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useDiscovery.ts",
+      "from": "hook:skillmeat/web/hooks/useDiscovery.ts::useEditArtifactParameters",
+      "to": "api_endpoint:POST /api/v1/artifacts/discover",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useDiscovery.ts",
+      "from": "hook:skillmeat/web/hooks/useDiscovery.ts::useEditArtifactParameters",
+      "to": "api_endpoint:POST /api/v1/artifacts/discover/import",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useDiscovery.ts",
+      "from": "hook:skillmeat/web/hooks/useDiscovery.ts::useEditArtifactParameters",
+      "to": "api_endpoint:GET /api/v1/artifacts/metadata/github",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useDiscovery.ts",
+      "from": "hook:skillmeat/web/hooks/useDiscovery.ts::useEditArtifactParameters",
+      "to": "api_endpoint:PUT /api/v1/artifacts/{encodedId}/parameters",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useDiscovery.ts",
+      "from": "hook:skillmeat/web/hooks/useDiscovery.ts::useGitHubMetadata",
+      "to": "api_endpoint:POST /api/v1/artifacts/discover",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useDiscovery.ts",
+      "from": "hook:skillmeat/web/hooks/useDiscovery.ts::useGitHubMetadata",
+      "to": "api_endpoint:POST /api/v1/artifacts/discover/import",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useDiscovery.ts",
+      "from": "hook:skillmeat/web/hooks/useDiscovery.ts::useGitHubMetadata",
+      "to": "api_endpoint:GET /api/v1/artifacts/metadata/github",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useDiscovery.ts",
+      "from": "hook:skillmeat/web/hooks/useDiscovery.ts::useGitHubMetadata",
+      "to": "api_endpoint:PUT /api/v1/artifacts/{encodedId}/parameters",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useDeploy.ts",
+      "from": "hook:skillmeat/web/hooks/useDeploy.ts::useUndeploy",
+      "to": "api_endpoint:POST /api/v1/artifacts/{artifactId}/deploy",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useDeploy.ts",
+      "from": "hook:skillmeat/web/hooks/useDeploy.ts::useUndeploy",
+      "to": "api_endpoint:POST /api/v1/artifacts/{artifactId}/undeploy",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useDeploy.ts",
+      "from": "hook:skillmeat/web/hooks/useDeploy.ts::useDeploy",
+      "to": "api_endpoint:POST /api/v1/artifacts/{artifactId}/deploy",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useDeploy.ts",
+      "from": "hook:skillmeat/web/hooks/useDeploy.ts::useDeploy",
+      "to": "api_endpoint:POST /api/v1/artifacts/{artifactId}/undeploy",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useAddArtifactToGroup",
+      "to": "api_endpoint:GET /api/v1/groups",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useAddArtifactToGroup",
+      "to": "api_endpoint:GET /api/v1/groups/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useAddArtifactToGroup",
+      "to": "api_endpoint:GET /api/v1/groups/{groupId}/artifacts",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useAddArtifactToGroup",
+      "to": "api_endpoint:POST /api/v1/groups",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useAddArtifactToGroup",
+      "to": "api_endpoint:PUT /api/v1/groups/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useAddArtifactToGroup",
+      "to": "api_endpoint:DELETE /api/v1/groups/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useAddArtifactToGroup",
+      "to": "api_endpoint:PUT /api/v1/collections/{collectionId}/groups/reorder",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useAddArtifactToGroup",
+      "to": "api_endpoint:POST /api/v1/groups/{groupId}/artifacts/{artifactId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useAddArtifactToGroup",
+      "to": "api_endpoint:DELETE /api/v1/groups/{groupId}/artifacts/{artifactId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useAddArtifactToGroup",
+      "to": "api_endpoint:POST /api/v1/groups/{groupId}/artifacts/reorder",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useAddArtifactToGroup",
+      "to": "api_endpoint:POST /api/v1/groups/{sourceGroupId}/artifacts/{artifactId}/move",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useGroups",
+      "to": "api_endpoint:GET /api/v1/groups",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useGroups",
+      "to": "api_endpoint:GET /api/v1/groups/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useGroups",
+      "to": "api_endpoint:GET /api/v1/groups/{groupId}/artifacts",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useGroups",
+      "to": "api_endpoint:POST /api/v1/groups",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useGroups",
+      "to": "api_endpoint:PUT /api/v1/groups/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useGroups",
+      "to": "api_endpoint:DELETE /api/v1/groups/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useGroups",
+      "to": "api_endpoint:PUT /api/v1/collections/{collectionId}/groups/reorder",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useGroups",
+      "to": "api_endpoint:POST /api/v1/groups/{groupId}/artifacts/{artifactId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useGroups",
+      "to": "api_endpoint:DELETE /api/v1/groups/{groupId}/artifacts/{artifactId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useGroups",
+      "to": "api_endpoint:POST /api/v1/groups/{groupId}/artifacts/reorder",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useGroups",
+      "to": "api_endpoint:POST /api/v1/groups/{sourceGroupId}/artifacts/{artifactId}/move",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useUpdateGroup",
+      "to": "api_endpoint:GET /api/v1/groups",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useUpdateGroup",
+      "to": "api_endpoint:GET /api/v1/groups/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useUpdateGroup",
+      "to": "api_endpoint:GET /api/v1/groups/{groupId}/artifacts",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useUpdateGroup",
+      "to": "api_endpoint:POST /api/v1/groups",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useUpdateGroup",
+      "to": "api_endpoint:PUT /api/v1/groups/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useUpdateGroup",
+      "to": "api_endpoint:DELETE /api/v1/groups/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useUpdateGroup",
+      "to": "api_endpoint:PUT /api/v1/collections/{collectionId}/groups/reorder",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useUpdateGroup",
+      "to": "api_endpoint:POST /api/v1/groups/{groupId}/artifacts/{artifactId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useUpdateGroup",
+      "to": "api_endpoint:DELETE /api/v1/groups/{groupId}/artifacts/{artifactId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useUpdateGroup",
+      "to": "api_endpoint:POST /api/v1/groups/{groupId}/artifacts/reorder",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useUpdateGroup",
+      "to": "api_endpoint:POST /api/v1/groups/{sourceGroupId}/artifacts/{artifactId}/move",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useRemoveArtifactFromGroup",
+      "to": "api_endpoint:GET /api/v1/groups",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useRemoveArtifactFromGroup",
+      "to": "api_endpoint:GET /api/v1/groups/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useRemoveArtifactFromGroup",
+      "to": "api_endpoint:GET /api/v1/groups/{groupId}/artifacts",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useRemoveArtifactFromGroup",
+      "to": "api_endpoint:POST /api/v1/groups",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useRemoveArtifactFromGroup",
+      "to": "api_endpoint:PUT /api/v1/groups/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useRemoveArtifactFromGroup",
+      "to": "api_endpoint:DELETE /api/v1/groups/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useRemoveArtifactFromGroup",
+      "to": "api_endpoint:PUT /api/v1/collections/{collectionId}/groups/reorder",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useRemoveArtifactFromGroup",
+      "to": "api_endpoint:POST /api/v1/groups/{groupId}/artifacts/{artifactId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useRemoveArtifactFromGroup",
+      "to": "api_endpoint:DELETE /api/v1/groups/{groupId}/artifacts/{artifactId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useRemoveArtifactFromGroup",
+      "to": "api_endpoint:POST /api/v1/groups/{groupId}/artifacts/reorder",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useRemoveArtifactFromGroup",
+      "to": "api_endpoint:POST /api/v1/groups/{sourceGroupId}/artifacts/{artifactId}/move",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useMoveArtifactToGroup",
+      "to": "api_endpoint:GET /api/v1/groups",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useMoveArtifactToGroup",
+      "to": "api_endpoint:GET /api/v1/groups/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useMoveArtifactToGroup",
+      "to": "api_endpoint:GET /api/v1/groups/{groupId}/artifacts",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useMoveArtifactToGroup",
+      "to": "api_endpoint:POST /api/v1/groups",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useMoveArtifactToGroup",
+      "to": "api_endpoint:PUT /api/v1/groups/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useMoveArtifactToGroup",
+      "to": "api_endpoint:DELETE /api/v1/groups/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useMoveArtifactToGroup",
+      "to": "api_endpoint:PUT /api/v1/collections/{collectionId}/groups/reorder",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useMoveArtifactToGroup",
+      "to": "api_endpoint:POST /api/v1/groups/{groupId}/artifacts/{artifactId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useMoveArtifactToGroup",
+      "to": "api_endpoint:DELETE /api/v1/groups/{groupId}/artifacts/{artifactId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useMoveArtifactToGroup",
+      "to": "api_endpoint:POST /api/v1/groups/{groupId}/artifacts/reorder",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useMoveArtifactToGroup",
+      "to": "api_endpoint:POST /api/v1/groups/{sourceGroupId}/artifacts/{artifactId}/move",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useCreateGroup",
+      "to": "api_endpoint:GET /api/v1/groups",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useCreateGroup",
+      "to": "api_endpoint:GET /api/v1/groups/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useCreateGroup",
+      "to": "api_endpoint:GET /api/v1/groups/{groupId}/artifacts",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useCreateGroup",
+      "to": "api_endpoint:POST /api/v1/groups",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useCreateGroup",
+      "to": "api_endpoint:PUT /api/v1/groups/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useCreateGroup",
+      "to": "api_endpoint:DELETE /api/v1/groups/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useCreateGroup",
+      "to": "api_endpoint:PUT /api/v1/collections/{collectionId}/groups/reorder",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useCreateGroup",
+      "to": "api_endpoint:POST /api/v1/groups/{groupId}/artifacts/{artifactId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useCreateGroup",
+      "to": "api_endpoint:DELETE /api/v1/groups/{groupId}/artifacts/{artifactId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useCreateGroup",
+      "to": "api_endpoint:POST /api/v1/groups/{groupId}/artifacts/reorder",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useCreateGroup",
+      "to": "api_endpoint:POST /api/v1/groups/{sourceGroupId}/artifacts/{artifactId}/move",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useReorderGroups",
+      "to": "api_endpoint:GET /api/v1/groups",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useReorderGroups",
+      "to": "api_endpoint:GET /api/v1/groups/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useReorderGroups",
+      "to": "api_endpoint:GET /api/v1/groups/{groupId}/artifacts",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useReorderGroups",
+      "to": "api_endpoint:POST /api/v1/groups",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useReorderGroups",
+      "to": "api_endpoint:PUT /api/v1/groups/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useReorderGroups",
+      "to": "api_endpoint:DELETE /api/v1/groups/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useReorderGroups",
+      "to": "api_endpoint:PUT /api/v1/collections/{collectionId}/groups/reorder",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useReorderGroups",
+      "to": "api_endpoint:POST /api/v1/groups/{groupId}/artifacts/{artifactId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useReorderGroups",
+      "to": "api_endpoint:DELETE /api/v1/groups/{groupId}/artifacts/{artifactId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useReorderGroups",
+      "to": "api_endpoint:POST /api/v1/groups/{groupId}/artifacts/reorder",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useReorderGroups",
+      "to": "api_endpoint:POST /api/v1/groups/{sourceGroupId}/artifacts/{artifactId}/move",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useGroup",
+      "to": "api_endpoint:GET /api/v1/groups",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useGroup",
+      "to": "api_endpoint:GET /api/v1/groups/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useGroup",
+      "to": "api_endpoint:GET /api/v1/groups/{groupId}/artifacts",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useGroup",
+      "to": "api_endpoint:POST /api/v1/groups",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useGroup",
+      "to": "api_endpoint:PUT /api/v1/groups/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useGroup",
+      "to": "api_endpoint:DELETE /api/v1/groups/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useGroup",
+      "to": "api_endpoint:PUT /api/v1/collections/{collectionId}/groups/reorder",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useGroup",
+      "to": "api_endpoint:POST /api/v1/groups/{groupId}/artifacts/{artifactId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useGroup",
+      "to": "api_endpoint:DELETE /api/v1/groups/{groupId}/artifacts/{artifactId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useGroup",
+      "to": "api_endpoint:POST /api/v1/groups/{groupId}/artifacts/reorder",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useGroup",
+      "to": "api_endpoint:POST /api/v1/groups/{sourceGroupId}/artifacts/{artifactId}/move",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useReorderArtifactsInGroup",
+      "to": "api_endpoint:GET /api/v1/groups",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useReorderArtifactsInGroup",
+      "to": "api_endpoint:GET /api/v1/groups/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useReorderArtifactsInGroup",
+      "to": "api_endpoint:GET /api/v1/groups/{groupId}/artifacts",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useReorderArtifactsInGroup",
+      "to": "api_endpoint:POST /api/v1/groups",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useReorderArtifactsInGroup",
+      "to": "api_endpoint:PUT /api/v1/groups/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useReorderArtifactsInGroup",
+      "to": "api_endpoint:DELETE /api/v1/groups/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useReorderArtifactsInGroup",
+      "to": "api_endpoint:PUT /api/v1/collections/{collectionId}/groups/reorder",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useReorderArtifactsInGroup",
+      "to": "api_endpoint:POST /api/v1/groups/{groupId}/artifacts/{artifactId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useReorderArtifactsInGroup",
+      "to": "api_endpoint:DELETE /api/v1/groups/{groupId}/artifacts/{artifactId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useReorderArtifactsInGroup",
+      "to": "api_endpoint:POST /api/v1/groups/{groupId}/artifacts/reorder",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useReorderArtifactsInGroup",
+      "to": "api_endpoint:POST /api/v1/groups/{sourceGroupId}/artifacts/{artifactId}/move",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useGroupArtifacts",
+      "to": "api_endpoint:GET /api/v1/groups",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useGroupArtifacts",
+      "to": "api_endpoint:GET /api/v1/groups/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useGroupArtifacts",
+      "to": "api_endpoint:GET /api/v1/groups/{groupId}/artifacts",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useGroupArtifacts",
+      "to": "api_endpoint:POST /api/v1/groups",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useGroupArtifacts",
+      "to": "api_endpoint:PUT /api/v1/groups/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useGroupArtifacts",
+      "to": "api_endpoint:DELETE /api/v1/groups/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useGroupArtifacts",
+      "to": "api_endpoint:PUT /api/v1/collections/{collectionId}/groups/reorder",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useGroupArtifacts",
+      "to": "api_endpoint:POST /api/v1/groups/{groupId}/artifacts/{artifactId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useGroupArtifacts",
+      "to": "api_endpoint:DELETE /api/v1/groups/{groupId}/artifacts/{artifactId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useGroupArtifacts",
+      "to": "api_endpoint:POST /api/v1/groups/{groupId}/artifacts/reorder",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useGroupArtifacts",
+      "to": "api_endpoint:POST /api/v1/groups/{sourceGroupId}/artifacts/{artifactId}/move",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useDeleteGroup",
+      "to": "api_endpoint:GET /api/v1/groups",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useDeleteGroup",
+      "to": "api_endpoint:GET /api/v1/groups/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useDeleteGroup",
+      "to": "api_endpoint:GET /api/v1/groups/{groupId}/artifacts",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useDeleteGroup",
+      "to": "api_endpoint:POST /api/v1/groups",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useDeleteGroup",
+      "to": "api_endpoint:PUT /api/v1/groups/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useDeleteGroup",
+      "to": "api_endpoint:DELETE /api/v1/groups/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useDeleteGroup",
+      "to": "api_endpoint:PUT /api/v1/collections/{collectionId}/groups/reorder",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useDeleteGroup",
+      "to": "api_endpoint:POST /api/v1/groups/{groupId}/artifacts/{artifactId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useDeleteGroup",
+      "to": "api_endpoint:DELETE /api/v1/groups/{groupId}/artifacts/{artifactId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useDeleteGroup",
+      "to": "api_endpoint:POST /api/v1/groups/{groupId}/artifacts/reorder",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-groups.ts",
+      "from": "hook:skillmeat/web/hooks/use-groups.ts::useDeleteGroup",
+      "to": "api_endpoint:POST /api/v1/groups/{sourceGroupId}/artifacts/{artifactId}/move",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-collections.ts",
+      "from": "hook:skillmeat/web/hooks/use-collections.ts::useDeleteCollection",
+      "to": "api_endpoint:GET /api/v1/user-collections/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-collections.ts",
+      "from": "hook:skillmeat/web/hooks/use-collections.ts::useAddArtifactToCollection",
+      "to": "api_endpoint:GET /api/v1/user-collections/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-collections.ts",
+      "from": "hook:skillmeat/web/hooks/use-collections.ts::useRemoveArtifactFromCollection",
+      "to": "api_endpoint:GET /api/v1/user-collections/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-collections.ts",
+      "from": "hook:skillmeat/web/hooks/use-collections.ts::useCollection",
+      "to": "api_endpoint:GET /api/v1/user-collections/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-collections.ts",
+      "from": "hook:skillmeat/web/hooks/use-collections.ts::useInfiniteCollectionArtifacts",
+      "to": "api_endpoint:GET /api/v1/user-collections/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-collections.ts",
+      "from": "hook:skillmeat/web/hooks/use-collections.ts::useCreateCollection",
+      "to": "api_endpoint:GET /api/v1/user-collections/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-collections.ts",
+      "from": "hook:skillmeat/web/hooks/use-collections.ts::useCollections",
+      "to": "api_endpoint:GET /api/v1/user-collections/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-collections.ts",
+      "from": "hook:skillmeat/web/hooks/use-collections.ts::useCollectionArtifacts",
+      "to": "api_endpoint:GET /api/v1/user-collections/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/use-collections.ts",
+      "from": "hook:skillmeat/web/hooks/use-collections.ts::useUpdateCollection",
+      "to": "api_endpoint:GET /api/v1/user-collections/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useUndeployMcpServer",
+      "to": "api_endpoint:GET /api/v1/mcp/servers{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useUndeployMcpServer",
+      "to": "api_endpoint:GET /api/v1/mcp/servers/{name}{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useUndeployMcpServer",
+      "to": "api_endpoint:GET /api/v1/mcp/servers/{name}/status",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useUndeployMcpServer",
+      "to": "api_endpoint:POST /api/v1/mcp/servers{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useUndeployMcpServer",
+      "to": "api_endpoint:PUT /api/v1/mcp/servers/{name}{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useUndeployMcpServer",
+      "to": "api_endpoint:DELETE /api/v1/mcp/servers/{name}{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useUndeployMcpServer",
+      "to": "api_endpoint:POST /api/v1/mcp/servers/{name}/deploy{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useUndeployMcpServer",
+      "to": "api_endpoint:POST /api/v1/mcp/servers/{name}/undeploy{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useCreateMcpServer",
+      "to": "api_endpoint:GET /api/v1/mcp/servers{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useCreateMcpServer",
+      "to": "api_endpoint:GET /api/v1/mcp/servers/{name}{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useCreateMcpServer",
+      "to": "api_endpoint:GET /api/v1/mcp/servers/{name}/status",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useCreateMcpServer",
+      "to": "api_endpoint:POST /api/v1/mcp/servers{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useCreateMcpServer",
+      "to": "api_endpoint:PUT /api/v1/mcp/servers/{name}{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useCreateMcpServer",
+      "to": "api_endpoint:DELETE /api/v1/mcp/servers/{name}{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useCreateMcpServer",
+      "to": "api_endpoint:POST /api/v1/mcp/servers/{name}/deploy{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useCreateMcpServer",
+      "to": "api_endpoint:POST /api/v1/mcp/servers/{name}/undeploy{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useDeleteMcpServer",
+      "to": "api_endpoint:GET /api/v1/mcp/servers{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useDeleteMcpServer",
+      "to": "api_endpoint:GET /api/v1/mcp/servers/{name}{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useDeleteMcpServer",
+      "to": "api_endpoint:GET /api/v1/mcp/servers/{name}/status",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useDeleteMcpServer",
+      "to": "api_endpoint:POST /api/v1/mcp/servers{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useDeleteMcpServer",
+      "to": "api_endpoint:PUT /api/v1/mcp/servers/{name}{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useDeleteMcpServer",
+      "to": "api_endpoint:DELETE /api/v1/mcp/servers/{name}{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useDeleteMcpServer",
+      "to": "api_endpoint:POST /api/v1/mcp/servers/{name}/deploy{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useDeleteMcpServer",
+      "to": "api_endpoint:POST /api/v1/mcp/servers/{name}/undeploy{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useMcpBatchOperations",
+      "to": "api_endpoint:GET /api/v1/mcp/servers{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useMcpBatchOperations",
+      "to": "api_endpoint:GET /api/v1/mcp/servers/{name}{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useMcpBatchOperations",
+      "to": "api_endpoint:GET /api/v1/mcp/servers/{name}/status",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useMcpBatchOperations",
+      "to": "api_endpoint:POST /api/v1/mcp/servers{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useMcpBatchOperations",
+      "to": "api_endpoint:PUT /api/v1/mcp/servers/{name}{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useMcpBatchOperations",
+      "to": "api_endpoint:DELETE /api/v1/mcp/servers/{name}{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useMcpBatchOperations",
+      "to": "api_endpoint:POST /api/v1/mcp/servers/{name}/deploy{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useMcpBatchOperations",
+      "to": "api_endpoint:POST /api/v1/mcp/servers/{name}/undeploy{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useUpdateMcpServer",
+      "to": "api_endpoint:GET /api/v1/mcp/servers{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useUpdateMcpServer",
+      "to": "api_endpoint:GET /api/v1/mcp/servers/{name}{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useUpdateMcpServer",
+      "to": "api_endpoint:GET /api/v1/mcp/servers/{name}/status",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useUpdateMcpServer",
+      "to": "api_endpoint:POST /api/v1/mcp/servers{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useUpdateMcpServer",
+      "to": "api_endpoint:PUT /api/v1/mcp/servers/{name}{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useUpdateMcpServer",
+      "to": "api_endpoint:DELETE /api/v1/mcp/servers/{name}{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useUpdateMcpServer",
+      "to": "api_endpoint:POST /api/v1/mcp/servers/{name}/deploy{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useUpdateMcpServer",
+      "to": "api_endpoint:POST /api/v1/mcp/servers/{name}/undeploy{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useDeployMcpServer",
+      "to": "api_endpoint:GET /api/v1/mcp/servers{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useDeployMcpServer",
+      "to": "api_endpoint:GET /api/v1/mcp/servers/{name}{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useDeployMcpServer",
+      "to": "api_endpoint:GET /api/v1/mcp/servers/{name}/status",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useDeployMcpServer",
+      "to": "api_endpoint:POST /api/v1/mcp/servers{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useDeployMcpServer",
+      "to": "api_endpoint:PUT /api/v1/mcp/servers/{name}{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useDeployMcpServer",
+      "to": "api_endpoint:DELETE /api/v1/mcp/servers/{name}{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useDeployMcpServer",
+      "to": "api_endpoint:POST /api/v1/mcp/servers/{name}/deploy{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useDeployMcpServer",
+      "to": "api_endpoint:POST /api/v1/mcp/servers/{name}/undeploy{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useMcpDeploymentStatus",
+      "to": "api_endpoint:GET /api/v1/mcp/servers{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useMcpDeploymentStatus",
+      "to": "api_endpoint:GET /api/v1/mcp/servers/{name}{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useMcpDeploymentStatus",
+      "to": "api_endpoint:GET /api/v1/mcp/servers/{name}/status",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useMcpDeploymentStatus",
+      "to": "api_endpoint:POST /api/v1/mcp/servers{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useMcpDeploymentStatus",
+      "to": "api_endpoint:PUT /api/v1/mcp/servers/{name}{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useMcpDeploymentStatus",
+      "to": "api_endpoint:DELETE /api/v1/mcp/servers/{name}{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useMcpDeploymentStatus",
+      "to": "api_endpoint:POST /api/v1/mcp/servers/{name}/deploy{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useMcpDeploymentStatus",
+      "to": "api_endpoint:POST /api/v1/mcp/servers/{name}/undeploy{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useMcpServer",
+      "to": "api_endpoint:GET /api/v1/mcp/servers{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useMcpServer",
+      "to": "api_endpoint:GET /api/v1/mcp/servers/{name}{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useMcpServer",
+      "to": "api_endpoint:GET /api/v1/mcp/servers/{name}/status",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useMcpServer",
+      "to": "api_endpoint:POST /api/v1/mcp/servers{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useMcpServer",
+      "to": "api_endpoint:PUT /api/v1/mcp/servers/{name}{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useMcpServer",
+      "to": "api_endpoint:DELETE /api/v1/mcp/servers/{name}{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useMcpServer",
+      "to": "api_endpoint:POST /api/v1/mcp/servers/{name}/deploy{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useMcpServer",
+      "to": "api_endpoint:POST /api/v1/mcp/servers/{name}/undeploy{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useMcpServers",
+      "to": "api_endpoint:GET /api/v1/mcp/servers{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useMcpServers",
+      "to": "api_endpoint:GET /api/v1/mcp/servers/{name}{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useMcpServers",
+      "to": "api_endpoint:GET /api/v1/mcp/servers/{name}/status",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useMcpServers",
+      "to": "api_endpoint:POST /api/v1/mcp/servers{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useMcpServers",
+      "to": "api_endpoint:PUT /api/v1/mcp/servers/{name}{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useMcpServers",
+      "to": "api_endpoint:DELETE /api/v1/mcp/servers/{name}{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useMcpServers",
+      "to": "api_endpoint:POST /api/v1/mcp/servers/{name}/deploy{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMcpServers.ts",
+      "from": "hook:skillmeat/web/hooks/useMcpServers.ts::useMcpServers",
+      "to": "api_endpoint:POST /api/v1/mcp/servers/{name}/undeploy{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useImportBundle.ts",
+      "from": "hook:skillmeat/web/hooks/useImportBundle.ts::useValidateImport",
+      "to": "api_endpoint:POST /api/v1/bundles/preview",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useImportBundle.ts",
+      "from": "hook:skillmeat/web/hooks/useImportBundle.ts::useValidateImport",
+      "to": "api_endpoint:POST /api/v1/bundles/import",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useImportBundle.ts",
+      "from": "hook:skillmeat/web/hooks/useImportBundle.ts::useImportBundle",
+      "to": "api_endpoint:POST /api/v1/bundles/preview",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useImportBundle.ts",
+      "from": "hook:skillmeat/web/hooks/useImportBundle.ts::useImportBundle",
+      "to": "api_endpoint:POST /api/v1/bundles/import",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useImportBundle.ts",
+      "from": "hook:skillmeat/web/hooks/useImportBundle.ts::usePreviewBundle",
+      "to": "api_endpoint:POST /api/v1/bundles/preview",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useImportBundle.ts",
+      "from": "hook:skillmeat/web/hooks/useImportBundle.ts::usePreviewBundle",
+      "to": "api_endpoint:POST /api/v1/bundles/import",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useProjectCache.ts",
+      "from": "hook:skillmeat/web/hooks/useProjectCache.ts::useProjectCache",
+      "to": "api_endpoint:GET /api/v1/projects",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useProjectCache.ts",
+      "from": "hook:skillmeat/web/hooks/useProjectCache.ts::useProjectCache",
+      "to": "api_endpoint:GET /api/v1/projects",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useSync.ts",
+      "from": "hook:skillmeat/web/hooks/useSync.ts::useCheckUpstream",
+      "to": "api_endpoint:GET /api/v1/artifacts/{request.artifactId}/sync",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useSync.ts",
+      "from": "hook:skillmeat/web/hooks/useSync.ts::useSync",
+      "to": "api_endpoint:GET /api/v1/artifacts/{request.artifactId}/sync",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useCacheRefresh.ts",
+      "from": "hook:skillmeat/web/hooks/useCacheRefresh.ts::useCacheRefresh",
+      "to": "api_endpoint:POST /api/v1/projects/cache/refresh",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useExportBundle.ts",
+      "from": "hook:skillmeat/web/hooks/useExportBundle.ts::useExportBundle",
+      "to": "api_endpoint:POST /api/v1/bundles/export",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useExportBundle.ts",
+      "from": "hook:skillmeat/web/hooks/useExportBundle.ts::useValidateExport",
+      "to": "api_endpoint:POST /api/v1/bundles/export",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useProjects.ts",
+      "from": "hook:skillmeat/web/hooks/useProjects.ts::useUpdateProject",
+      "to": "api_endpoint:GET /api/v1/projects",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useProjects.ts",
+      "from": "hook:skillmeat/web/hooks/useProjects.ts::useUpdateProject",
+      "to": "api_endpoint:GET /api/v1/projects/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useProjects.ts",
+      "from": "hook:skillmeat/web/hooks/useProjects.ts::useUpdateProject",
+      "to": "api_endpoint:POST /api/v1/projects",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useProjects.ts",
+      "from": "hook:skillmeat/web/hooks/useProjects.ts::useUpdateProject",
+      "to": "api_endpoint:PUT /api/v1/projects/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useProjects.ts",
+      "from": "hook:skillmeat/web/hooks/useProjects.ts::useUpdateProject",
+      "to": "api_endpoint:DELETE /api/v1/projects/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useProjects.ts",
+      "from": "hook:skillmeat/web/hooks/useProjects.ts::useProject",
+      "to": "api_endpoint:GET /api/v1/projects",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useProjects.ts",
+      "from": "hook:skillmeat/web/hooks/useProjects.ts::useProject",
+      "to": "api_endpoint:GET /api/v1/projects/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useProjects.ts",
+      "from": "hook:skillmeat/web/hooks/useProjects.ts::useProject",
+      "to": "api_endpoint:POST /api/v1/projects",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useProjects.ts",
+      "from": "hook:skillmeat/web/hooks/useProjects.ts::useProject",
+      "to": "api_endpoint:PUT /api/v1/projects/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useProjects.ts",
+      "from": "hook:skillmeat/web/hooks/useProjects.ts::useProject",
+      "to": "api_endpoint:DELETE /api/v1/projects/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useProjects.ts",
+      "from": "hook:skillmeat/web/hooks/useProjects.ts::useCreateProject",
+      "to": "api_endpoint:GET /api/v1/projects",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useProjects.ts",
+      "from": "hook:skillmeat/web/hooks/useProjects.ts::useCreateProject",
+      "to": "api_endpoint:GET /api/v1/projects/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useProjects.ts",
+      "from": "hook:skillmeat/web/hooks/useProjects.ts::useCreateProject",
+      "to": "api_endpoint:POST /api/v1/projects",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useProjects.ts",
+      "from": "hook:skillmeat/web/hooks/useProjects.ts::useCreateProject",
+      "to": "api_endpoint:PUT /api/v1/projects/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useProjects.ts",
+      "from": "hook:skillmeat/web/hooks/useProjects.ts::useCreateProject",
+      "to": "api_endpoint:DELETE /api/v1/projects/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useProjects.ts",
+      "from": "hook:skillmeat/web/hooks/useProjects.ts::useDeleteProject",
+      "to": "api_endpoint:GET /api/v1/projects",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useProjects.ts",
+      "from": "hook:skillmeat/web/hooks/useProjects.ts::useDeleteProject",
+      "to": "api_endpoint:GET /api/v1/projects/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useProjects.ts",
+      "from": "hook:skillmeat/web/hooks/useProjects.ts::useDeleteProject",
+      "to": "api_endpoint:POST /api/v1/projects",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useProjects.ts",
+      "from": "hook:skillmeat/web/hooks/useProjects.ts::useDeleteProject",
+      "to": "api_endpoint:PUT /api/v1/projects/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useProjects.ts",
+      "from": "hook:skillmeat/web/hooks/useProjects.ts::useDeleteProject",
+      "to": "api_endpoint:DELETE /api/v1/projects/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useProjects.ts",
+      "from": "hook:skillmeat/web/hooks/useProjects.ts::useProjects",
+      "to": "api_endpoint:GET /api/v1/projects",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useProjects.ts",
+      "from": "hook:skillmeat/web/hooks/useProjects.ts::useProjects",
+      "to": "api_endpoint:GET /api/v1/projects/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useProjects.ts",
+      "from": "hook:skillmeat/web/hooks/useProjects.ts::useProjects",
+      "to": "api_endpoint:POST /api/v1/projects",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useProjects.ts",
+      "from": "hook:skillmeat/web/hooks/useProjects.ts::useProjects",
+      "to": "api_endpoint:PUT /api/v1/projects/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useProjects.ts",
+      "from": "hook:skillmeat/web/hooks/useProjects.ts::useProjects",
+      "to": "api_endpoint:DELETE /api/v1/projects/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useProjectDiscovery.ts",
+      "from": "hook:skillmeat/web/hooks/useProjectDiscovery.ts::useConfirmDuplicates",
+      "to": "api_endpoint:POST /api/v1/artifacts/discover/project/{encodedPath}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useProjectDiscovery.ts",
+      "from": "hook:skillmeat/web/hooks/useProjectDiscovery.ts::useConfirmDuplicates",
+      "to": "api_endpoint:POST /api/v1/artifacts/discover/import{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useProjectDiscovery.ts",
+      "from": "hook:skillmeat/web/hooks/useProjectDiscovery.ts::useConfirmDuplicates",
+      "to": "api_endpoint:POST /api/v1/artifacts/confirm-duplicates",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useProjectDiscovery.ts",
+      "from": "hook:skillmeat/web/hooks/useProjectDiscovery.ts::useProjectDiscovery",
+      "to": "api_endpoint:POST /api/v1/artifacts/discover/project/{encodedPath}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useProjectDiscovery.ts",
+      "from": "hook:skillmeat/web/hooks/useProjectDiscovery.ts::useProjectDiscovery",
+      "to": "api_endpoint:POST /api/v1/artifacts/discover/import{params}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useProjectDiscovery.ts",
+      "from": "hook:skillmeat/web/hooks/useProjectDiscovery.ts::useProjectDiscovery",
+      "to": "api_endpoint:POST /api/v1/artifacts/confirm-duplicates",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useBundles.ts",
+      "from": "hook:skillmeat/web/hooks/useBundles.ts::useUpdateShareLink",
+      "to": "api_endpoint:GET /api/v1/bundles${params.toString() ",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useBundles.ts",
+      "from": "hook:skillmeat/web/hooks/useBundles.ts::useUpdateShareLink",
+      "to": "api_endpoint:GET /api/v1/bundles/{bundleId}/analytics",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useBundles.ts",
+      "from": "hook:skillmeat/web/hooks/useBundles.ts::useUpdateShareLink",
+      "to": "api_endpoint:DELETE /api/v1/bundles/{bundleId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useBundles.ts",
+      "from": "hook:skillmeat/web/hooks/useBundles.ts::useUpdateShareLink",
+      "to": "api_endpoint:PUT /api/v1/bundles/{bundleId}/share",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useBundles.ts",
+      "from": "hook:skillmeat/web/hooks/useBundles.ts::useUpdateShareLink",
+      "to": "api_endpoint:DELETE /api/v1/bundles/{bundleId}/share",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useBundles.ts",
+      "from": "hook:skillmeat/web/hooks/useBundles.ts::useBundleAnalytics",
+      "to": "api_endpoint:GET /api/v1/bundles${params.toString() ",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useBundles.ts",
+      "from": "hook:skillmeat/web/hooks/useBundles.ts::useBundleAnalytics",
+      "to": "api_endpoint:GET /api/v1/bundles/{bundleId}/analytics",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useBundles.ts",
+      "from": "hook:skillmeat/web/hooks/useBundles.ts::useBundleAnalytics",
+      "to": "api_endpoint:DELETE /api/v1/bundles/{bundleId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useBundles.ts",
+      "from": "hook:skillmeat/web/hooks/useBundles.ts::useBundleAnalytics",
+      "to": "api_endpoint:PUT /api/v1/bundles/{bundleId}/share",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useBundles.ts",
+      "from": "hook:skillmeat/web/hooks/useBundles.ts::useBundleAnalytics",
+      "to": "api_endpoint:DELETE /api/v1/bundles/{bundleId}/share",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useBundles.ts",
+      "from": "hook:skillmeat/web/hooks/useBundles.ts::useRevokeShareLink",
+      "to": "api_endpoint:GET /api/v1/bundles${params.toString() ",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useBundles.ts",
+      "from": "hook:skillmeat/web/hooks/useBundles.ts::useRevokeShareLink",
+      "to": "api_endpoint:GET /api/v1/bundles/{bundleId}/analytics",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useBundles.ts",
+      "from": "hook:skillmeat/web/hooks/useBundles.ts::useRevokeShareLink",
+      "to": "api_endpoint:DELETE /api/v1/bundles/{bundleId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useBundles.ts",
+      "from": "hook:skillmeat/web/hooks/useBundles.ts::useRevokeShareLink",
+      "to": "api_endpoint:PUT /api/v1/bundles/{bundleId}/share",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useBundles.ts",
+      "from": "hook:skillmeat/web/hooks/useBundles.ts::useRevokeShareLink",
+      "to": "api_endpoint:DELETE /api/v1/bundles/{bundleId}/share",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useBundles.ts",
+      "from": "hook:skillmeat/web/hooks/useBundles.ts::useBundles",
+      "to": "api_endpoint:GET /api/v1/bundles${params.toString() ",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useBundles.ts",
+      "from": "hook:skillmeat/web/hooks/useBundles.ts::useBundles",
+      "to": "api_endpoint:GET /api/v1/bundles/{bundleId}/analytics",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useBundles.ts",
+      "from": "hook:skillmeat/web/hooks/useBundles.ts::useBundles",
+      "to": "api_endpoint:DELETE /api/v1/bundles/{bundleId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useBundles.ts",
+      "from": "hook:skillmeat/web/hooks/useBundles.ts::useBundles",
+      "to": "api_endpoint:PUT /api/v1/bundles/{bundleId}/share",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useBundles.ts",
+      "from": "hook:skillmeat/web/hooks/useBundles.ts::useBundles",
+      "to": "api_endpoint:DELETE /api/v1/bundles/{bundleId}/share",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useBundles.ts",
+      "from": "hook:skillmeat/web/hooks/useBundles.ts::useDeleteBundle",
+      "to": "api_endpoint:GET /api/v1/bundles${params.toString() ",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useBundles.ts",
+      "from": "hook:skillmeat/web/hooks/useBundles.ts::useDeleteBundle",
+      "to": "api_endpoint:GET /api/v1/bundles/{bundleId}/analytics",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useBundles.ts",
+      "from": "hook:skillmeat/web/hooks/useBundles.ts::useDeleteBundle",
+      "to": "api_endpoint:DELETE /api/v1/bundles/{bundleId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useBundles.ts",
+      "from": "hook:skillmeat/web/hooks/useBundles.ts::useDeleteBundle",
+      "to": "api_endpoint:PUT /api/v1/bundles/{bundleId}/share",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useBundles.ts",
+      "from": "hook:skillmeat/web/hooks/useBundles.ts::useDeleteBundle",
+      "to": "api_endpoint:DELETE /api/v1/bundles/{bundleId}/share",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useCacheStatus.ts",
+      "from": "hook:skillmeat/web/hooks/useCacheStatus.ts::useCacheStatus",
+      "to": "api_endpoint:GET /api/v1/projects/cache/stats",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useExcludeCatalogEntry",
+      "to": "api_endpoint:GET /api/v1/marketplace/sources",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useExcludeCatalogEntry",
+      "to": "api_endpoint:GET /api/v1/marketplace/sources/{sourceId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useExcludeCatalogEntry",
+      "to": "api_endpoint:POST /api/v1/marketplace/sources",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useExcludeCatalogEntry",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useExcludeCatalogEntry",
+      "to": "api_endpoint:DELETE /api/v1/marketplace/sources/{sourceId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useExcludeCatalogEntry",
+      "to": "api_endpoint:POST /api/v1/marketplace/sources/{sourceId}/rescan",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useExcludeCatalogEntry",
+      "to": "api_endpoint:GET /api/v1/marketplace/sources/{sourceId}/artifacts",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useExcludeCatalogEntry",
+      "to": "api_endpoint:POST /api/v1/marketplace/sources/{sourceId}/import",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useExcludeCatalogEntry",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}/artifacts/{entryId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useExcludeCatalogEntry",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}/artifacts/{entryId}/exclude",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useExcludeCatalogEntry",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}/artifacts/{entryId}/exclude",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useSource",
+      "to": "api_endpoint:GET /api/v1/marketplace/sources",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useSource",
+      "to": "api_endpoint:GET /api/v1/marketplace/sources/{sourceId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useSource",
+      "to": "api_endpoint:POST /api/v1/marketplace/sources",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useSource",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useSource",
+      "to": "api_endpoint:DELETE /api/v1/marketplace/sources/{sourceId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useSource",
+      "to": "api_endpoint:POST /api/v1/marketplace/sources/{sourceId}/rescan",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useSource",
+      "to": "api_endpoint:GET /api/v1/marketplace/sources/{sourceId}/artifacts",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useSource",
+      "to": "api_endpoint:POST /api/v1/marketplace/sources/{sourceId}/import",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useSource",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}/artifacts/{entryId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useSource",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}/artifacts/{entryId}/exclude",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useSource",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}/artifacts/{entryId}/exclude",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useUpdateSource",
+      "to": "api_endpoint:GET /api/v1/marketplace/sources",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useUpdateSource",
+      "to": "api_endpoint:GET /api/v1/marketplace/sources/{sourceId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useUpdateSource",
+      "to": "api_endpoint:POST /api/v1/marketplace/sources",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useUpdateSource",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useUpdateSource",
+      "to": "api_endpoint:DELETE /api/v1/marketplace/sources/{sourceId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useUpdateSource",
+      "to": "api_endpoint:POST /api/v1/marketplace/sources/{sourceId}/rescan",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useUpdateSource",
+      "to": "api_endpoint:GET /api/v1/marketplace/sources/{sourceId}/artifacts",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useUpdateSource",
+      "to": "api_endpoint:POST /api/v1/marketplace/sources/{sourceId}/import",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useUpdateSource",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}/artifacts/{entryId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useUpdateSource",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}/artifacts/{entryId}/exclude",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useUpdateSource",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}/artifacts/{entryId}/exclude",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useImportArtifacts",
+      "to": "api_endpoint:GET /api/v1/marketplace/sources",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useImportArtifacts",
+      "to": "api_endpoint:GET /api/v1/marketplace/sources/{sourceId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useImportArtifacts",
+      "to": "api_endpoint:POST /api/v1/marketplace/sources",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useImportArtifacts",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useImportArtifacts",
+      "to": "api_endpoint:DELETE /api/v1/marketplace/sources/{sourceId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useImportArtifacts",
+      "to": "api_endpoint:POST /api/v1/marketplace/sources/{sourceId}/rescan",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useImportArtifacts",
+      "to": "api_endpoint:GET /api/v1/marketplace/sources/{sourceId}/artifacts",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useImportArtifacts",
+      "to": "api_endpoint:POST /api/v1/marketplace/sources/{sourceId}/import",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useImportArtifacts",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}/artifacts/{entryId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useImportArtifacts",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}/artifacts/{entryId}/exclude",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useImportArtifacts",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}/artifacts/{entryId}/exclude",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useRestoreCatalogEntry",
+      "to": "api_endpoint:GET /api/v1/marketplace/sources",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useRestoreCatalogEntry",
+      "to": "api_endpoint:GET /api/v1/marketplace/sources/{sourceId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useRestoreCatalogEntry",
+      "to": "api_endpoint:POST /api/v1/marketplace/sources",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useRestoreCatalogEntry",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useRestoreCatalogEntry",
+      "to": "api_endpoint:DELETE /api/v1/marketplace/sources/{sourceId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useRestoreCatalogEntry",
+      "to": "api_endpoint:POST /api/v1/marketplace/sources/{sourceId}/rescan",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useRestoreCatalogEntry",
+      "to": "api_endpoint:GET /api/v1/marketplace/sources/{sourceId}/artifacts",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useRestoreCatalogEntry",
+      "to": "api_endpoint:POST /api/v1/marketplace/sources/{sourceId}/import",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useRestoreCatalogEntry",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}/artifacts/{entryId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useRestoreCatalogEntry",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}/artifacts/{entryId}/exclude",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useRestoreCatalogEntry",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}/artifacts/{entryId}/exclude",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useSources",
+      "to": "api_endpoint:GET /api/v1/marketplace/sources",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useSources",
+      "to": "api_endpoint:GET /api/v1/marketplace/sources/{sourceId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useSources",
+      "to": "api_endpoint:POST /api/v1/marketplace/sources",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useSources",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useSources",
+      "to": "api_endpoint:DELETE /api/v1/marketplace/sources/{sourceId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useSources",
+      "to": "api_endpoint:POST /api/v1/marketplace/sources/{sourceId}/rescan",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useSources",
+      "to": "api_endpoint:GET /api/v1/marketplace/sources/{sourceId}/artifacts",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useSources",
+      "to": "api_endpoint:POST /api/v1/marketplace/sources/{sourceId}/import",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useSources",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}/artifacts/{entryId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useSources",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}/artifacts/{entryId}/exclude",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useSources",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}/artifacts/{entryId}/exclude",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useImportAllMatching",
+      "to": "api_endpoint:GET /api/v1/marketplace/sources",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useImportAllMatching",
+      "to": "api_endpoint:GET /api/v1/marketplace/sources/{sourceId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useImportAllMatching",
+      "to": "api_endpoint:POST /api/v1/marketplace/sources",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useImportAllMatching",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useImportAllMatching",
+      "to": "api_endpoint:DELETE /api/v1/marketplace/sources/{sourceId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useImportAllMatching",
+      "to": "api_endpoint:POST /api/v1/marketplace/sources/{sourceId}/rescan",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useImportAllMatching",
+      "to": "api_endpoint:GET /api/v1/marketplace/sources/{sourceId}/artifacts",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useImportAllMatching",
+      "to": "api_endpoint:POST /api/v1/marketplace/sources/{sourceId}/import",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useImportAllMatching",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}/artifacts/{entryId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useImportAllMatching",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}/artifacts/{entryId}/exclude",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useImportAllMatching",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}/artifacts/{entryId}/exclude",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useSourceCatalog",
+      "to": "api_endpoint:GET /api/v1/marketplace/sources",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useSourceCatalog",
+      "to": "api_endpoint:GET /api/v1/marketplace/sources/{sourceId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useSourceCatalog",
+      "to": "api_endpoint:POST /api/v1/marketplace/sources",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useSourceCatalog",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useSourceCatalog",
+      "to": "api_endpoint:DELETE /api/v1/marketplace/sources/{sourceId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useSourceCatalog",
+      "to": "api_endpoint:POST /api/v1/marketplace/sources/{sourceId}/rescan",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useSourceCatalog",
+      "to": "api_endpoint:GET /api/v1/marketplace/sources/{sourceId}/artifacts",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useSourceCatalog",
+      "to": "api_endpoint:POST /api/v1/marketplace/sources/{sourceId}/import",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useSourceCatalog",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}/artifacts/{entryId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useSourceCatalog",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}/artifacts/{entryId}/exclude",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useSourceCatalog",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}/artifacts/{entryId}/exclude",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useUpdateCatalogEntryName",
+      "to": "api_endpoint:GET /api/v1/marketplace/sources",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useUpdateCatalogEntryName",
+      "to": "api_endpoint:GET /api/v1/marketplace/sources/{sourceId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useUpdateCatalogEntryName",
+      "to": "api_endpoint:POST /api/v1/marketplace/sources",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useUpdateCatalogEntryName",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useUpdateCatalogEntryName",
+      "to": "api_endpoint:DELETE /api/v1/marketplace/sources/{sourceId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useUpdateCatalogEntryName",
+      "to": "api_endpoint:POST /api/v1/marketplace/sources/{sourceId}/rescan",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useUpdateCatalogEntryName",
+      "to": "api_endpoint:GET /api/v1/marketplace/sources/{sourceId}/artifacts",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useUpdateCatalogEntryName",
+      "to": "api_endpoint:POST /api/v1/marketplace/sources/{sourceId}/import",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useUpdateCatalogEntryName",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}/artifacts/{entryId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useUpdateCatalogEntryName",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}/artifacts/{entryId}/exclude",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useUpdateCatalogEntryName",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}/artifacts/{entryId}/exclude",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useDeleteSource",
+      "to": "api_endpoint:GET /api/v1/marketplace/sources",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useDeleteSource",
+      "to": "api_endpoint:GET /api/v1/marketplace/sources/{sourceId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useDeleteSource",
+      "to": "api_endpoint:POST /api/v1/marketplace/sources",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useDeleteSource",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useDeleteSource",
+      "to": "api_endpoint:DELETE /api/v1/marketplace/sources/{sourceId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useDeleteSource",
+      "to": "api_endpoint:POST /api/v1/marketplace/sources/{sourceId}/rescan",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useDeleteSource",
+      "to": "api_endpoint:GET /api/v1/marketplace/sources/{sourceId}/artifacts",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useDeleteSource",
+      "to": "api_endpoint:POST /api/v1/marketplace/sources/{sourceId}/import",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useDeleteSource",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}/artifacts/{entryId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useDeleteSource",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}/artifacts/{entryId}/exclude",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useDeleteSource",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}/artifacts/{entryId}/exclude",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useInferUrl",
+      "to": "api_endpoint:GET /api/v1/marketplace/sources",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useInferUrl",
+      "to": "api_endpoint:GET /api/v1/marketplace/sources/{sourceId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useInferUrl",
+      "to": "api_endpoint:POST /api/v1/marketplace/sources",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useInferUrl",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useInferUrl",
+      "to": "api_endpoint:DELETE /api/v1/marketplace/sources/{sourceId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useInferUrl",
+      "to": "api_endpoint:POST /api/v1/marketplace/sources/{sourceId}/rescan",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useInferUrl",
+      "to": "api_endpoint:GET /api/v1/marketplace/sources/{sourceId}/artifacts",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useInferUrl",
+      "to": "api_endpoint:POST /api/v1/marketplace/sources/{sourceId}/import",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useInferUrl",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}/artifacts/{entryId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useInferUrl",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}/artifacts/{entryId}/exclude",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useInferUrl",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}/artifacts/{entryId}/exclude",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useRescanSource",
+      "to": "api_endpoint:GET /api/v1/marketplace/sources",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useRescanSource",
+      "to": "api_endpoint:GET /api/v1/marketplace/sources/{sourceId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useRescanSource",
+      "to": "api_endpoint:POST /api/v1/marketplace/sources",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useRescanSource",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useRescanSource",
+      "to": "api_endpoint:DELETE /api/v1/marketplace/sources/{sourceId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useRescanSource",
+      "to": "api_endpoint:POST /api/v1/marketplace/sources/{sourceId}/rescan",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useRescanSource",
+      "to": "api_endpoint:GET /api/v1/marketplace/sources/{sourceId}/artifacts",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useRescanSource",
+      "to": "api_endpoint:POST /api/v1/marketplace/sources/{sourceId}/import",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useRescanSource",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}/artifacts/{entryId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useRescanSource",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}/artifacts/{entryId}/exclude",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useRescanSource",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}/artifacts/{entryId}/exclude",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useCreateSource",
+      "to": "api_endpoint:GET /api/v1/marketplace/sources",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useCreateSource",
+      "to": "api_endpoint:GET /api/v1/marketplace/sources/{sourceId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useCreateSource",
+      "to": "api_endpoint:POST /api/v1/marketplace/sources",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useCreateSource",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useCreateSource",
+      "to": "api_endpoint:DELETE /api/v1/marketplace/sources/{sourceId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useCreateSource",
+      "to": "api_endpoint:POST /api/v1/marketplace/sources/{sourceId}/rescan",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useCreateSource",
+      "to": "api_endpoint:GET /api/v1/marketplace/sources/{sourceId}/artifacts",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useCreateSource",
+      "to": "api_endpoint:POST /api/v1/marketplace/sources/{sourceId}/import",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useCreateSource",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}/artifacts/{entryId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useCreateSource",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}/artifacts/{entryId}/exclude",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplaceSources.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplaceSources.ts::useCreateSource",
+      "to": "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}/artifacts/{entryId}/exclude",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useAnalytics.ts",
+      "from": "hook:skillmeat/web/hooks/useAnalytics.ts::useAnalyticsSummary",
+      "to": "api_endpoint:GET /api/v1/analytics/summary",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useAnalytics.ts",
+      "from": "hook:skillmeat/web/hooks/useAnalytics.ts::useAnalyticsSummary",
+      "to": "api_endpoint:GET /api/v1/analytics/top-artifacts",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useAnalytics.ts",
+      "from": "hook:skillmeat/web/hooks/useAnalytics.ts::useAnalyticsSummary",
+      "to": "api_endpoint:GET /api/v1/analytics/trends",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useAnalytics.ts",
+      "from": "hook:skillmeat/web/hooks/useAnalytics.ts::useTopArtifacts",
+      "to": "api_endpoint:GET /api/v1/analytics/summary",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useAnalytics.ts",
+      "from": "hook:skillmeat/web/hooks/useAnalytics.ts::useTopArtifacts",
+      "to": "api_endpoint:GET /api/v1/analytics/top-artifacts",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useAnalytics.ts",
+      "from": "hook:skillmeat/web/hooks/useAnalytics.ts::useTopArtifacts",
+      "to": "api_endpoint:GET /api/v1/analytics/trends",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useAnalytics.ts",
+      "from": "hook:skillmeat/web/hooks/useAnalytics.ts::useUsageTrends",
+      "to": "api_endpoint:GET /api/v1/analytics/summary",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useAnalytics.ts",
+      "from": "hook:skillmeat/web/hooks/useAnalytics.ts::useUsageTrends",
+      "to": "api_endpoint:GET /api/v1/analytics/top-artifacts",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useAnalytics.ts",
+      "from": "hook:skillmeat/web/hooks/useAnalytics.ts::useUsageTrends",
+      "to": "api_endpoint:GET /api/v1/analytics/trends",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useArtifacts.ts",
+      "from": "hook:skillmeat/web/hooks/useArtifacts.ts::useArtifact",
+      "to": "api_endpoint:GET /api/v1/artifacts",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useArtifacts.ts",
+      "from": "hook:skillmeat/web/hooks/useArtifacts.ts::useArtifact",
+      "to": "api_endpoint:GET /api/v1/artifacts/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useArtifacts.ts",
+      "from": "hook:skillmeat/web/hooks/useArtifacts.ts::useArtifact",
+      "to": "api_endpoint:PUT /api/v1/artifacts/{artifact.id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useArtifacts.ts",
+      "from": "hook:skillmeat/web/hooks/useArtifacts.ts::useArtifact",
+      "to": "api_endpoint:DELETE /api/v1/artifacts/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useArtifacts.ts",
+      "from": "hook:skillmeat/web/hooks/useArtifacts.ts::useUpdateArtifact",
+      "to": "api_endpoint:GET /api/v1/artifacts",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useArtifacts.ts",
+      "from": "hook:skillmeat/web/hooks/useArtifacts.ts::useUpdateArtifact",
+      "to": "api_endpoint:GET /api/v1/artifacts/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useArtifacts.ts",
+      "from": "hook:skillmeat/web/hooks/useArtifacts.ts::useUpdateArtifact",
+      "to": "api_endpoint:PUT /api/v1/artifacts/{artifact.id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useArtifacts.ts",
+      "from": "hook:skillmeat/web/hooks/useArtifacts.ts::useUpdateArtifact",
+      "to": "api_endpoint:DELETE /api/v1/artifacts/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useArtifacts.ts",
+      "from": "hook:skillmeat/web/hooks/useArtifacts.ts::useDeleteArtifact",
+      "to": "api_endpoint:GET /api/v1/artifacts",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useArtifacts.ts",
+      "from": "hook:skillmeat/web/hooks/useArtifacts.ts::useDeleteArtifact",
+      "to": "api_endpoint:GET /api/v1/artifacts/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useArtifacts.ts",
+      "from": "hook:skillmeat/web/hooks/useArtifacts.ts::useDeleteArtifact",
+      "to": "api_endpoint:PUT /api/v1/artifacts/{artifact.id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useArtifacts.ts",
+      "from": "hook:skillmeat/web/hooks/useArtifacts.ts::useDeleteArtifact",
+      "to": "api_endpoint:DELETE /api/v1/artifacts/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useArtifacts.ts",
+      "from": "hook:skillmeat/web/hooks/useArtifacts.ts::useInfiniteArtifacts",
+      "to": "api_endpoint:GET /api/v1/artifacts",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useArtifacts.ts",
+      "from": "hook:skillmeat/web/hooks/useArtifacts.ts::useInfiniteArtifacts",
+      "to": "api_endpoint:GET /api/v1/artifacts/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useArtifacts.ts",
+      "from": "hook:skillmeat/web/hooks/useArtifacts.ts::useInfiniteArtifacts",
+      "to": "api_endpoint:PUT /api/v1/artifacts/{artifact.id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useArtifacts.ts",
+      "from": "hook:skillmeat/web/hooks/useArtifacts.ts::useInfiniteArtifacts",
+      "to": "api_endpoint:DELETE /api/v1/artifacts/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useArtifacts.ts",
+      "from": "hook:skillmeat/web/hooks/useArtifacts.ts::useArtifacts",
+      "to": "api_endpoint:GET /api/v1/artifacts",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useArtifacts.ts",
+      "from": "hook:skillmeat/web/hooks/useArtifacts.ts::useArtifacts",
+      "to": "api_endpoint:GET /api/v1/artifacts/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useArtifacts.ts",
+      "from": "hook:skillmeat/web/hooks/useArtifacts.ts::useArtifacts",
+      "to": "api_endpoint:PUT /api/v1/artifacts/{artifact.id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useArtifacts.ts",
+      "from": "hook:skillmeat/web/hooks/useArtifacts.ts::useArtifacts",
+      "to": "api_endpoint:DELETE /api/v1/artifacts/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplace.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplace.ts::useBrokers",
+      "to": "api_endpoint:GET /api/v1/marketplace/listings",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplace.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplace.ts::useBrokers",
+      "to": "api_endpoint:GET /api/v1/marketplace/listings/{listingId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplace.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplace.ts::useBrokers",
+      "to": "api_endpoint:POST /api/v1/marketplace/brokers",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplace.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplace.ts::useBrokers",
+      "to": "api_endpoint:POST /api/v1/marketplace/install",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplace.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplace.ts::useBrokers",
+      "to": "api_endpoint:POST /api/v1/marketplace/publish",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplace.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplace.ts::useListings",
+      "to": "api_endpoint:GET /api/v1/marketplace/listings",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplace.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplace.ts::useListings",
+      "to": "api_endpoint:GET /api/v1/marketplace/listings/{listingId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplace.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplace.ts::useListings",
+      "to": "api_endpoint:POST /api/v1/marketplace/brokers",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplace.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplace.ts::useListings",
+      "to": "api_endpoint:POST /api/v1/marketplace/install",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplace.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplace.ts::useListings",
+      "to": "api_endpoint:POST /api/v1/marketplace/publish",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplace.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplace.ts::usePublishBundle",
+      "to": "api_endpoint:GET /api/v1/marketplace/listings",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplace.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplace.ts::usePublishBundle",
+      "to": "api_endpoint:GET /api/v1/marketplace/listings/{listingId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplace.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplace.ts::usePublishBundle",
+      "to": "api_endpoint:POST /api/v1/marketplace/brokers",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplace.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplace.ts::usePublishBundle",
+      "to": "api_endpoint:POST /api/v1/marketplace/install",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplace.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplace.ts::usePublishBundle",
+      "to": "api_endpoint:POST /api/v1/marketplace/publish",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplace.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplace.ts::useInstallListing",
+      "to": "api_endpoint:GET /api/v1/marketplace/listings",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplace.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplace.ts::useInstallListing",
+      "to": "api_endpoint:GET /api/v1/marketplace/listings/{listingId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplace.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplace.ts::useInstallListing",
+      "to": "api_endpoint:POST /api/v1/marketplace/brokers",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplace.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplace.ts::useInstallListing",
+      "to": "api_endpoint:POST /api/v1/marketplace/install",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplace.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplace.ts::useInstallListing",
+      "to": "api_endpoint:POST /api/v1/marketplace/publish",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplace.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplace.ts::useListing",
+      "to": "api_endpoint:GET /api/v1/marketplace/listings",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplace.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplace.ts::useListing",
+      "to": "api_endpoint:GET /api/v1/marketplace/listings/{listingId}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplace.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplace.ts::useListing",
+      "to": "api_endpoint:POST /api/v1/marketplace/brokers",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplace.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplace.ts::useListing",
+      "to": "api_endpoint:POST /api/v1/marketplace/install",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useMarketplace.ts",
+      "from": "hook:skillmeat/web/hooks/useMarketplace.ts::useListing",
+      "to": "api_endpoint:POST /api/v1/marketplace/publish",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useEntityLifecycle.tsx",
+      "from": "hook:skillmeat/web/hooks/useEntityLifecycle.tsx::useEntityLifecycle",
+      "to": "api_endpoint:POST /api/v1/artifacts",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useEntityLifecycle.tsx",
+      "from": "hook:skillmeat/web/hooks/useEntityLifecycle.tsx::useEntityLifecycle",
+      "to": "api_endpoint:PUT /api/v1/artifacts/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useEntityLifecycle.tsx",
+      "from": "hook:skillmeat/web/hooks/useEntityLifecycle.tsx::useEntityLifecycle",
+      "to": "api_endpoint:DELETE /api/v1/artifacts/{id}",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useEntityLifecycle.tsx",
+      "from": "hook:skillmeat/web/hooks/useEntityLifecycle.tsx::useEntityLifecycle",
+      "to": "api_endpoint:POST /api/v1/artifacts/{id}/deploy",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useEntityLifecycle.tsx",
+      "from": "hook:skillmeat/web/hooks/useEntityLifecycle.tsx::useEntityLifecycle",
+      "to": "api_endpoint:POST /api/v1/artifacts/{id}/sync",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useEntityLifecycle.tsx",
+      "from": "hook:skillmeat/web/hooks/useEntityLifecycle.tsx::useEntityLifecycle",
+      "to": "api_endpoint:GET /api/v1/artifacts",
+      "type": "calls_api"
+    },
+    {
+      "file": "skillmeat/web/hooks/useEntityLifecycle.tsx",
+      "from": "hook:skillmeat/web/hooks/useEntityLifecycle.tsx::useEntityLifecycle",
+      "to": "api_endpoint:GET /api/v1/projects/{projectId}",
+      "type": "calls_api"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "route:/",
+      "label": "/",
+      "type": "route"
+    },
+    {
+      "file": "skillmeat/web/app/page.tsx",
+      "id": "page:skillmeat/web/app/page.tsx",
+      "type": "page"
+    },
+    {
+      "id": "route:/settings",
+      "label": "/settings",
+      "type": "route"
+    },
+    {
+      "file": "skillmeat/web/app/settings/page.tsx",
+      "id": "page:skillmeat/web/app/settings/page.tsx",
+      "type": "page"
+    },
+    {
+      "id": "route:/collection",
+      "label": "/collection",
+      "type": "route"
+    },
+    {
+      "file": "skillmeat/web/app/collection/page.tsx",
+      "id": "page:skillmeat/web/app/collection/page.tsx",
+      "type": "page"
+    },
+    {
+      "id": "hook:useCollectionContext",
+      "label": "useCollectionContext",
+      "type": "hook"
+    },
+    {
+      "id": "hook:useInfiniteArtifacts",
+      "label": "useInfiniteArtifacts",
+      "type": "hook"
+    },
+    {
+      "id": "hook:useInfiniteCollectionArtifacts",
+      "label": "useInfiniteCollectionArtifacts",
+      "type": "hook"
+    },
+    {
+      "id": "hook:useIntersectionObserver",
+      "label": "useIntersectionObserver",
+      "type": "hook"
+    },
+    {
+      "id": "hook:useEditArtifactParameters",
+      "label": "useEditArtifactParameters",
+      "type": "hook"
+    },
+    {
+      "id": "hook:useToast",
+      "label": "useToast",
+      "type": "hook"
+    },
+    {
+      "id": "route:/sharing",
+      "label": "/sharing",
+      "type": "route"
+    },
+    {
+      "file": "skillmeat/web/app/sharing/page.tsx",
+      "id": "page:skillmeat/web/app/sharing/page.tsx",
+      "type": "page"
+    },
+    {
+      "id": "route:/projects",
+      "label": "/projects",
+      "type": "route"
+    },
+    {
+      "file": "skillmeat/web/app/projects/page.tsx",
+      "id": "page:skillmeat/web/app/projects/page.tsx",
+      "type": "page"
+    },
+    {
+      "id": "hook:useProjectCache",
+      "label": "useProjectCache",
+      "type": "hook"
+    },
+    {
+      "id": "hook:useOutdatedArtifacts",
+      "label": "useOutdatedArtifacts",
+      "type": "hook"
+    },
+    {
+      "id": "route:/marketplace",
+      "label": "/marketplace",
+      "type": "route"
+    },
+    {
+      "file": "skillmeat/web/app/marketplace/page.tsx",
+      "id": "page:skillmeat/web/app/marketplace/page.tsx",
+      "type": "page"
+    },
+    {
+      "id": "hook:useListings",
+      "label": "useListings",
+      "type": "hook"
+    },
+    {
+      "id": "hook:useBrokers",
+      "label": "useBrokers",
+      "type": "hook"
+    },
+    {
+      "id": "hook:useInstallListing",
+      "label": "useInstallListing",
+      "type": "hook"
+    },
+    {
+      "id": "route:/mcp",
+      "label": "/mcp",
+      "type": "route"
+    },
+    {
+      "file": "skillmeat/web/app/mcp/page.tsx",
+      "id": "page:skillmeat/web/app/mcp/page.tsx",
+      "type": "page"
+    },
+    {
+      "id": "hook:useMcpServers",
+      "label": "useMcpServers",
+      "type": "hook"
+    },
+    {
+      "id": "hook:useCreateMcpServer",
+      "label": "useCreateMcpServer",
+      "type": "hook"
+    },
+    {
+      "id": "route:/context-entities",
+      "label": "/context-entities",
+      "type": "route"
+    },
+    {
+      "file": "skillmeat/web/app/context-entities/page.tsx",
+      "id": "page:skillmeat/web/app/context-entities/page.tsx",
+      "type": "page"
+    },
+    {
+      "id": "hook:useContextEntities",
+      "label": "useContextEntities",
+      "type": "hook"
+    },
+    {
+      "id": "hook:useCreateContextEntity",
+      "label": "useCreateContextEntity",
+      "type": "hook"
+    },
+    {
+      "id": "hook:useDeleteContextEntity",
+      "label": "useDeleteContextEntity",
+      "type": "hook"
+    },
+    {
+      "id": "route:/templates",
+      "label": "/templates",
+      "type": "route"
+    },
+    {
+      "file": "skillmeat/web/app/templates/page.tsx",
+      "id": "page:skillmeat/web/app/templates/page.tsx",
+      "type": "page"
+    },
+    {
+      "id": "hook:useTemplates",
+      "label": "useTemplates",
+      "type": "hook"
+    },
+    {
+      "id": "route:/manage",
+      "label": "/manage",
+      "type": "route"
+    },
+    {
+      "file": "skillmeat/web/app/manage/page.tsx",
+      "id": "page:skillmeat/web/app/manage/page.tsx",
+      "type": "page"
+    },
+    {
+      "id": "route:/deployments",
+      "label": "/deployments",
+      "type": "route"
+    },
+    {
+      "file": "skillmeat/web/app/deployments/page.tsx",
+      "id": "page:skillmeat/web/app/deployments/page.tsx",
+      "type": "page"
+    },
+    {
+      "id": "hook:useDeploymentList",
+      "label": "useDeploymentList",
+      "type": "hook"
+    },
+    {
+      "id": "hook:useDeploymentSummary",
+      "label": "useDeploymentSummary",
+      "type": "hook"
+    },
+    {
+      "id": "hook:useRefreshDeployments",
+      "label": "useRefreshDeployments",
+      "type": "hook"
+    },
+    {
+      "id": "route:/projects/[id]",
+      "label": "/projects/[id]",
+      "type": "route"
+    },
+    {
+      "file": "skillmeat/web/app/projects/[id]/page.tsx",
+      "id": "page:skillmeat/web/app/projects/[id]/page.tsx",
+      "type": "page"
+    },
+    {
+      "id": "hook:useProject",
+      "label": "useProject",
+      "type": "hook"
+    },
+    {
+      "id": "hook:useArtifacts",
+      "label": "useArtifacts",
+      "type": "hook"
+    },
+    {
+      "id": "hook:useProjectDiscovery",
+      "label": "useProjectDiscovery",
+      "type": "hook"
+    },
+    {
+      "id": "route:/projects/[id]/settings",
+      "label": "/projects/[id]/settings",
+      "type": "route"
+    },
+    {
+      "file": "skillmeat/web/app/projects/[id]/settings/page.tsx",
+      "id": "page:skillmeat/web/app/projects/[id]/settings/page.tsx",
+      "type": "page"
+    },
+    {
+      "id": "hook:useUpdateProject",
+      "label": "useUpdateProject",
+      "type": "hook"
+    },
+    {
+      "id": "route:/projects/[id]/manage",
+      "label": "/projects/[id]/manage",
+      "type": "route"
+    },
+    {
+      "file": "skillmeat/web/app/projects/[id]/manage/page.tsx",
+      "id": "page:skillmeat/web/app/projects/[id]/manage/page.tsx",
+      "type": "page"
+    },
+    {
+      "id": "route:/marketplace/[listing_id]",
+      "label": "/marketplace/[listing_id]",
+      "type": "route"
+    },
+    {
+      "file": "skillmeat/web/app/marketplace/[listing_id]/page.tsx",
+      "id": "page:skillmeat/web/app/marketplace/[listing_id]/page.tsx",
+      "type": "page"
+    },
+    {
+      "id": "hook:useListing",
+      "label": "useListing",
+      "type": "hook"
+    },
+    {
+      "id": "route:/marketplace/publish",
+      "label": "/marketplace/publish",
+      "type": "route"
+    },
+    {
+      "file": "skillmeat/web/app/marketplace/publish/page.tsx",
+      "id": "page:skillmeat/web/app/marketplace/publish/page.tsx",
+      "type": "page"
+    },
+    {
+      "id": "hook:usePublishBundle",
+      "label": "usePublishBundle",
+      "type": "hook"
+    },
+    {
+      "id": "route:/marketplace/sources",
+      "label": "/marketplace/sources",
+      "type": "route"
+    },
+    {
+      "file": "skillmeat/web/app/marketplace/sources/page.tsx",
+      "id": "page:skillmeat/web/app/marketplace/sources/page.tsx",
+      "type": "page"
+    },
+    {
+      "id": "hook:useSources",
+      "label": "useSources",
+      "type": "hook"
+    },
+    {
+      "id": "route:/marketplace/sources/[id]",
+      "label": "/marketplace/sources/[id]",
+      "type": "route"
+    },
+    {
+      "file": "skillmeat/web/app/marketplace/sources/[id]/page.tsx",
+      "id": "page:skillmeat/web/app/marketplace/sources/[id]/page.tsx",
+      "type": "page"
+    },
+    {
+      "id": "hook:useSource",
+      "label": "useSource",
+      "type": "hook"
+    },
+    {
+      "id": "hook:useSourceCatalog",
+      "label": "useSourceCatalog",
+      "type": "hook"
+    },
+    {
+      "id": "hook:useRescanSource",
+      "label": "useRescanSource",
+      "type": "hook"
+    },
+    {
+      "id": "hook:useImportArtifacts",
+      "label": "useImportArtifacts",
+      "type": "hook"
+    },
+    {
+      "id": "hook:useExcludeCatalogEntry",
+      "label": "useExcludeCatalogEntry",
+      "type": "hook"
+    },
+    {
+      "id": "hook:useUpdateSource",
+      "label": "useUpdateSource",
+      "type": "hook"
+    },
+    {
+      "id": "route:/mcp/[name]",
+      "label": "/mcp/[name]",
+      "type": "route"
+    },
+    {
+      "file": "skillmeat/web/app/mcp/[name]/page.tsx",
+      "id": "page:skillmeat/web/app/mcp/[name]/page.tsx",
+      "type": "page"
+    },
+    {
+      "id": "hook:useMcpServer",
+      "label": "useMcpServer",
+      "type": "hook"
+    },
+    {
+      "id": "hook:useMcpDeploymentStatus",
+      "label": "useMcpDeploymentStatus",
+      "type": "hook"
+    },
+    {
+      "id": "hook:useUpdateMcpServer",
+      "label": "useUpdateMcpServer",
+      "type": "hook"
+    },
+    {
+      "id": "hook:useDeleteMcpServer",
+      "label": "useDeleteMcpServer",
+      "type": "hook"
+    },
+    {
+      "id": "hook:useDeployMcpServer",
+      "label": "useDeployMcpServer",
+      "type": "hook"
+    },
+    {
+      "id": "hook:useUndeployMcpServer",
+      "label": "useUndeployMcpServer",
+      "type": "hook"
+    },
+    {
+      "id": "hook:skillmeat/web/hooks/useDiscovery.ts::useDiscovery",
+      "type": "hook",
+      "label": "useDiscovery",
+      "file": "skillmeat/web/hooks/useDiscovery.ts"
+    },
+    {
+      "file": "skillmeat/api/openapi.json",
+      "id": "api_endpoint:POST /api/v1/artifacts/discover",
+      "label": "POST /api/v1/artifacts/discover",
+      "method": "POST",
+      "method_inferred": false,
+      "operation_id": "discover_artifacts_api_v1_artifacts_discover_post",
+      "path": "/api/v1/artifacts/discover",
+      "raw_method": "POST",
+      "raw_path": "/artifacts/discover",
+      "summary": "Discover artifacts in collection",
+      "type": "api_endpoint"
+    },
+    {
+      "file": "skillmeat/api/openapi.json",
+      "id": "api_endpoint:POST /api/v1/artifacts/discover/import",
+      "label": "POST /api/v1/artifacts/discover/import",
+      "method": "POST",
+      "method_inferred": false,
+      "operation_id": "bulk_import_artifacts_api_v1_artifacts_discover_import_post",
+      "path": "/api/v1/artifacts/discover/import",
+      "raw_method": "POST",
+      "raw_path": "/artifacts/discover/import",
+      "summary": "Bulk import artifacts",
+      "type": "api_endpoint"
+    },
+    {
+      "file": "skillmeat/api/openapi.json",
+      "id": "api_endpoint:GET /api/v1/artifacts/metadata/github",
+      "label": "GET /api/v1/artifacts/metadata/github",
+      "method": "GET",
+      "method_inferred": true,
+      "operation_id": "fetch_github_metadata_api_v1_artifacts_metadata_github_get",
+      "path": "/api/v1/artifacts/metadata/github",
+      "raw_method": "unknown",
+      "raw_path": "/artifacts/metadata/github?source=${encodedSource}",
+      "summary": "Fetch Github Metadata",
+      "type": "api_endpoint"
+    },
+    {
+      "id": "api_endpoint:PUT /api/v1/artifacts/{encodedId}/parameters",
+      "label": "PUT /api/v1/artifacts/{encodedId}/parameters",
+      "method": "PUT",
+      "method_inferred": false,
+      "path": "/api/v1/artifacts/{encodedId}/parameters",
+      "raw_method": "PUT",
+      "raw_path": "/artifacts/${encodedId}/parameters",
+      "type": "api_endpoint"
+    },
+    {
+      "id": "hook:skillmeat/web/hooks/useDiscovery.ts::useEditArtifactParameters",
+      "type": "hook",
+      "label": "useEditArtifactParameters",
+      "file": "skillmeat/web/hooks/useDiscovery.ts"
+    },
+    {
+      "id": "hook:skillmeat/web/hooks/useDiscovery.ts::useGitHubMetadata",
+      "type": "hook",
+      "label": "useGitHubMetadata",
+      "file": "skillmeat/web/hooks/useDiscovery.ts"
+    },
+    {
+      "id": "hook:skillmeat/web/hooks/useDeploy.ts::useUndeploy",
+      "type": "hook",
+      "label": "useUndeploy",
+      "file": "skillmeat/web/hooks/useDeploy.ts"
+    },
+    {
+      "id": "api_endpoint:POST /api/v1/artifacts/{artifactId}/deploy",
+      "label": "POST /api/v1/artifacts/{artifactId}/deploy",
+      "method": "POST",
+      "method_inferred": false,
+      "path": "/api/v1/artifacts/{artifactId}/deploy",
+      "raw_method": "POST",
+      "raw_path": "/artifacts/${artifactId}/deploy",
+      "type": "api_endpoint"
+    },
+    {
+      "id": "api_endpoint:POST /api/v1/artifacts/{artifactId}/undeploy",
+      "label": "POST /api/v1/artifacts/{artifactId}/undeploy",
+      "method": "POST",
+      "method_inferred": false,
+      "path": "/api/v1/artifacts/{artifactId}/undeploy",
+      "raw_method": "POST",
+      "raw_path": "/artifacts/${artifactId}/undeploy",
+      "type": "api_endpoint"
+    },
+    {
+      "id": "hook:skillmeat/web/hooks/useDeploy.ts::useDeploy",
+      "type": "hook",
+      "label": "useDeploy",
+      "file": "skillmeat/web/hooks/useDeploy.ts"
+    },
+    {
+      "id": "hook:skillmeat/web/hooks/use-groups.ts::useReorderGroups",
+      "type": "hook",
+      "label": "useReorderGroups",
+      "file": "skillmeat/web/hooks/use-groups.ts"
+    },
+    {
+      "file": "skillmeat/api/openapi.json",
+      "id": "api_endpoint:GET /api/v1/groups",
+      "label": "GET /api/v1/groups",
+      "method": "GET",
+      "method_inferred": true,
+      "operation_id": "list_groups_api_v1_groups_get",
+      "path": "/api/v1/groups",
+      "raw_method": "unknown",
+      "raw_path": "/groups?${params.toString()}",
+      "summary": "List groups in collection",
+      "type": "api_endpoint"
+    },
+    {
+      "id": "api_endpoint:DELETE /api/v1/groups/{id}",
+      "label": "DELETE /api/v1/groups/{id}",
+      "method": "DELETE",
+      "method_inferred": false,
+      "path": "/api/v1/groups/{id}",
+      "raw_method": "DELETE",
+      "raw_path": "/groups/${id}",
+      "type": "api_endpoint"
+    },
+    {
+      "id": "hook:skillmeat/web/hooks/use-collections.ts::useCreateCollection",
+      "type": "hook",
+      "label": "useCreateCollection",
+      "file": "skillmeat/web/hooks/use-collections.ts"
+    },
+    {
+      "file": "skillmeat/web/lib/api/collections.ts",
+      "id": "api_endpoint:GET /api/v1/user-collections",
+      "label": "GET /api/v1/user-collections",
+      "method": "GET",
+      "method_inferred": true,
+      "operation_id": "list_user_collections_api_v1_user_collections_get",
+      "path": "/api/v1/user-collections",
+      "raw_method": "unknown",
+      "raw_path": "/user-collections",
+      "summary": "List all user collections",
+      "type": "api_endpoint"
+    },
+    {
+      "id": "handler:skillmeat/api/routers/artifacts.py::discover_artifacts",
+      "type": "handler",
+      "label": "discover_artifacts",
+      "file": "skillmeat/api/routers/artifacts.py"
+    },
+    {
+      "id": "service:skillmeat/core/discovery.py::ArtifactDiscoveryService",
+      "type": "service",
+      "label": "ArtifactDiscoveryService",
+      "file": "skillmeat/core/discovery.py"
+    },
+    {
+      "id": "model:skillmeat/cache/models.py::Artifact",
+      "type": "model",
+      "label": "Artifact",
+      "file": "skillmeat/cache/models.py"
+    },
+    {
+      "id": "model:skillmeat/cache/models.py::Collection",
+      "type": "model",
+      "label": "Collection",
+      "file": "skillmeat/cache/models.py"
+    },
+    {
+      "id": "component:skillmeat/web/components/ui/button.tsx::Button",
+      "type": "component",
+      "label": "Button",
+      "file": "skillmeat/web/components/ui/button.tsx"
+    },
+    {
+      "id": "component:skillmeat/web/components/ui/card.tsx::Card",
+      "type": "component",
+      "label": "Card",
+      "file": "skillmeat/web/components/ui/card.tsx"
+    },
+    {
+      "id": "component:skillmeat/web/components/collection/artifact-grid.tsx::ArtifactGrid",
+      "type": "component",
+      "label": "ArtifactGrid",
+      "file": "skillmeat/web/components/collection/artifact-grid.tsx"
+    },
+    {
+      "id": "service:skillmeat/core/artifact.py::ArtifactManager",
+      "type": "service",
+      "label": "ArtifactManager",
+      "file": "skillmeat/core/artifact.py"
+    }
+  ],
+  "schema_version": "v1",
+  "source": "unified",
+  "source_commit": "e04a2fab42d14fe1b80859aa638554248dd96aba"
+}

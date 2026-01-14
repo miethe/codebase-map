@@ -1,0 +1,5 @@
+{
+  "name": "Skillmeat Codebase Visualizer",
+  "description": "Interactive visualization of the Skillmeat application architecture, tracing flows from frontend routes to backend services and database models.",
+  "requestFramePermissions": []
+}
