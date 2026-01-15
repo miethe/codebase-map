@@ -168,6 +168,12 @@ export const GraphCanvas: React.FC = () => {
     // Track dragging state to prevent click events (which trigger view resets via re-render)
     const isDragging = useRef<boolean>(false);
 
+    // FIX: Use ref to access latest selectedNode inside D3 callbacks (which may be stale closures)
+    const selectedNodeRef = useRef<Node | null>(selectedNode);
+    useEffect(() => {
+        selectedNodeRef.current = selectedNode;
+    }, [selectedNode]);
+
     const flowNodeIds = useMemo(() => {
         if (!selectedNode) return null;
         return getFlowNodes(selectedNode.id, data.edges);
@@ -260,6 +266,13 @@ export const GraphCanvas: React.FC = () => {
                     zoomTransform.current = event.transform;
                 });
             svg.call(zoom).call(zoom.transform, zoomTransform.current);
+
+            // Background Click Handler to Clear Selection
+            svg.on("click", (event) => {
+                if (event.target === svgRef.current) {
+                    setSelectedNode(null);
+                }
+            });
         }
 
         const groupLayer = g.select<SVGGElement>(".group-boxes");
@@ -538,7 +551,9 @@ export const GraphCanvas: React.FC = () => {
                 isDragging.current = false;
                 return;
             }
-            setSelectedNode(d.id === selectedNode?.id ? null : d);
+            // Use ref for toggle check to ensure we have fresh state
+            const currentSelected = selectedNodeRef.current;
+            setSelectedNode(d.id === currentSelected?.id ? null : d);
         })
             .on("mouseover", (event, d) => setHoveredNode(d))
             .on("mouseout", () => setHoveredNode(null));
@@ -708,6 +723,17 @@ export const GraphCanvas: React.FC = () => {
             .attr("opacity", selectedNode && !focusMode ? 0.2 : 0.8);
 
     }, [selectedNode, flowNodeIds, focusMode]);
+
+    // EFFECT: Global Key Helpers (ESC to clear)
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                setSelectedNode(null);
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [setSelectedNode]);
 
     return (
         <div ref={containerRef} className="w-full h-full bg-slate-950">
