@@ -5,8 +5,10 @@ import { NODE_COLORS, EDGE_STYLES, Node, Edge } from '../types';
 import {
     Search, Filter, Layers, Zap, Database, Globe, Box, Info,
     GitGraph, Grid, Server, Terminal, FileCode, GitBranch,
-    ChevronDown, ChevronRight, ArrowRight, Activity, Laptop, LayoutGrid, Focus, Check, Minus, Workflow, ChevronLeft, Home
+    ChevronDown, ChevronRight, ArrowRight, Activity, Laptop, LayoutGrid, Focus, Check, Minus, Workflow, ChevronLeft, Home, Download
 } from 'lucide-react';
+import { computeClusterMetrics } from '../utils/graphAnalytics';
+import { generateCursorRules } from '../utils/rulesGenerator';
 
 // --- Helper Components ---
 
@@ -170,6 +172,26 @@ export const Sidebar: React.FC = () => {
         if (!selectedNode) return [];
         return getDownstreamNodes(selectedNode.id, data.edges, data.nodes);
     }, [selectedNode, data]);
+
+    // Compute Metrics for Active Module
+    const activeModuleMetrics = useMemo(() => {
+        if (!activeModule) return null;
+        // Filter nodes belonging to active module
+        // We use startsWith because we want the subtree
+        const clusterNodes = data.nodes.filter(n => n.modulePath && n.modulePath.join('/').startsWith(activeModule));
+        return computeClusterMetrics(clusterNodes, data.edges);
+    }, [activeModule, data.nodes, data.edges]);
+
+    const handleExportRules = () => {
+        const rules = generateCursorRules(data, activeModule);
+        const blob = new Blob([rules], { type: 'text/markdown' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = '.cursorrules';
+        a.click();
+        URL.revokeObjectURL(url);
+    };
 
     // Merge basic node properties with rich details properties
     const additionalDetails = useMemo(() => {
@@ -601,6 +623,36 @@ export const Sidebar: React.FC = () => {
                         )}
                     </div>
                 </CollapsibleSection>
+
+                {/* Cluster Metrics (Phase 5) */}
+                {activeModule && activeModuleMetrics && (
+                    <CollapsibleSection title="Cluster Health" icon={<Activity size={14} />} defaultOpen={true}>
+                        <div className="grid grid-cols-2 gap-2">
+                            <div className="bg-slate-800/50 p-2 rounded border border-slate-800">
+                                <div className="text-[10px] text-slate-500 uppercase">Cohesion</div>
+                                <div className={`text-lg font-mono ${activeModuleMetrics.cohesion > 0.5 ? 'text-emerald-400' : 'text-slate-300'}`}>
+                                    {(activeModuleMetrics.cohesion * 100).toFixed(0)}%
+                                </div>
+                            </div>
+                            <div className="bg-slate-800/50 p-2 rounded border border-slate-800">
+                                <div className="text-[10px] text-slate-500 uppercase">Coupling</div>
+                                <div className={`text-lg font-mono ${activeModuleMetrics.coupling > 0.3 ? 'text-orange-400' : 'text-slate-300'}`}>
+                                    {(activeModuleMetrics.coupling * 100).toFixed(0)}%
+                                </div>
+                            </div>
+                            <div className="bg-slate-800/50 p-2 rounded border border-slate-800">
+                                <div className="text-[10px] text-slate-500 uppercase">Instability</div>
+                                <div className="text-lg font-mono text-slate-300">
+                                    {activeModuleMetrics.instability.toFixed(2)}
+                                </div>
+                            </div>
+                            <div className="bg-slate-800/50 p-2 rounded border border-slate-800 flex flex-col justify-center items-center cursor-pointer hover:bg-slate-800 transition-colors" onClick={handleExportRules}>
+                                <Download size={16} className="text-indigo-400 mb-1" />
+                                <div className="text-[10px] text-indigo-300 font-medium">Export Rules</div>
+                            </div>
+                        </div>
+                    </CollapsibleSection>
+                )}
 
                 {/* Node Filters */}
                 <CollapsibleSection title="Node Types" icon={<Filter size={14} />} defaultOpen={false}>

@@ -123,6 +123,22 @@ export interface GraphContextType {
   // Visualization Support
   activeColorMode: string;
   setActiveColorMode: (mode: string) => void;
+  // Metadata Support
+  gitMetadata: GitMetadata | null;
+  dependencyData: DependencyGraph | null;
+}
+
+export interface GitMetadata {
+  [filePath: string]: {
+    last_modified: number;
+    change_count: number;
+    unique_authors: number;
+  }
+}
+
+export interface DependencyGraph {
+  nodes: Node[]; // Re-using Node type, but with type='external_dependency'
+  edges: Edge[];
 }
 
 // Configuration for Node Sizing based on Total Degree

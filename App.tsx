@@ -2,7 +2,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { GraphCanvas } from './components/GraphCanvas';
 import { Sidebar } from './components/Sidebar';
-import { GraphData, Node, GraphContextType, ViewMode, GraphViewMode, EDGE_STYLES, DetailsData } from './types';
+import { GraphData, Node, GraphContextType, ViewMode, GraphViewMode, EDGE_STYLES, DetailsData, GitMetadata, DependencyGraph } from './types';
 import { Layout, Loader2, AlertCircle, ChevronDown, ChevronUp, GitBranch } from 'lucide-react';
 
 import { deriveModulePath, getDisplayModule, buildNodePathMap } from './utils/moduleGrouping';
@@ -41,6 +41,9 @@ const App: React.FC = () => {
   const [groupingData, setGroupingData] = useState<any | null>(null);
   const [activeGroupingMode, setActiveGroupingMode] = useState<string>('structure');
   const [activeColorMode, setActiveColorMode] = useState<string>('type');
+
+  const [gitMetadata, setGitMetadata] = useState<GitMetadata | null>(null);
+  const [dependencyData, setDependencyData] = useState<DependencyGraph | null>(null);
 
   const [details, setDetails] = useState<DetailsData | null>(null); // DetailsData loaded lazily
   const [isDetailsLoading, setIsDetailsLoading] = useState(false);
@@ -88,6 +91,31 @@ const App: React.FC = () => {
         } catch (e) {
           console.warn("Failed to load groupings", e);
         }
+
+        // Load Git Metadata
+        try {
+          const gitRes = await fetch('./codebase-graph.git-metadata.json');
+          if (gitRes.ok) {
+            const gitJson = await gitRes.json();
+            setGitMetadata(gitJson);
+          }
+        } catch (e) { console.warn("Failed to load git metadata", e); }
+
+        // Load Dependencies
+        try {
+          const depRes = await fetch('./codebase-graph.dependencies.json');
+          if (depRes.ok) {
+            const depJson = await depRes.json();
+            setDependencyData(depJson);
+            // Merge dependencies into rawData nodes
+            if (depJson.nodes && depJson.nodes.length > 0) {
+              setRawData(prev => ({
+                ...prev,
+                nodes: [...prev.nodes, ...depJson.nodes]
+              }));
+            }
+          }
+        } catch (e) { console.warn("Failed to load dependencies", e); }
 
         // Kick off details fetch immediately after main graph is loaded
         setIsDetailsLoading(true);
@@ -138,6 +166,8 @@ const App: React.FC = () => {
           modulePath = deriveModulePath(n);
         } else if (nodePathMap && nodePathMap.has(n.id)) {
           modulePath = nodePathMap.get(n.id)!;
+        } else if (n.type === 'external_dependency' && n.modulePath) {
+          modulePath = n.modulePath;
         } else {
           modulePath = ['Other'];
         }
@@ -317,7 +347,9 @@ const App: React.FC = () => {
     activeGroupingMode,
     setActiveGroupingMode,
     activeColorMode,
-    setActiveColorMode
+    setActiveColorMode,
+    gitMetadata,
+    dependencyData
   };
 
   if (isLoading) {

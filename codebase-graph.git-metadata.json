@@ -1,0 +1,97 @@
+{
+  ".gitignore": {
+    "last_modified": 1768413381000,
+    "change_count": 1,
+    "unique_authors": 1
+  },
+  "App.tsx": {
+    "last_modified": 1768503207000,
+    "change_count": 4,
+    "unique_authors": 1
+  },
+  "README.md": {
+    "last_modified": 1768413381000,
+    "change_count": 2,
+    "unique_authors": 1
+  },
+  "codebase-graph.details.json": {
+    "last_modified": 1768503207000,
+    "change_count": 1,
+    "unique_authors": 1
+  },
+  "codebase-graph.groupings.json": {
+    "last_modified": 1768503207000,
+    "change_count": 1,
+    "unique_authors": 1
+  },
+  "codebase-graph.json": {
+    "last_modified": 1768413381000,
+    "change_count": 1,
+    "unique_authors": 1
+  },
+  "components/GraphCanvas.tsx": {
+    "last_modified": 1768503207000,
+    "change_count": 3,
+    "unique_authors": 1
+  },
+  "components/Sidebar.tsx": {
+    "last_modified": 1768503207000,
+    "change_count": 4,
+    "unique_authors": 1
+  },
+  "constants.ts": {
+    "last_modified": 1768413381000,
+    "change_count": 1,
+    "unique_authors": 1
+  },
+  "index.html": {
+    "last_modified": 1768415820000,
+    "change_count": 2,
+    "unique_authors": 1
+  },
+  "index.tsx": {
+    "last_modified": 1768413381000,
+    "change_count": 1,
+    "unique_authors": 1
+  },
+  "metadata.json": {
+    "last_modified": 1768413381000,
+    "change_count": 1,
+    "unique_authors": 1
+  },
+  "package.json": {
+    "last_modified": 1768413381000,
+    "change_count": 1,
+    "unique_authors": 1
+  },
+  "tsconfig.json": {
+    "last_modified": 1768413381000,
+    "change_count": 1,
+    "unique_authors": 1
+  },
+  "types.ts": {
+    "last_modified": 1768503207000,
+    "change_count": 4,
+    "unique_authors": 1
+  },
+  "utils/clusterLayout.ts": {
+    "last_modified": 1768503207000,
+    "change_count": 1,
+    "unique_authors": 1
+  },
+  "utils/colorMapping.ts": {
+    "last_modified": 1768503207000,
+    "change_count": 1,
+    "unique_authors": 1
+  },
+  "utils/moduleGrouping.ts": {
+    "last_modified": 1768501906000,
+    "change_count": 2,
+    "unique_authors": 1
+  },
+  "vite.config.ts": {
+    "last_modified": 1768413381000,
+    "change_count": 1,
+    "unique_authors": 1
+  }
+}
