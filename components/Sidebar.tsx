@@ -133,7 +133,9 @@ export const Sidebar: React.FC = () => {
         setActiveModule,
         groupingData,
         activeGroupingMode,
-        setActiveGroupingMode
+        setActiveGroupingMode,
+        activeColorMode,
+        setActiveColorMode
     } = useContext(GraphContext);
     const [searchTerm, setSearchTerm] = useState("");
 
@@ -485,13 +487,12 @@ export const Sidebar: React.FC = () => {
 
                 {/* --- Global Controls Sections (Always Visible) --- */}
 
-                {/* Module / Cluster Focus */}
-                <CollapsibleSection title="Focus Cluster" icon={<Focus size={14} />} defaultOpen={true}>
-                    <div className="space-y-2">
-                        {/* Grouping Mode Selector */}
+                <CollapsibleSection title="Display Settings" icon={<Layers size={14} />} defaultOpen={true}>
+                    <div className="space-y-4">
+                        {/* Grouping Strategy */}
                         {groupingData && (
-                            <div className="mb-2 pb-2 border-b border-slate-800">
-                                <label className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider mb-1.5 block">Grouping Strategy</label>
+                            <div className="space-y-1.5">
+                                <label className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider block">Grouping Strategy</label>
                                 <div className="relative">
                                     <select
                                         value={activeGroupingMode}
@@ -506,6 +507,31 @@ export const Sidebar: React.FC = () => {
                                 </div>
                             </div>
                         )}
+
+                        {/* Color By Strategy */}
+                        <div className="space-y-1.5">
+                            <label className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider block">Color Nodes By</label>
+                            <div className="relative">
+                                <select
+                                    value={activeColorMode}
+                                    onChange={(e) => setActiveColorMode(e.target.value)}
+                                    className="w-full bg-slate-800 text-slate-300 text-xs rounded border border-slate-700 py-1.5 pl-2 pr-8 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50 appearance-none transition-colors cursor-pointer hover:bg-slate-700"
+                                >
+                                    <option value="type">Node Type (Default)</option>
+                                    <option value="module">Top-Level Module</option>
+                                    {groupingData?.group_sets.map((set: any) => (
+                                        <option key={`color-${set.id}`} value={set.id}>Group: {set.label}</option>
+                                    ))}
+                                </select>
+                                <ChevronDown size={12} className="absolute right-2.5 top-2.5 text-slate-500 pointer-events-none" />
+                            </div>
+                        </div>
+                    </div>
+                </CollapsibleSection>
+
+                {/* Module / Cluster Focus */}
+                <CollapsibleSection title="Focus Cluster" icon={<Focus size={14} />} defaultOpen={true}>
+                    <div className="space-y-2">
 
                         {/* Breadcrumb / Back Navigation */}
                         <div className="flex items-center gap-2 mb-2 pb-2 border-b border-slate-800">

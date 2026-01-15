@@ -32,12 +32,15 @@ export const GraphContext = React.createContext<GraphContextType>({
   groupingData: null,
   activeGroupingMode: 'structure',
   setActiveGroupingMode: () => { },
+  activeColorMode: 'type',
+  setActiveColorMode: () => { },
 });
 
 const App: React.FC = () => {
   const [rawData, setRawData] = useState<GraphData>({ nodes: [], edges: [] });
   const [groupingData, setGroupingData] = useState<any | null>(null);
   const [activeGroupingMode, setActiveGroupingMode] = useState<string>('structure');
+  const [activeColorMode, setActiveColorMode] = useState<string>('type');
 
   const [details, setDetails] = useState<DetailsData | null>(null); // DetailsData loaded lazily
   const [isDetailsLoading, setIsDetailsLoading] = useState(false);
@@ -312,7 +315,9 @@ const App: React.FC = () => {
     setActiveModule,
     groupingData,
     activeGroupingMode,
-    setActiveGroupingMode
+    setActiveGroupingMode,
+    activeColorMode,
+    setActiveColorMode
   };
 
   if (isLoading) {

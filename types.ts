@@ -120,6 +120,9 @@ export interface GraphContextType {
   groupingData: GroupingData | null;
   activeGroupingMode: string; // ID of the active GroupSet
   setActiveGroupingMode: (mode: string) => void;
+  // Visualization Support
+  activeColorMode: string;
+  setActiveColorMode: (mode: string) => void;
 }
 
 // Configuration for Node Sizing based on Total Degree
