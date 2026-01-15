@@ -340,7 +340,7 @@ export const GraphCanvas: React.FC = () => {
 
         // Configure Simulation Parameters safely
         simulation.nodes(visibleNodes);
-        simulation.alphaDecay(0.12).velocityDecay(0.6);
+        simulation.alphaDecay(0.02).velocityDecay(0.6);
 
         // Configure Forces
         const linkForce = simulation.force<d3.ForceLink<Node, any>>("link");
@@ -504,6 +504,7 @@ export const GraphCanvas: React.FC = () => {
                         .attr("x", 12)
                         .attr("y", 4)
                         .style("font-size", "10px")
+                        .style("fill", "#cbd5e1")
                         .style("font-family", "JetBrains Mono, monospace")
                         .style("pointer-events", "none")
                         .style("text-shadow", "0 1px 2px rgba(0,0,0,0.8)");
@@ -622,7 +623,7 @@ export const GraphCanvas: React.FC = () => {
         });
 
         // Restart simulation to wake it up
-        simulation.alpha(0.3).restart();
+        simulation.alpha(1).restart();
 
         // Cleanup
         return () => {
