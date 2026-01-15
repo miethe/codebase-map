@@ -137,7 +137,8 @@ export const Sidebar: React.FC = () => {
         activeGroupingMode,
         setActiveGroupingMode,
         activeColorMode,
-        setActiveColorMode
+        setActiveColorMode,
+        gitMetadata
     } = useContext(GraphContext);
     const [searchTerm, setSearchTerm] = useState("");
 
@@ -428,6 +429,48 @@ export const Sidebar: React.FC = () => {
                                             Loading extended details...
                                         </div>
                                     )}
+
+                                    {/* Git Metadata Block */}
+                                    {gitMetadata && selectedNode.file && gitMetadata[selectedNode.file] && (
+                                        <div className="pt-2 border-t border-slate-800/50 space-y-2">
+                                            <span className="text-[10px] uppercase font-bold text-slate-500 flex items-center gap-1">
+                                                <GitGraph size={10} /> Git Activity
+                                            </span>
+                                            <div className="grid grid-cols-2 gap-2">
+                                                <div className="bg-slate-900 p-2 rounded border border-slate-800">
+                                                    <div className="text-[10px] text-slate-500">Last Modified</div>
+                                                    <div className="text-xs text-slate-300 font-mono mt-0.5">
+                                                        {new Date(gitMetadata[selectedNode.file].last_modified).toLocaleDateString()}
+                                                    </div>
+                                                </div>
+                                                <div className="bg-slate-900 p-2 rounded border border-slate-800">
+                                                    <div className="text-[10px] text-slate-500">Changes</div>
+                                                    <div className="text-xs text-slate-300 font-mono mt-0.5">
+                                                        {gitMetadata[selectedNode.file].change_count}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Dependency Details Block */}
+                                    {selectedNode.type === 'external_dependency' && selectedNode.details && (
+                                        <div className="pt-2 border-t border-slate-800/50 space-y-2">
+                                            <span className="text-[10px] uppercase font-bold text-slate-500 flex items-center gap-1">
+                                                <Box size={10} /> Dependency Info
+                                            </span>
+                                            <div className="bg-slate-900 p-2 rounded border border-slate-800 space-y-1">
+                                                <div className="flex justify-between">
+                                                    <span className="text-[10px] text-slate-500">Version</span>
+                                                    <span className="text-xs text-indigo-300 font-mono">{selectedNode.details.version}</span>
+                                                </div>
+                                                <div className="flex justify-between">
+                                                    <span className="text-[10px] text-slate-500">Type</span>
+                                                    <span className="text-xs text-slate-400 font-mono">{selectedNode.details.deptype}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
 
                                 <div className="pt-2">
@@ -544,6 +587,8 @@ export const Sidebar: React.FC = () => {
                                     {groupingData?.group_sets.map((set: any) => (
                                         <option key={`color-${set.id}`} value={set.id}>Group: {set.label}</option>
                                     ))}
+                                    <option value="recency">Git: Recency (Heatmap)</option>
+                                    <option value="churn">Git: Churn (Activity)</option>
                                 </select>
                                 <ChevronDown size={12} className="absolute right-2.5 top-2.5 text-slate-500 pointer-events-none" />
                             </div>

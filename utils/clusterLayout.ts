@@ -115,7 +115,7 @@ export const computeClusterLayout = (
         .stop();
 
     // Run ticks manually
-    const TICKS = 300;
+    const TICKS = 75;
     for (let i = 0; i < TICKS; ++i) simulation.tick();
 
     // 4. Extract Results

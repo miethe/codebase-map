@@ -1243,7 +1243,7 @@
     "handler:skillmeat/api/routers/marketplace_sources.py::get_artifact_file_content->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/marketplace/github_scanner.py::GitHubScanner:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/marketplace_sources.py",
-        "line": 2763
+        "line": 3133
       },
       "notes": "method_name=GitHubScanner"
     },
@@ -1253,7 +1253,7 @@
     "handler:skillmeat/api/routers/marketplace_sources.py::get_artifact_file_tree->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/marketplace/github_scanner.py::GitHubScanner:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/marketplace_sources.py",
-        "line": 2566
+        "line": 2936
       },
       "notes": "method_name=GitHubScanner"
     },
@@ -1272,14 +1272,14 @@
     "handler:skillmeat/api/routers/marketplace_sources.py::import_artifacts->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/marketplace/import_coordinator.py::ConflictStrategy:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/marketplace_sources.py",
-        "line": 1725
+        "line": 2084
       },
       "notes": "method_name=ConflictStrategy"
     },
     "handler:skillmeat/api/routers/marketplace_sources.py::import_artifacts->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/marketplace/import_coordinator.py::ImportCoordinator:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/marketplace_sources.py",
-        "line": 1724
+        "line": 2083
       },
       "notes": "method_name=ImportCoordinator"
     },
@@ -1304,6 +1304,19 @@
     "handler:skillmeat/api/routers/marketplace_sources.py::restore_excluded_artifact->schema:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/api/schemas/marketplace.py::CatalogEntryResponse:handler_uses_schema": {
       "notes": "role=response"
     },
+    "handler:skillmeat/api/routers/marketplace_sources.py::sync_imported_artifacts->schema:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/api/schemas/discovery.py::BulkSyncRequest:handler_uses_schema": {
+      "notes": "role=request"
+    },
+    "handler:skillmeat/api/routers/marketplace_sources.py::sync_imported_artifacts->schema:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/api/schemas/discovery.py::BulkSyncResponse:handler_uses_schema": {
+      "notes": "role=response"
+    },
+    "handler:skillmeat/api/routers/marketplace_sources.py::sync_imported_artifacts->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/artifact.py::ArtifactType:handler_calls_service": {
+      "callsite": {
+        "file": "skillmeat/api/routers/marketplace_sources.py",
+        "line": 1452
+      },
+      "notes": "method_name=ArtifactType"
+    },
     "handler:skillmeat/api/routers/marketplace_sources.py::update_catalog_entry_name->schema:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/api/schemas/marketplace.py::CatalogEntryResponse:handler_uses_schema": {
       "notes": "role=response"
     },
@@ -1313,7 +1326,7 @@
     "handler:skillmeat/api/routers/marketplace_sources.py::update_catalog_entry_name->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/validation.py::validate_artifact_name:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/marketplace_sources.py",
-        "line": 1556
+        "line": 1915
       },
       "notes": "method_name=validate_artifact_name"
     },
@@ -9107,7 +9120,7 @@
       "notes": "method_name=TagRepository"
     }
   },
-  "generated_at": "2026-01-15T17:02:08Z",
+  "generated_at": "2026-01-15T20:47:50Z",
   "nodes": {
     "api_client:skillmeat/web/hooks/use-toast.tsx::useToast": {
       "docstring": null,
@@ -12714,6 +12727,26 @@
       ],
       "params": null,
       "signature": "export function PathTagReviewSkeleton()"
+    },
+    "component:skillmeat/web/components/marketplace/rescan-updates-dialog.tsx::RescanUpdatesDialog": {
+      "doc_summary": "RescanUpdatesDialog - Dialog for syncing updated imported artifacts",
+      "docstring": "RescanUpdatesDialog - Dialog for syncing updated imported artifacts\n\nShows a list of imported artifacts that have upstream updates available.\nUsers can select which artifacts to sync, with warnings for those with\nlocal modifications.\n/",
+      "imports": [
+        "@/components/ui/badge",
+        "@/components/ui/button",
+        "@/components/ui/checkbox",
+        "@/components/ui/dialog",
+        "@/components/ui/tooltip",
+        "@/hooks",
+        "@/lib/api",
+        "@/lib/utils",
+        "@tanstack/react-query",
+        "lucide-react",
+        "next/link",
+        "react"
+      ],
+      "params": null,
+      "signature": "export function RescanUpdatesDialog("
     },
     "component:skillmeat/web/components/marketplace/source-card.example.tsx::BasicExample": {
       "doc_summary": "============================================================================",
@@ -17059,10 +17092,12 @@
         "re",
         "skillmeat.api.dependencies",
         "skillmeat.api.schemas.common",
+        "skillmeat.api.schemas.discovery",
         "skillmeat.api.schemas.marketplace",
         "skillmeat.api.utils.github_cache",
         "skillmeat.cache.models",
         "skillmeat.cache.repositories",
+        "skillmeat.core.artifact",
         "skillmeat.core.marketplace.github_scanner",
         "skillmeat.core.marketplace.import_coordinator",
         "skillmeat.core.path_tags",
@@ -17093,10 +17128,12 @@
         "re",
         "skillmeat.api.dependencies",
         "skillmeat.api.schemas.common",
+        "skillmeat.api.schemas.discovery",
         "skillmeat.api.schemas.marketplace",
         "skillmeat.api.utils.github_cache",
         "skillmeat.cache.models",
         "skillmeat.cache.repositories",
+        "skillmeat.core.artifact",
         "skillmeat.core.marketplace.github_scanner",
         "skillmeat.core.marketplace.import_coordinator",
         "skillmeat.core.path_tags",
@@ -17115,7 +17152,7 @@
         "router.patch"
       ],
       "doc_summary": "Mark or restore a catalog entry as excluded.",
-      "docstring": "Mark or restore a catalog entry as excluded.\n\nMarks artifacts that are false positives or not actual Claude artifacts as excluded.\nExcluded artifacts are filtered from default catalog listings but can be restored.\nThis operation is idempotent - calling it on already excluded entries succeeds.\n\nArgs:\n    source_id: Unique source identifier\n    entry_id: Unique catalog entry identifier\n    request: Exclusion request with excluded flag and optional reason\n\nReturns:\n    Updated catalog entry with exclusion metadata\n\nRaises:\n    HTTPException 404: If source or entry not found\n    HTTPException 400: If entry does not belong to source\n    HTTPException 500: If database operation fails\n\nExample:\n    >>> # Mark as excluded\n    >>> request = ExcludeArtifactRequest(\n    ...     excluded=True,\n    ...     reason=\"Documentation file, not a skill\"\n    ... )\n    >>> response = await exclude_artifact(\"src-123\", \"cat-456\", request)\n    >>> assert response.excluded_at is not None\n    >>> assert response.status == \"excluded\"",
+      "docstring": "Mark or restore a catalog entry as excluded.\n\nMarks artifacts that are false positives or not actual Claude artifacts as excluded.\nExcluded artifacts are filtered from default catalog listings but can be restored.\nThis operation is idempotent - calling it on already excluded entries succeeds.\n\nArgs:\n    source_id: Unique source identifier\n    entry_id: Unique catalog entry identifier\n    request: Exclusion request with excluded flag and optional reason\n    collection_mgr: Collection manager for in_collection lookup\n\nReturns:\n    Updated catalog entry with exclusion metadata\n\nRaises:\n    HTTPException 404: If source or entry not found\n    HTTPException 400: If entry does not belong to source\n    HTTPException 500: If database operation fails\n\nExample:\n    >>> # Mark as excluded\n    >>> request = ExcludeArtifactRequest(\n    ...     excluded=True,\n    ...     reason=\"Documentation file, not a skill\"\n    ... )\n    >>> response = await exclude_artifact(\"src-123\", \"cat-456\", request)\n    >>> assert response.excluded_at is not None\n    >>> assert response.status == \"excluded\"",
       "imports": [
         "dataclasses",
         "datetime",
@@ -17127,10 +17164,12 @@
         "re",
         "skillmeat.api.dependencies",
         "skillmeat.api.schemas.common",
+        "skillmeat.api.schemas.discovery",
         "skillmeat.api.schemas.marketplace",
         "skillmeat.api.utils.github_cache",
         "skillmeat.cache.models",
         "skillmeat.cache.repositories",
+        "skillmeat.core.artifact",
         "skillmeat.core.marketplace.github_scanner",
         "skillmeat.core.marketplace.import_coordinator",
         "skillmeat.core.path_tags",
@@ -17141,10 +17180,11 @@
       "params": [
         "source_id",
         "entry_id",
-        "request"
+        "request",
+        "collection_mgr"
       ],
       "returns": "CatalogEntryResponse",
-      "signature": "exclude_artifact(source_id: str, entry_id: str, request: ExcludeArtifactRequest) -> CatalogEntryResponse"
+      "signature": "exclude_artifact(source_id: str, entry_id: str, request: ExcludeArtifactRequest, collection_mgr: CollectionManagerDep) -> CatalogEntryResponse"
     },
     "handler:skillmeat/api/routers/marketplace_sources.py::get_artifact_file_content": {
       "decorators": [
@@ -17163,10 +17203,12 @@
         "re",
         "skillmeat.api.dependencies",
         "skillmeat.api.schemas.common",
+        "skillmeat.api.schemas.discovery",
         "skillmeat.api.schemas.marketplace",
         "skillmeat.api.utils.github_cache",
         "skillmeat.cache.models",
         "skillmeat.cache.repositories",
+        "skillmeat.core.artifact",
         "skillmeat.core.marketplace.github_scanner",
         "skillmeat.core.marketplace.import_coordinator",
         "skillmeat.core.path_tags",
@@ -17199,10 +17241,12 @@
         "re",
         "skillmeat.api.dependencies",
         "skillmeat.api.schemas.common",
+        "skillmeat.api.schemas.discovery",
         "skillmeat.api.schemas.marketplace",
         "skillmeat.api.utils.github_cache",
         "skillmeat.cache.models",
         "skillmeat.cache.repositories",
+        "skillmeat.core.artifact",
         "skillmeat.core.marketplace.github_scanner",
         "skillmeat.core.marketplace.import_coordinator",
         "skillmeat.core.path_tags",
@@ -17234,10 +17278,12 @@
         "re",
         "skillmeat.api.dependencies",
         "skillmeat.api.schemas.common",
+        "skillmeat.api.schemas.discovery",
         "skillmeat.api.schemas.marketplace",
         "skillmeat.api.utils.github_cache",
         "skillmeat.cache.models",
         "skillmeat.cache.repositories",
+        "skillmeat.core.artifact",
         "skillmeat.core.marketplace.github_scanner",
         "skillmeat.core.marketplace.import_coordinator",
         "skillmeat.core.path_tags",
@@ -17269,10 +17315,12 @@
         "re",
         "skillmeat.api.dependencies",
         "skillmeat.api.schemas.common",
+        "skillmeat.api.schemas.discovery",
         "skillmeat.api.schemas.marketplace",
         "skillmeat.api.utils.github_cache",
         "skillmeat.cache.models",
         "skillmeat.cache.repositories",
+        "skillmeat.core.artifact",
         "skillmeat.core.marketplace.github_scanner",
         "skillmeat.core.marketplace.import_coordinator",
         "skillmeat.core.path_tags",
@@ -17303,10 +17351,12 @@
         "re",
         "skillmeat.api.dependencies",
         "skillmeat.api.schemas.common",
+        "skillmeat.api.schemas.discovery",
         "skillmeat.api.schemas.marketplace",
         "skillmeat.api.utils.github_cache",
         "skillmeat.cache.models",
         "skillmeat.cache.repositories",
+        "skillmeat.core.artifact",
         "skillmeat.core.marketplace.github_scanner",
         "skillmeat.core.marketplace.import_coordinator",
         "skillmeat.core.path_tags",
@@ -17339,10 +17389,12 @@
         "re",
         "skillmeat.api.dependencies",
         "skillmeat.api.schemas.common",
+        "skillmeat.api.schemas.discovery",
         "skillmeat.api.schemas.marketplace",
         "skillmeat.api.utils.github_cache",
         "skillmeat.cache.models",
         "skillmeat.cache.repositories",
+        "skillmeat.core.artifact",
         "skillmeat.core.marketplace.github_scanner",
         "skillmeat.core.marketplace.import_coordinator",
         "skillmeat.core.path_tags",
@@ -17373,10 +17425,12 @@
         "re",
         "skillmeat.api.dependencies",
         "skillmeat.api.schemas.common",
+        "skillmeat.api.schemas.discovery",
         "skillmeat.api.schemas.marketplace",
         "skillmeat.api.utils.github_cache",
         "skillmeat.cache.models",
         "skillmeat.cache.repositories",
+        "skillmeat.core.artifact",
         "skillmeat.core.marketplace.github_scanner",
         "skillmeat.core.marketplace.import_coordinator",
         "skillmeat.core.path_tags",
@@ -17395,10 +17449,11 @@
         "sort_by",
         "sort_order",
         "limit",
-        "cursor"
+        "cursor",
+        "collection_mgr"
       ],
       "returns": "CatalogListResponse",
-      "signature": "list_artifacts(source_id: str, artifact_type: Optional[str], status_filter: Optional[str], min_confidence: Optional[int], max_confidence: Optional[int], include_below_threshold: bool, include_excluded: bool, sort_by: Optional[str], sort_order: Optional[str], limit: int, cursor: Optional[str]) -> CatalogListResponse"
+      "signature": "list_artifacts(source_id: str, artifact_type: Optional[str], status_filter: Optional[str], min_confidence: Optional[int], max_confidence: Optional[int], include_below_threshold: bool, include_excluded: bool, sort_by: Optional[str], sort_order: Optional[str], limit: int, cursor: Optional[str], collection_mgr: CollectionManagerDep) -> CatalogListResponse"
     },
     "handler:skillmeat/api/routers/marketplace_sources.py::list_sources": {
       "decorators": [
@@ -17417,10 +17472,12 @@
         "re",
         "skillmeat.api.dependencies",
         "skillmeat.api.schemas.common",
+        "skillmeat.api.schemas.discovery",
         "skillmeat.api.schemas.marketplace",
         "skillmeat.api.utils.github_cache",
         "skillmeat.cache.models",
         "skillmeat.cache.repositories",
+        "skillmeat.core.artifact",
         "skillmeat.core.marketplace.github_scanner",
         "skillmeat.core.marketplace.import_coordinator",
         "skillmeat.core.path_tags",
@@ -17452,10 +17509,12 @@
         "re",
         "skillmeat.api.dependencies",
         "skillmeat.api.schemas.common",
+        "skillmeat.api.schemas.discovery",
         "skillmeat.api.schemas.marketplace",
         "skillmeat.api.utils.github_cache",
         "skillmeat.cache.models",
         "skillmeat.cache.repositories",
+        "skillmeat.core.artifact",
         "skillmeat.core.marketplace.github_scanner",
         "skillmeat.core.marketplace.import_coordinator",
         "skillmeat.core.path_tags",
@@ -17475,7 +17534,7 @@
         "router.delete"
       ],
       "doc_summary": "Restore an excluded catalog entry to the catalog.",
-      "docstring": "Restore an excluded catalog entry to the catalog.\n\nRemoves exclusion status and makes the artifact visible in default catalog views.\nThis is idempotent - restoring a non-excluded entry succeeds without changes.\n\nArgs:\n    source_id: Unique source identifier\n    entry_id: Unique catalog entry identifier\n\nReturns:\n    Updated catalog entry with exclusion removed (excluded_at=None, excluded_reason=None)\n\nRaises:\n    HTTPException 404: If source or entry not found\n    HTTPException 400: If entry does not belong to source\n    HTTPException 500: If database operation fails\n\nExample:\n    >>> # Restore previously excluded entry\n    >>> response = await restore_excluded_artifact(\"src-123\", \"cat-456\")\n    >>> assert response.excluded_at is None\n    >>> assert response.excluded_reason is None\n    >>> assert response.status == \"new\"  # or \"imported\" if previously imported",
+      "docstring": "Restore an excluded catalog entry to the catalog.\n\nRemoves exclusion status and makes the artifact visible in default catalog views.\nThis is idempotent - restoring a non-excluded entry succeeds without changes.\n\nArgs:\n    source_id: Unique source identifier\n    entry_id: Unique catalog entry identifier\n    collection_mgr: Collection manager for in_collection lookup\n\nReturns:\n    Updated catalog entry with exclusion removed (excluded_at=None, excluded_reason=None)\n\nRaises:\n    HTTPException 404: If source or entry not found\n    HTTPException 400: If entry does not belong to source\n    HTTPException 500: If database operation fails\n\nExample:\n    >>> # Restore previously excluded entry\n    >>> response = await restore_excluded_artifact(\"src-123\", \"cat-456\")\n    >>> assert response.excluded_at is None\n    >>> assert response.excluded_reason is None\n    >>> assert response.status == \"new\"  # or \"imported\" if previously imported",
       "imports": [
         "dataclasses",
         "datetime",
@@ -17487,10 +17546,12 @@
         "re",
         "skillmeat.api.dependencies",
         "skillmeat.api.schemas.common",
+        "skillmeat.api.schemas.discovery",
         "skillmeat.api.schemas.marketplace",
         "skillmeat.api.utils.github_cache",
         "skillmeat.cache.models",
         "skillmeat.cache.repositories",
+        "skillmeat.core.artifact",
         "skillmeat.core.marketplace.github_scanner",
         "skillmeat.core.marketplace.import_coordinator",
         "skillmeat.core.path_tags",
@@ -17500,10 +17561,50 @@
       ],
       "params": [
         "source_id",
-        "entry_id"
+        "entry_id",
+        "collection_mgr"
       ],
       "returns": "CatalogEntryResponse",
-      "signature": "restore_excluded_artifact(source_id: str, entry_id: str) -> CatalogEntryResponse"
+      "signature": "restore_excluded_artifact(source_id: str, entry_id: str, collection_mgr: CollectionManagerDep) -> CatalogEntryResponse"
+    },
+    "handler:skillmeat/api/routers/marketplace_sources.py::sync_imported_artifacts": {
+      "decorators": [
+        "router.post"
+      ],
+      "doc_summary": "Sync imported artifacts from a marketplace source with upstream.",
+      "docstring": "Sync imported artifacts from a marketplace source with upstream.\n\nArgs:\n    source_id: Unique source identifier\n    request: Sync request with artifact entry IDs\n\nReturns:\n    Bulk sync response with per-artifact results\n\nRaises:\n    HTTPException 400: If artifact_ids is empty or invalid\n    HTTPException 404: If source not found or entry IDs invalid\n    HTTPException 500: If sync operation fails",
+      "imports": [
+        "dataclasses",
+        "datetime",
+        "fastapi",
+        "fastapi.responses",
+        "json",
+        "logging",
+        "pathlib",
+        "re",
+        "skillmeat.api.dependencies",
+        "skillmeat.api.schemas.common",
+        "skillmeat.api.schemas.discovery",
+        "skillmeat.api.schemas.marketplace",
+        "skillmeat.api.utils.github_cache",
+        "skillmeat.cache.models",
+        "skillmeat.cache.repositories",
+        "skillmeat.core.artifact",
+        "skillmeat.core.marketplace.github_scanner",
+        "skillmeat.core.marketplace.import_coordinator",
+        "skillmeat.core.path_tags",
+        "skillmeat.core.validation",
+        "typing",
+        "uuid"
+      ],
+      "params": [
+        "source_id",
+        "request",
+        "artifact_mgr",
+        "collection_mgr"
+      ],
+      "returns": "BulkSyncResponse",
+      "signature": "sync_imported_artifacts(source_id: str, request: BulkSyncRequest, artifact_mgr: ArtifactManagerDep, collection_mgr: CollectionManagerDep) -> BulkSyncResponse"
     },
     "handler:skillmeat/api/routers/marketplace_sources.py::update_catalog_entry_name": {
       "decorators": [
@@ -17522,10 +17623,12 @@
         "re",
         "skillmeat.api.dependencies",
         "skillmeat.api.schemas.common",
+        "skillmeat.api.schemas.discovery",
         "skillmeat.api.schemas.marketplace",
         "skillmeat.api.utils.github_cache",
         "skillmeat.cache.models",
         "skillmeat.cache.repositories",
+        "skillmeat.core.artifact",
         "skillmeat.core.marketplace.github_scanner",
         "skillmeat.core.marketplace.import_coordinator",
         "skillmeat.core.path_tags",
@@ -17536,10 +17639,11 @@
       "params": [
         "source_id",
         "entry_id",
-        "request"
+        "request",
+        "collection_mgr"
       ],
       "returns": "CatalogEntryResponse",
-      "signature": "update_catalog_entry_name(source_id: str, entry_id: str, request: UpdateCatalogEntryNameRequest) -> CatalogEntryResponse"
+      "signature": "update_catalog_entry_name(source_id: str, entry_id: str, request: UpdateCatalogEntryNameRequest, collection_mgr: CollectionManagerDep) -> CatalogEntryResponse"
     },
     "handler:skillmeat/api/routers/marketplace_sources.py::update_path_tag_status": {
       "decorators": [
@@ -17558,10 +17662,12 @@
         "re",
         "skillmeat.api.dependencies",
         "skillmeat.api.schemas.common",
+        "skillmeat.api.schemas.discovery",
         "skillmeat.api.schemas.marketplace",
         "skillmeat.api.utils.github_cache",
         "skillmeat.cache.models",
         "skillmeat.cache.repositories",
+        "skillmeat.core.artifact",
         "skillmeat.core.marketplace.github_scanner",
         "skillmeat.core.marketplace.import_coordinator",
         "skillmeat.core.path_tags",
@@ -17594,10 +17700,12 @@
         "re",
         "skillmeat.api.dependencies",
         "skillmeat.api.schemas.common",
+        "skillmeat.api.schemas.discovery",
         "skillmeat.api.schemas.marketplace",
         "skillmeat.api.utils.github_cache",
         "skillmeat.cache.models",
         "skillmeat.cache.repositories",
+        "skillmeat.core.artifact",
         "skillmeat.core.marketplace.github_scanner",
         "skillmeat.core.marketplace.import_coordinator",
         "skillmeat.core.path_tags",
@@ -22040,6 +22148,30 @@
       ],
       "signature": "BulkImportResult(BaseModel)"
     },
+    "schema:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/api/schemas/discovery.py::BulkSyncRequest": {
+      "decorators": null,
+      "doc_summary": "Request to sync multiple imported artifacts from a marketplace source.",
+      "docstring": "Request to sync multiple imported artifacts from a marketplace source.\n\nUsed to update imported artifacts with their upstream versions when\nchanges are detected during a rescan.",
+      "imports": [
+        "datetime",
+        "enum",
+        "pydantic",
+        "typing"
+      ],
+      "signature": "BulkSyncRequest(BaseModel)"
+    },
+    "schema:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/api/schemas/discovery.py::BulkSyncResponse": {
+      "decorators": null,
+      "doc_summary": "Response from bulk sync operation.",
+      "docstring": "Response from bulk sync operation.\n\nProvides summary statistics and per-artifact results for a bulk\nsync operation on imported marketplace artifacts.",
+      "imports": [
+        "datetime",
+        "enum",
+        "pydantic",
+        "typing"
+      ],
+      "signature": "BulkSyncResponse(BaseModel)"
+    },
     "schema:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/api/schemas/discovery.py::ConfirmDuplicatesRequest": {
       "decorators": null,
       "doc_summary": "Request to process duplicate review decisions.",
@@ -24573,6 +24705,42 @@
         "typing"
       ],
       "signature": "BulkImportResult(BaseModel)"
+    },
+    "schema:skillmeat/api/schemas/discovery.py::BulkSyncItemResult": {
+      "decorators": null,
+      "doc_summary": "Result for a single artifact sync operation.",
+      "docstring": "Result for a single artifact sync operation.\n\nProvides detailed status for each artifact in a bulk sync request,\nincluding success/failure status, conflicts, and error messages.",
+      "imports": [
+        "datetime",
+        "enum",
+        "pydantic",
+        "typing"
+      ],
+      "signature": "BulkSyncItemResult(BaseModel)"
+    },
+    "schema:skillmeat/api/schemas/discovery.py::BulkSyncRequest": {
+      "decorators": null,
+      "doc_summary": "Request to sync multiple imported artifacts from a marketplace source.",
+      "docstring": "Request to sync multiple imported artifacts from a marketplace source.\n\nUsed to update imported artifacts with their upstream versions when\nchanges are detected during a rescan.",
+      "imports": [
+        "datetime",
+        "enum",
+        "pydantic",
+        "typing"
+      ],
+      "signature": "BulkSyncRequest(BaseModel)"
+    },
+    "schema:skillmeat/api/schemas/discovery.py::BulkSyncResponse": {
+      "decorators": null,
+      "doc_summary": "Response from bulk sync operation.",
+      "docstring": "Response from bulk sync operation.\n\nProvides summary statistics and per-artifact results for a bulk\nsync operation on imported marketplace artifacts.",
+      "imports": [
+        "datetime",
+        "enum",
+        "pydantic",
+        "typing"
+      ],
+      "signature": "BulkSyncResponse(BaseModel)"
     },
     "schema:skillmeat/api/schemas/discovery.py::CollectionMatch": {
       "decorators": null,
@@ -28658,14 +28826,14 @@
       "params": [
         "file_tree",
         "repo_url",
-        "_ref",
+        "ref",
         "root_hint",
         "detected_sha",
         "enable_frontmatter_detection",
         "manual_mappings"
       ],
       "returns": "List[DetectedArtifact]",
-      "signature": "detect_artifacts_in_tree(file_tree: List[str], repo_url: str, _ref: str, root_hint: Optional[str], detected_sha: Optional[str], enable_frontmatter_detection: bool, manual_mappings: Optional[Dict[str, str]]) -> List[DetectedArtifact]"
+      "signature": "detect_artifacts_in_tree(file_tree: List[str], repo_url: str, ref: str, root_hint: Optional[str], detected_sha: Optional[str], enable_frontmatter_detection: bool, manual_mappings: Optional[Dict[str, str]]) -> List[DetectedArtifact]"
     },
     "service:skillmeat/core/marketplace/heuristic_detector.py::normalize_score": {
       "decorators": null,
@@ -33617,5 +33785,5 @@
       "signature": "export function getEntityTypeConfig(type: EntityType): EntityTypeConfig"
     }
   },
-  "source_commit": "1218856ce545cde014b308f0b21632cabea6be70"
+  "source_commit": "e0a7cbdf6ff68a9425af368600dc64d941629316"
 }

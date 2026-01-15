@@ -25,6 +25,10 @@ export interface Node {
   totalDegree?: number; // Number of TOTAL connections in raw graph (for visual sizing)
   module?: string; // The architectural cluster this node belongs to
   modulePath?: string[]; // Hierarchical path for drill-down (e.g. ['Frontend', 'Features', 'Maketplace'])
+  details?: { // For external dependencies
+    version?: string;
+    deptype?: string;
+  };
 }
 
 export interface Edge {

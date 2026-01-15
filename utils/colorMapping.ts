@@ -1,5 +1,5 @@
 
-import { Node, GroupingData, NODE_COLORS } from '../types';
+import { Node, GroupingData, NODE_COLORS, GitMetadata } from '../types';
 
 // Palette for categorical data (e.g. owners, domains)
 // Distinct colors that are not too close to the dark background
@@ -48,7 +48,8 @@ const getColorForString = (str: string): string => {
 export const getNodeColor = (
     node: Node,
     mode: string,
-    groupingData: GroupingData | null
+    groupingData: GroupingData | null,
+    gitMetadata: GitMetadata | null
 ): string => {
     // 1. Default Mode: Node Type
     if (mode === 'type') {
@@ -71,6 +72,48 @@ export const getNodeColor = (
 
         if (relevantGroup) {
             return getColorForString(relevantGroup.label);
+        }
+    }
+
+    // 4. Git Metadata Modes (Recency, Churn)
+    if ((mode === 'recency' || mode === 'churn') && gitMetadata && node.file) {
+        // Find relative path key in gitMetadata
+        // The node.file is absolute or relative? The git-metadata uses relative paths.
+        // Assuming node.file matches keys in gitMetadata (which are relative from root)
+        // We might need to handle leading './' if present/absent
+        // Let's try direct lookup first, then fallback
+
+        let stats = gitMetadata[node.file];
+        if (!stats && node.file.startsWith('/') && !gitMetadata[node.file]) {
+            // Try stripping leading slash or matching basename if needed, 
+            // but ideally the extrator script kept them consistent.
+        }
+
+        if (stats) {
+            if (mode === 'recency') {
+                // Time decay heat map
+                // 1 day ago = Hot (Red/Orange), 1 year ago = Cold (Blue/Grey)
+                const now = Date.now();
+                const diffMs = now - stats.last_modified;
+                const days = diffMs / (1000 * 60 * 60 * 24);
+
+                if (days < 1) return '#ef4444'; // Red-500 (< 24h)
+                if (days < 7) return '#f97316'; // Orange-500 (< 1 week)
+                if (days < 30) return '#eab308'; // Yellow-500 (< 1 month)
+                if (days < 90) return '#84cc16'; // Lime-500 (< 3 months)
+                if (days < 180) return '#10b981'; // Emerald-500 (< 6 months)
+                return '#3b82f6'; // Blue-500 (> 6 months)
+            }
+
+            if (mode === 'churn') {
+                // Change count heat map
+                const changes = stats.change_count;
+                if (changes > 50) return '#ef4444'; // Very High Churn
+                if (changes > 20) return '#f97316'; // High
+                if (changes > 10) return '#eab308'; // Medium
+                if (changes > 5) return '#84cc16'; // Low
+                return '#3b82f6'; // Stable
+            }
         }
     }
 

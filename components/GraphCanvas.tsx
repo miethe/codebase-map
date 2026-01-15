@@ -156,7 +156,8 @@ export const GraphCanvas: React.FC = () => {
         activeModule,
         setActiveModule,
         groupingData,
-        activeColorMode
+        activeColorMode,
+        gitMetadata
     } = useContext(GraphContext);
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -218,50 +219,63 @@ export const GraphCanvas: React.FC = () => {
         return computeClusterLayout(visibleNodes, visibleEdges, width, height);
     }, [viewMode, visibleNodes, visibleEdges]);
 
-    // EFFECT 1: Initialization  // Re-run simulation when data, filters, view mode, or color mode changes
-    // Note: changing color mode doesn't strictly require re-simulation, but we need to trigger re-render.
-    // The animation loop handles re-renders if the simulation is running.
-    // If simulation is static, we might need to force update.
+    // EFFECT: Main D3 Render Logic
     useEffect(() => {
-        if (!svgRef.current || !containerRef.current || visibleNodes.length === 0) return;
+        if (!svgRef.current || !containerRef.current) return;
 
         const width = containerRef.current.clientWidth;
         const height = containerRef.current.clientHeight;
 
         const svg = d3.select(svgRef.current);
-        svg.selectAll("*").remove(); // Clear previous render
 
-        const g = svg.append("g");
+        // Setup container group if it doesn't exist
+        let g = svg.select<SVGGElement>("g.main-group");
+        if (g.empty()) {
+            g = svg.append("g").attr("class", "main-group");
 
-        // Group Layer (Bottom)
-        const groupLayer = g.append("g").attr("class", "group-boxes");
-        // Link Layer
-        const linkLayer = g.append("g").attr("class", "links");
-        // Node Layer (Top)
-        const nodeLayer = g.append("g").attr("class", "nodes");
+            // Create layers in order
+            g.append("g").attr("class", "group-boxes");
+            g.append("g").attr("class", "links");
+            g.append("g").attr("class", "nodes");
 
-        const zoom = d3.zoom<SVGSVGElement, unknown>()
-            .scaleExtent([0.1, 8])
-            .on("zoom", (event) => {
-                g.attr("transform", event.transform);
-                zoomTransform.current = event.transform; // Save current zoom state
-            });
+            // Markers
+            const defs = svg.append("defs");
+            defs.append("marker")
+                .attr("id", "arrowhead")
+                .attr("viewBox", "0 -5 10 10")
+                .attr("refX", 22)
+                .attr("refY", 0)
+                .attr("markerWidth", 6)
+                .attr("markerHeight", 6)
+                .attr("orient", "auto")
+                .append("path")
+                .attr("d", "M0,-5L10,0L0,5")
+                .attr("fill", "#64748b");
 
-        // Apply the preserved zoom transform immediately
-        svg.call(zoom).call(zoom.transform, zoomTransform.current);
+            // Initializes Zoom
+            const zoom = d3.zoom<SVGSVGElement, unknown>()
+                .scaleExtent([0.1, 8])
+                .on("zoom", (event) => {
+                    g.attr("transform", event.transform);
+                    zoomTransform.current = event.transform;
+                });
+            svg.call(zoom).call(zoom.transform, zoomTransform.current);
+        }
 
-        // --- VIEW MODE CALCULATIONS ---
+        const groupLayer = g.select<SVGGElement>(".group-boxes");
+        const linkLayer = g.select<SVGGElement>(".links");
+        const nodeLayer = g.select<SVGGElement>(".nodes");
+
+        // --- PREPARE DATA ---
         const moduleCenters: Record<string, { x: number, y: number }> = {};
         const moduleNodes: Record<string, Node[]> = {};
         const modules = Array.from(new Set(visibleNodes.map(n => n.module || 'Other'))).sort() as string[];
 
         if (viewMode === 'hierarchical') {
-            // Dynamic Layout: Use pre-computed cluster positions
             modules.forEach(mod => {
                 if (clusterPositions[mod]) {
                     moduleCenters[mod] = clusterPositions[mod];
                 } else {
-                    // Fallback
                     moduleCenters[mod] = { x: width / 2, y: height / 2 };
                 }
                 moduleNodes[mod] = [];
@@ -274,7 +288,6 @@ export const GraphCanvas: React.FC = () => {
             });
         }
 
-        // --- STRUCTURED VIEW PRE-CALCULATION ---
         if (viewMode === 'structured') {
             const GROUPS_COUNT = 7;
             const colWidth = width / (GROUPS_COUNT + 1);
@@ -302,93 +315,157 @@ export const GraphCanvas: React.FC = () => {
                 });
             });
         } else {
-            // Only clear fixed positions if NOT in hierarchical mode (where we might have dragged nodes)
-            // AND if we are switching FROM structured mode. 
-            // Actually, for now, re-calculating visibleNodes always resets d3 objects unless we persisted them carefully.
-            // We persist x/y/vx/vy via nodePositions ref, but not fx/fy.
-            // If we want to persist dragging in hierarchical mode, we'd need to save fx/fy too.
-            // For now, simpler approach: Just clear fx/fy unless dragging is active. 
             visibleNodes.forEach(n => {
-                // If the node was previously fixed (dragged) and we are just re-rendering, we might want to keep it?
-                // But visibleNodes are fresh objects. 
-                n.fx = null;
-                n.fy = null;
+                if (!isDragging.current) {
+                    n.fx = null;
+                    n.fy = null;
+                }
             });
         }
 
-        const simulation = d3.forceSimulation(visibleNodes)
-            .alphaDecay(0.12) // Increase decay to stabilize faster (tuned up from 0.05)
-            .velocityDecay(0.6) // Add friction to prevent drift
-            .force("link", d3.forceLink(visibleEdges).id((d: any) => d.id).distance((d: any) => {
+        // --- D3 SIMULATION SETUP ---
+        // Reuse existing simulation if possible, or create new one
+        let simulation = simulationRef.current;
+        if (!simulation) {
+            simulation = d3.forceSimulation<Node, undefined>()
+                .force("link", d3.forceLink().id((d: any) => d.id))
+                .force("charge", d3.forceManyBody())
+                .force("center", d3.forceCenter(width / 2, height / 2))
+                .force("x", d3.forceX())
+                .force("y", d3.forceY())
+                .force("collide", d3.forceCollide());
+
+            simulationRef.current = simulation;
+        }
+
+        // Configure Simulation Parameters safely
+        simulation.nodes(visibleNodes);
+        simulation.alphaDecay(0.12).velocityDecay(0.6);
+
+        // Configure Forces
+        const linkForce = simulation.force<d3.ForceLink<Node, any>>("link");
+        if (linkForce) {
+            linkForce.links(visibleEdges).distance((d: any) => {
                 if (viewMode === 'structured') return 0;
                 if (viewMode === 'hierarchical') {
-                    // If intra-module, keep tight. If inter-module, looser.
                     const srcMod = (d.source as Node).module;
                     const tgtMod = (d.target as Node).module;
                     return srcMod === tgtMod ? 30 : 100;
                 }
                 return 50;
-            }))
-            .force("charge", d3.forceManyBody().strength((d: any) => {
+            });
+        }
+
+        const chargeForce = simulation.force<d3.ForceManyBody<Node>>("charge");
+        if (chargeForce) {
+            chargeForce.strength((d: any) => {
                 if (viewMode === 'structured') return 0;
                 const degree = d.degree || 0;
-                // In hierarchical, less repulsion to allow distinct clusters
                 const base = viewMode === 'hierarchical' ? -80 : -120;
                 return Math.max(-800, base - (degree * 30));
-            }))
-            .force("center", d3.forceCenter(width / 2, height / 2).strength(0));
+            });
+        }
 
-        // Specific Forces for Views
-        if (viewMode !== 'structured') {
-            if (viewMode === 'hierarchical') {
-                // Force nodes toward their module center
-                simulation.force("x", d3.forceX((d: any) => {
+        const centerForce = simulation.force<d3.ForceCenter<Node>>("center");
+        if (centerForce) centerForce.strength(0); // We use custom forces instead usually
+
+        // Specific View Forces
+        const forceX = simulation.force<d3.ForceX<Node>>("x");
+        const forceY = simulation.force<d3.ForceY<Node>>("y");
+
+        if (viewMode === 'structured') {
+            if (forceX) forceX.strength(0);
+            if (forceY) forceY.strength(0);
+        } else if (viewMode === 'hierarchical') {
+            if (forceX) {
+                forceX.x((d: any) => {
                     const center = moduleCenters[d.module || 'Other'];
                     return center ? center.x : width / 2;
-                }).strength(0.6));
-
-                simulation.force("y", d3.forceY((d: any) => {
+                }).strength(0.6);
+            }
+            if (forceY) {
+                forceY.y((d: any) => {
                     const center = moduleCenters[d.module || 'Other'];
                     return center ? center.y : height / 2;
-                }).strength(0.6));
-            } else {
-                // Standard Map Flow
-                simulation
-                    .force("x", d3.forceX((d: any) => {
-                        const relativePos = ARCHITECTURE_FLOW[d.type] || 0.5;
-                        return width * relativePos;
-                    }).strength(0.15))
-                    .force("y", d3.forceY(height / 2).strength(0.05));
+                }).strength(0.6);
+            }
+        } else {
+            // Standard Map Flow
+            if (forceX) {
+                forceX.x((d: any) => {
+                    const relativePos = ARCHITECTURE_FLOW[d.type] || 0.5;
+                    return width * relativePos;
+                }).strength(0.15);
+            }
+            if (forceY) {
+                forceY.y(height / 2).strength(0.05);
             }
         }
 
-        simulation.force("collide", d3.forceCollide().radius((d: any) => {
-            if (viewMode === 'structured') return 0;
-            return getNodeRadius(d) + 5;
-        }).iterations(2).strength(0.8));
+        const collideForce = simulation.force<d3.ForceCollide<Node>>("collide");
+        if (collideForce) {
+            collideForce.radius((d: any) => {
+                if (viewMode === 'structured') return 0;
+                return getNodeRadius(d) + 5;
+            }).iterations(2).strength(0.8);
+        }
 
-        simulationRef.current = simulation;
+        // --- RENDERING WITH JOIN PATTERN ---
 
-        // Markers
-        const defs = svg.append("defs");
-        defs.append("marker")
-            .attr("id", "arrowhead")
-            .attr("viewBox", "0 -5 10 10")
-            .attr("refX", 22)
-            .attr("refY", 0)
-            .attr("markerWidth", 6)
-            .attr("markerHeight", 6)
-            .attr("orient", "auto")
-            .append("path")
-            .attr("d", "M0,-5L10,0L0,5")
-            .attr("fill", "#64748b");
+        // 1. Group Boxes (Hierarchical)
+        // We only render these if in hierarchical mode
+        const groupData = viewMode === 'hierarchical' ? modules : [];
 
-        // Draw Links
+        // Group Rects
+        const groupRects = groupLayer
+            .selectAll<SVGRectElement, string>("rect")
+            .data(groupData, (d) => d)
+            .join(
+                enter => enter.append("rect")
+                    .attr("rx", 8)
+                    .attr("ry", 8)
+                    .attr("fill", "#1e293b")
+                    .attr("stroke", "#334155")
+                    .attr("stroke-width", 1)
+                    .attr("stroke-dasharray", "4,4")
+                    .attr("opacity", 0.5),
+                update => update,
+                exit => exit.remove()
+            );
+
+        // Group Labels
+        const groupLabels = groupLayer
+            .selectAll<SVGTextElement, string>("text")
+            .data(groupData, (d) => d)
+            .join(
+                enter => enter.append("text")
+                    .text(d => d)
+                    .attr("fill", "#94a3b8")
+                    .attr("font-size", "10px")
+                    .attr("font-family", "Inter, sans-serif")
+                    .attr("font-weight", "600")
+                    .attr("text-anchor", "start")
+                    .attr("opacity", 0.8),
+                update => update,
+                exit => exit.remove()
+            );
+
+        // 2. Links
         const link = linkLayer
-            .selectAll("path")
-            .data(visibleEdges)
-            .enter().append("path")
-            .attr("class", "edge-path")
+            .selectAll<SVGPathElement, Edge>("path")
+            .data(visibleEdges, (d) => d.id)
+            .join(
+                enter => {
+                    const path = enter.append("path")
+                        .attr("class", "edge-path")
+                        .attr("fill", "none")
+                        .attr("marker-end", "url(#arrowhead)");
+                    path.append("title");
+                    return path;
+                },
+                update => update,
+                exit => exit.remove()
+            )
             .attr("stroke", (d) => {
                 const style = EDGE_STYLES[d.type] || EDGE_STYLES.default;
                 return style.stroke;
@@ -401,67 +478,84 @@ export const GraphCanvas: React.FC = () => {
                 const style = EDGE_STYLES[d.type] || EDGE_STYLES.default;
                 return style.dash || null;
             })
-            .attr("marker-end", "url(#arrowhead)")
-            .attr("fill", "none")
             .attr("stroke-opacity", 0.6);
 
-        link.append("title").text(d => d.type);
+        link.select("title").text(d => d.type);
 
-        // Draw Nodes
+        // 3. Nodes
         const node = nodeLayer
-            .selectAll("g")
-            .data(visibleNodes)
-            .enter().append("g")
-            .attr("class", "node-group")
+            .selectAll<SVGGElement, Node>("g.node-group")
+            .data(visibleNodes, (d) => d.id)
+            .join(
+                enter => {
+                    const g = enter.append("g")
+                        .attr("class", "node-group")
+                        .style("cursor", "pointer");
+
+                    g.append("circle")
+                        .attr("class", "node-circle")
+                        .attr("stroke", "none")
+                        .attr("stroke-width", 2);
+
+                    g.append("title");
+
+                    g.append("text")
+                        .attr("class", "node-label")
+                        .attr("x", 12)
+                        .attr("y", 4)
+                        .style("font-size", "10px")
+                        .style("font-family", "JetBrains Mono, monospace")
+                        .style("pointer-events", "none")
+                        .style("text-shadow", "0 1px 2px rgba(0,0,0,0.8)");
+
+                    return g;
+                },
+                update => update,
+                exit => exit.remove()
+            )
             .call(d3.drag<any, any>()
                 .on("start", dragstarted)
                 .on("drag", dragged)
                 .on("end", dragended));
 
-        // Node Circles
-        node.append("circle")
-            .attr("class", "node-circle")
+        // Update Node Attributes (for both new and existing)
+        node.select(".node-circle")
             .attr("r", (d) => getNodeRadius(d))
-            .attr("fill", (d) => NODE_COLORS[d.type] || '#9ca3af')
-            .attr("stroke", "none")
-            .attr("stroke-width", 2)
-            .style("cursor", "pointer")
-            .on("click", (event, d) => {
-                event.stopPropagation();
-                // Prevent selection if we just finished dragging
-                if (isDragging.current) {
-                    isDragging.current = false;
-                    return;
-                }
-                setSelectedNode(d.id === selectedNode?.id ? null : d);
-            })
+            .attr("fill", (d) => getNodeColor(d, activeColorMode, groupingData, gitMetadata)); // Use latest color logic
+
+        node.select("title")
+            .text(d => `Type: ${d.type}\nID: ${d.id}\nVisible Connections: ${d.degree || 0}\nTotal Connections: ${d.totalDegree || 0}`);
+
+        node.select(".node-label")
+            .text((d) => getCleanLabel(d));
+
+        // Event Listeners (Re-attach to ensure closure freshness if needed, though D3 usually handles this well. 
+        // Safer to re-attach or use stable functions. Here we re-attach.)
+        node.on("click", (event, d) => {
+            event.stopPropagation();
+            if (isDragging.current) {
+                isDragging.current = false;
+                return;
+            }
+            setSelectedNode(d.id === selectedNode?.id ? null : d);
+        })
             .on("mouseover", (event, d) => setHoveredNode(d))
             .on("mouseout", () => setHoveredNode(null));
 
-        node.append("title")
-            .text(d => `Type: ${d.type}\nID: ${d.id}\nVisible Connections: ${d.degree || 0}\nTotal Connections: ${d.totalDegree || 0}`);
+        // 4. Structured Headers (Conditional)
+        const headerGroup = g.select<SVGGElement>(".headers"); // Note: headers logic was in 'enter' only previously
+        // Ideally we manage headers with data join too if they change.
+        // For simplicity, we can clear/redraw headers since they are static count (7).
+        if (!headerGroup.empty()) headerGroup.remove();
 
-        // Node Labels
-        node.append("text")
-            .attr("class", "node-label")
-            .text((d) => getCleanLabel(d))
-            .attr("x", 12)
-            .attr("y", 4)
-            .style("font-size", "10px")
-            .style("font-family", "JetBrains Mono, monospace")
-            .style("fill", "#cbd5e1")
-            .style("pointer-events", "none")
-            .style("text-shadow", "0 1px 2px rgba(0,0,0,0.8)");
-
-        // Headers for Structured Mode
         if (viewMode === 'structured') {
             const labels = ['Routes', 'Pages', 'Components', 'Hooks', 'API', 'Services', 'Data'];
             const colWidth = width / (labels.length + 1);
             const startX = colWidth * 0.8;
 
-            const headerGroup = g.append("g").attr("class", "headers");
+            const hg = g.insert("g", ".group-boxes").attr("class", "headers"); // Insert before boxes/links
             labels.forEach((label, i) => {
-                headerGroup.append("text")
+                hg.append("text")
                     .attr("x", startX + (i * colWidth))
                     .attr("y", 30)
                     .attr("text-anchor", "middle")
@@ -474,39 +568,9 @@ export const GraphCanvas: React.FC = () => {
             });
         }
 
-        // Boxes for Hierarchical Mode
-        let groupRects: d3.Selection<SVGRectElement, string, SVGGElement, unknown>;
-        let groupLabels: d3.Selection<SVGTextElement, string, SVGGElement, unknown>;
-
-        if (viewMode === 'hierarchical') {
-            groupRects = groupLayer
-                .selectAll("rect")
-                .data(modules)
-                .enter().append("rect")
-                .attr("rx", 8)
-                .attr("ry", 8)
-                .attr("fill", "#1e293b")
-                .attr("stroke", "#334155")
-                .attr("stroke-width", 1)
-                .attr("stroke-dasharray", "4,4")
-                .attr("opacity", 0.5);
-
-            groupLabels = groupLayer
-                .selectAll("text")
-                .data(modules)
-                .enter().append("text")
-                .text(d => d)
-                .attr("fill", "#94a3b8")
-                .attr("font-size", "10px")
-                .attr("font-family", "Inter, sans-serif")
-                .attr("font-weight", "600")
-                .attr("text-anchor", "start")
-                .attr("opacity", 0.8);
-        }
-
+        // --- TICK FUNCTION ---
         simulation.on("tick", () => {
-
-            // Update Links with Curves if Hierarchical
+            // Update positions
             link.attr("d", (d: any) => {
                 if (viewMode === 'hierarchical') {
                     const x1 = d.source.x, y1 = d.source.y;
@@ -518,8 +582,8 @@ export const GraphCanvas: React.FC = () => {
 
             node.attr("transform", (d: any) => `translate(${d.x},${d.y})`);
 
-            // Update Group Boxes (Hierarchical View)
-            if (viewMode === 'hierarchical' && groupRects && groupLabels) {
+            // Update Groups (Hierarchical)
+            if (viewMode === 'hierarchical') {
                 modules.forEach(mod => {
                     const nodesInMod = moduleNodes[mod];
                     if (!nodesInMod || nodesInMod.length === 0) return;
@@ -539,15 +603,17 @@ export const GraphCanvas: React.FC = () => {
                     const boxW = Math.max(50, (maxX - minX) + (pad * 2));
                     const boxH = Math.max(50, (maxY - minY) + (pad * 2) + 10);
 
-                    const rect = groupRects.filter((d: any) => d === mod);
-                    rect.attr("x", boxX).attr("y", boxY).attr("width", boxW).attr("height", boxH);
+                    // Efficient update via selection filter
+                    // (This is O(Modules), which is small)
+                    groupRects.filter((d) => d === mod)
+                        .attr("x", boxX).attr("y", boxY).attr("width", boxW).attr("height", boxH);
 
-                    const text = groupLabels.filter((d: any) => d === mod);
-                    text.attr("x", boxX + 10).attr("y", boxY + 15);
+                    groupLabels.filter((d) => d === mod)
+                        .attr("x", boxX + 10).attr("y", boxY + 15);
                 });
             }
 
-            // Update positions ref for persistence
+            // Persist positions
             visibleNodes.forEach(n => {
                 if (n.x !== undefined && n.y !== undefined) {
                     nodePositions.current.set(n.id, { x: n.x, y: n.y, vx: n.vx, vy: n.vy });
@@ -555,8 +621,16 @@ export const GraphCanvas: React.FC = () => {
             });
         });
 
+        // Restart simulation to wake it up
+        simulation.alpha(0.3).restart();
+
+        // Cleanup
+        return () => {
+            simulation.stop();
+        };
+
+        // --- DRAG HANDLERS ---
         function dragstarted(event: any, d: any) {
-            // isDragging.current = false; // logic changed below
             d.fx = d.x;
             d.fy = d.y;
         }
@@ -572,61 +646,50 @@ export const GraphCanvas: React.FC = () => {
 
         function dragended(event: any, d: any) {
             if (!event.active && viewMode !== 'structured') simulation.alphaTarget(0);
-
-            // Behavior Change: 
-            // We now keep nodes pinned (fixed) after dragging to prevent them from drifting back
-            // d.fx = null;
-            // d.fy = null;
-
             setTimeout(() => { isDragging.current = false; }, 100);
         }
 
-        svg.on("click", () => {
-            setSelectedNode(null);
-        });
+    }, [visibleNodes, visibleEdges, viewMode, clusterPositions, activeColorMode, groupingData, gitMetadata]);
+    // ^ Added dependencies so colors update when mode changes
 
-        return () => {
-            simulation.stop();
-        };
-    }, [visibleNodes, visibleEdges, viewMode, clusterPositions]);
-
-    // EFFECT 2: Styling Updates (Selection / Dimming)
+    // EFFECT: Styling Updates (Selection / Dimming)
+    // Runs on selection changes WITHOUT re-running simulation
     useEffect(() => {
         const svg = d3.select(svgRef.current);
         if (svg.empty()) return;
 
         // Update Node Opacity
-        svg.selectAll(".node-group")
+        svg.selectAll<SVGGElement, Node>(".node-group")
             .transition().duration(200)
-            .attr("opacity", (d: any) => {
+            .attr("opacity", (d) => {
                 if (!selectedNode) return 1;
                 if (focusMode) return 1;
                 return flowNodeIds && flowNodeIds.has(d.id) ? 1 : 0.1;
             });
 
         // Update Label Visibility
-        svg.selectAll(".node-label")
+        svg.selectAll<SVGTextElement, Node>(".node-label")
             .transition().duration(200)
-            .style("opacity", (d: any) => {
+            .style("opacity", (d) => {
                 if (!selectedNode) return 1;
                 if (focusMode) return 1;
                 return flowNodeIds && flowNodeIds.has(d.id) ? 1 : 0;
             })
-            .style("fill", (d: any) => d.id === selectedNode?.id ? "#fff" : "#cbd5e1");
+            .style("fill", (d) => d.id === selectedNode?.id ? "#fff" : "#cbd5e1");
 
         // Update Node Circle Highlight
-        svg.selectAll(".node-circle")
+        svg.selectAll<SVGCircleElement, Node>(".node-circle")
             .transition().duration(200)
-            .attr("r", (d: any) => {
+            .attr("r", (d) => {
                 const baseR = getNodeRadius(d);
                 return d.id === selectedNode?.id ? baseR + 3 : baseR;
             })
-            .attr("stroke", (d: any) => d.id === selectedNode?.id ? "#fff" : "none");
+            .attr("stroke", (d) => d.id === selectedNode?.id ? "#fff" : "none");
 
         // Update Edge Opacity
-        svg.selectAll(".edge-path")
+        svg.selectAll<SVGPathElement, any>(".edge-path")
             .transition().duration(200)
-            .attr("stroke-opacity", (d: any) => {
+            .attr("stroke-opacity", (d) => {
                 if (!selectedNode) return 0.6;
                 if (focusMode) return 0.9;
                 const srcId = d.source.id || d.source;

@@ -1,117 +1,19 @@
 {
+  "edges": [],
   "nodes": [
     {
-      "id": "node_modules/d3",
-      "type": "external_dependency",
-      "label": "d3",
-      "file": "package.json",
       "details": {
-        "version": "^7.9.0",
-        "deptype": "dependencies"
+        "deptype": "devDependencies",
+        "version": "^3.6.2"
       },
-      "modulePath": [
-        "External",
-        "Production"
-      ]
-    },
-    {
-      "id": "node_modules/react",
-      "type": "external_dependency",
-      "label": "react",
       "file": "package.json",
-      "details": {
-        "version": "^19.2.3",
-        "deptype": "dependencies"
-      },
-      "modulePath": [
-        "External",
-        "Production"
-      ]
-    },
-    {
-      "id": "node_modules/lucide-react",
-      "type": "external_dependency",
-      "label": "lucide-react",
-      "file": "package.json",
-      "details": {
-        "version": "^0.562.0",
-        "deptype": "dependencies"
-      },
-      "modulePath": [
-        "External",
-        "Production"
-      ]
-    },
-    {
-      "id": "node_modules/react-dom",
-      "type": "external_dependency",
-      "label": "react-dom",
-      "file": "package.json",
-      "details": {
-        "version": "^19.2.3",
-        "deptype": "dependencies"
-      },
-      "modulePath": [
-        "External",
-        "Production"
-      ]
-    },
-    {
-      "id": "node_modules/@types/node",
-      "type": "external_dependency",
-      "label": "@types/node",
-      "file": "package.json",
-      "details": {
-        "version": "^22.14.0",
-        "deptype": "devDependencies"
-      },
+      "id": "node_modules/shadcn",
+      "label": "shadcn",
       "modulePath": [
         "External",
         "Dev"
-      ]
-    },
-    {
-      "id": "node_modules/@vitejs/plugin-react",
-      "type": "external_dependency",
-      "label": "@vitejs/plugin-react",
-      "file": "package.json",
-      "details": {
-        "version": "^5.0.0",
-        "deptype": "devDependencies"
-      },
-      "modulePath": [
-        "External",
-        "Dev"
-      ]
-    },
-    {
-      "id": "node_modules/typescript",
-      "type": "external_dependency",
-      "label": "typescript",
-      "file": "package.json",
-      "details": {
-        "version": "~5.8.2",
-        "deptype": "devDependencies"
-      },
-      "modulePath": [
-        "External",
-        "Dev"
-      ]
-    },
-    {
-      "id": "node_modules/vite",
-      "type": "external_dependency",
-      "label": "vite",
-      "file": "package.json",
-      "details": {
-        "version": "^6.2.0",
-        "deptype": "devDependencies"
-      },
-      "modulePath": [
-        "External",
-        "Dev"
-      ]
+      ],
+      "type": "external_dependency"
     }
-  ],
-  "edges": []
+  ]
 }
