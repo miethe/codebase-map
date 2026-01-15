@@ -120,3 +120,71 @@ export const getNodeColor = (
     // Fallback node color if not found in group
     return '#334155'; // slate-700 (dim, indicates no membership)
 };
+
+/**
+ * Generates the legend items for the current active color mode.
+ */
+export const getNodeLegendItems = (
+    mode: string,
+    groupingData: GroupingData | null,
+    uniqueModules: string[] = [] // Optional, only needed for 'module' mode
+): { label: string; color: string }[] => {
+    // 1. Node Type Mode
+    if (mode === 'type') {
+        const items = Object.entries(NODE_COLORS).map(([type, color]) => ({
+            label: type.replace('_', ' '),
+            color: color
+        }));
+        // Sort alphabetically for consistency
+        return items.sort((a, b) => a.label.localeCompare(b.label));
+    }
+
+    // 2. Module Mode
+    if (mode === 'module') {
+        // Use the unique modules passed in (calculated from the graph data)
+        const items = uniqueModules.map(mod => ({
+            label: mod,
+            color: getColorForString(mod)
+        }));
+        return items.sort((a, b) => a.label.localeCompare(b.label));
+    }
+
+    // 3. Grouping Modes (Ownership, Domain, etc.)
+    if (groupingData) {
+        // Find the group set for this mode
+        const groupSet = groupingData.group_sets.find(gs => gs.id === mode);
+        if (groupSet) {
+            // Get all groups in this set
+            const groups = groupingData.groups.filter(g => g.group_set === mode);
+            const items = groups.map(g => ({
+                label: g.label,
+                color: getColorForString(g.label)
+            }));
+            return items.sort((a, b) => a.label.localeCompare(b.label));
+        }
+    }
+
+    // 4. Git Metadata Modes (Static Buckets)
+    if (mode === 'recency') {
+        return [
+            { label: '< 24 Hours', color: '#ef4444' }, // Red-500
+            { label: '< 1 Week', color: '#f97316' },   // Orange-500
+            { label: '< 1 Month', color: '#eab308' },  // Yellow-500
+            { label: '< 3 Months', color: '#84cc16' }, // Lime-500
+            { label: '< 6 Months', color: '#10b981' }, // Emerald-500
+            { label: '> 6 Months', color: '#3b82f6' }, // Blue-500
+        ];
+    }
+
+    if (mode === 'churn') {
+        return [
+            { label: '> 50 Changes', color: '#ef4444' },
+            { label: '> 20 Changes', color: '#f97316' },
+            { label: '> 10 Changes', color: '#eab308' },
+            { label: '> 5 Changes', color: '#84cc16' },
+            { label: 'Stable', color: '#3b82f6' },
+        ];
+    }
+
+    return [];
+};

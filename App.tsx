@@ -6,6 +6,7 @@ import { GraphData, Node, GraphContextType, ViewMode, GraphViewMode, EDGE_STYLES
 import { Layout, Loader2, AlertCircle, ChevronDown, ChevronUp, GitBranch } from 'lucide-react';
 
 import { deriveModulePath, getDisplayModule, buildNodePathMap } from './utils/moduleGrouping';
+import { getNodeLegendItems } from './utils/colorMapping';
 
 const FRONTEND_TYPES = new Set(['route', 'page', 'component', 'hook', 'api_client', 'query_key']);
 const BACKEND_TYPES = new Set(['api_endpoint', 'endpoint', 'handler', 'service', 'model', 'repository', 'schema', 'migration', 'router', 'type']);
@@ -57,12 +58,14 @@ const App: React.FC = () => {
   const [graphView, setGraphView] = useState<GraphViewMode>('unified');
   const [activeModule, setActiveModule] = useState<string | null>(null);
   const [isLegendOpen, setIsLegendOpen] = useState(false);
+  const [isNodeLegendOpen, setIsNodeLegendOpen] = useState(true); // Open by default
+
 
   // Fetch data on mount
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('./codebase-graph.json');
+        const response = await fetch('./codebase-graph.unified.json');
         if (!response.ok) {
           throw new Error(`Failed to load graph data: ${response.statusText}`);
         }
@@ -205,6 +208,12 @@ const App: React.FC = () => {
 
     return { totalNodeCounts: tCounts, moduleCounts: mCounts };
   }, [rawData, activeModule]);
+
+  const nodeLegendItems = useMemo(() => {
+    // Collect unique modules from the current view for the 'module' mode
+    const uniqueModules = Object.keys(moduleCounts);
+    return getNodeLegendItems(activeColorMode, groupingData, uniqueModules);
+  }, [activeColorMode, groupingData, moduleCounts]);
 
   // Initial active filters (all true by default)
   const initialFilters = useMemo(() => {
@@ -404,10 +413,37 @@ const App: React.FC = () => {
                 )}
               </div>
 
+              {/* Expandable Node Legend Toggle */}
+              <button
+                onClick={() => setIsNodeLegendOpen(!isNodeLegendOpen)}
+                className="w-full mt-3 flex items-center justify-between text-xs text-slate-400 hover:text-slate-200 py-1 border-t border-slate-800 transition-colors"
+              >
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-indigo-500/50" />
+                  <span className="font-medium">Node Color: {activeColorMode.charAt(0).toUpperCase() + activeColorMode.slice(1)}</span>
+                </div>
+                {isNodeLegendOpen ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+              </button>
+
+              {/* Node Legend Content */}
+              {isNodeLegendOpen && (
+                <div className="mt-2 grid grid-cols-1 gap-1.5 animate-in slide-in-from-top-1 fade-in duration-200 max-h-48 overflow-y-auto custom-scrollbar pr-1 mb-2">
+                  {nodeLegendItems.map((item) => (
+                    <div key={item.label} className="flex items-center gap-2 p-1 rounded hover:bg-slate-800/50 transition-colors">
+                      <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: item.color, boxShadow: `0 0 4px ${item.color}40` }} />
+                      <span className="text-[10px] text-slate-400 capitalize truncate leading-tight">{item.label}</span>
+                    </div>
+                  ))}
+                  {nodeLegendItems.length === 0 && (
+                    <p className="text-[10px] text-slate-600 italic px-1">No specific legend for this mode</p>
+                  )}
+                </div>
+              )}
+
               {/* Expandable Edge Legend Toggle */}
               <button
                 onClick={() => setIsLegendOpen(!isLegendOpen)}
-                className="w-full mt-3 flex items-center justify-between text-xs text-slate-400 hover:text-slate-200 py-1 border-t border-slate-800 transition-colors"
+                className="w-full mt-1 flex items-center justify-between text-xs text-slate-400 hover:text-slate-200 py-1 border-t border-slate-800 transition-colors"
               >
                 <div className="flex items-center gap-2">
                   <GitBranch size={12} />
@@ -418,7 +454,7 @@ const App: React.FC = () => {
 
               {/* Edge Legend Content */}
               {isLegendOpen && (
-                <div className="mt-2 grid grid-cols-1 gap-1.5 animate-in slide-in-from-top-1 fade-in duration-200 max-h-64 overflow-y-auto custom-scrollbar pr-1">
+                <div className="mt-2 grid grid-cols-1 gap-1.5 animate-in slide-in-from-top-1 fade-in duration-200 max-h-48 overflow-y-auto custom-scrollbar pr-1">
                   {Object.entries(EDGE_STYLES).filter(([key]) => key !== 'default').map(([key, style]) => (
                     <div
                       key={key}

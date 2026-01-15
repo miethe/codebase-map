@@ -6050,8 +6050,8 @@
     "unique_authors": 1
   },
   "skillmeat/cache/repositories.py": {
-    "change_count": 4,
-    "last_modified": 1768508303000,
+    "change_count": 5,
+    "last_modified": 1768511446000,
     "unique_authors": 1
   },
   "skillmeat/cache/repository.py": {
@@ -6185,8 +6185,8 @@
     "unique_authors": 1
   },
   "skillmeat/core/marketplace/github_scanner.py": {
-    "change_count": 15,
-    "last_modified": 1768488551000,
+    "change_count": 16,
+    "last_modified": 1768510202000,
     "unique_authors": 2
   },
   "skillmeat/core/marketplace/heuristic_detector.py": {
@@ -7415,8 +7415,8 @@
     "unique_authors": 1
   },
   "skillmeat/web/app/marketplace/sources/[id]/components/catalog-list.tsx": {
-    "change_count": 4,
-    "last_modified": 1768233991000,
+    "change_count": 5,
+    "last_modified": 1768511322000,
     "unique_authors": 1
   },
   "skillmeat/web/app/marketplace/sources/[id]/components/catalog-tabs.tsx": {
@@ -7435,8 +7435,8 @@
     "unique_authors": 1
   },
   "skillmeat/web/app/marketplace/sources/[id]/page.tsx": {
-    "change_count": 23,
-    "last_modified": 1768510062000,
+    "change_count": 24,
+    "last_modified": 1768511322000,
     "unique_authors": 1
   },
   "skillmeat/web/app/marketplace/sources/page.tsx": {
@@ -7555,8 +7555,8 @@
     "unique_authors": 1
   },
   "skillmeat/web/components/CatalogEntryModal.tsx": {
-    "change_count": 15,
-    "last_modified": 1768508396000,
+    "change_count": 16,
+    "last_modified": 1768512265000,
     "unique_authors": 1
   },
   "skillmeat/web/components/ConfidenceFilter.example.tsx": {
@@ -10440,8 +10440,8 @@
     "unique_authors": 1
   },
   "skillmeat/web/types/marketplace.ts": {
-    "change_count": 14,
-    "last_modified": 1768508303000,
+    "change_count": 15,
+    "last_modified": 1768511322000,
     "unique_authors": 2
   },
   "skillmeat/web/types/mcp.ts": {
