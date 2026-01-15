@@ -130,7 +130,10 @@ export const Sidebar: React.FC = () => {
         graphView,
         setGraphView,
         activeModule,
-        setActiveModule
+        setActiveModule,
+        groupingData,
+        activeGroupingMode,
+        setActiveGroupingMode
     } = useContext(GraphContext);
     const [searchTerm, setSearchTerm] = useState("");
 
@@ -485,6 +488,25 @@ export const Sidebar: React.FC = () => {
                 {/* Module / Cluster Focus */}
                 <CollapsibleSection title="Focus Cluster" icon={<Focus size={14} />} defaultOpen={true}>
                     <div className="space-y-2">
+                        {/* Grouping Mode Selector */}
+                        {groupingData && (
+                            <div className="mb-2 pb-2 border-b border-slate-800">
+                                <label className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider mb-1.5 block">Grouping Strategy</label>
+                                <div className="relative">
+                                    <select
+                                        value={activeGroupingMode}
+                                        onChange={(e) => setActiveGroupingMode(e.target.value)}
+                                        className="w-full bg-slate-800 text-slate-300 text-xs rounded border border-slate-700 py-1.5 pl-2 pr-8 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50 appearance-none transition-colors cursor-pointer hover:bg-slate-700"
+                                    >
+                                        {groupingData.group_sets.map((set: any) => (
+                                            <option key={set.id} value={set.id}>{set.label}</option>
+                                        ))}
+                                    </select>
+                                    <ChevronDown size={12} className="absolute right-2.5 top-2.5 text-slate-500 pointer-events-none" />
+                                </div>
+                            </div>
+                        )}
+
                         {/* Breadcrumb / Back Navigation */}
                         <div className="flex items-center gap-2 mb-2 pb-2 border-b border-slate-800">
                             {activeModule ? (

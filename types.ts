@@ -45,6 +45,29 @@ export interface GraphData {
   source_commit?: string;
 }
 
+export interface GroupSet {
+  id: string;
+  label: string;
+  source: string;
+  multi_membership: boolean;
+  metadata: Record<string, any>;
+}
+
+export interface Group {
+  group_set: string;
+  id: string;
+  label: string;
+  nodes: string[];
+  metadata: Record<string, any>;
+}
+
+export interface GroupingData {
+  generated_at?: string;
+  source_commit?: string;
+  group_sets: GroupSet[];
+  groups: Group[];
+}
+
 export type ViewMode = 'force' | 'structured' | 'hierarchical';
 export type GraphViewMode = 'unified' | 'frontend' | 'backend';
 
@@ -93,6 +116,10 @@ export interface GraphContextType {
   setGraphView: (mode: GraphViewMode) => void;
   activeModule: string | null;
   setActiveModule: (module: string | null) => void;
+  // Grouping Support
+  groupingData: GroupingData | null;
+  activeGroupingMode: string; // ID of the active GroupSet
+  setActiveGroupingMode: (mode: string) => void;
 }
 
 // Configuration for Node Sizing based on Total Degree

@@ -5,7 +5,7 @@ import { Sidebar } from './components/Sidebar';
 import { GraphData, Node, GraphContextType, ViewMode, GraphViewMode, EDGE_STYLES, DetailsData } from './types';
 import { Layout, Loader2, AlertCircle, ChevronDown, ChevronUp, GitBranch } from 'lucide-react';
 
-import { deriveModulePath, getDisplayModule } from './utils/moduleGrouping';
+import { deriveModulePath, getDisplayModule, buildNodePathMap } from './utils/moduleGrouping';
 
 const FRONTEND_TYPES = new Set(['route', 'page', 'component', 'hook', 'api_client', 'query_key']);
 const BACKEND_TYPES = new Set(['api_endpoint', 'endpoint', 'handler', 'service', 'model', 'repository', 'schema', 'migration', 'router', 'type']);
@@ -29,10 +29,16 @@ export const GraphContext = React.createContext<GraphContextType>({
   setGraphView: () => { },
   activeModule: null,
   setActiveModule: () => { },
+  groupingData: null,
+  activeGroupingMode: 'structure',
+  setActiveGroupingMode: () => { },
 });
 
 const App: React.FC = () => {
   const [rawData, setRawData] = useState<GraphData>({ nodes: [], edges: [] });
+  const [groupingData, setGroupingData] = useState<any | null>(null);
+  const [activeGroupingMode, setActiveGroupingMode] = useState<string>('structure');
+
   const [details, setDetails] = useState<DetailsData | null>(null); // DetailsData loaded lazily
   const [isDetailsLoading, setIsDetailsLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -69,8 +75,18 @@ const App: React.FC = () => {
 
         setRawData({ ...data, nodes: enrichedNodes });
 
+        // Load Groupings
+        try {
+          const groupRes = await fetch('./codebase-graph.groupings.json');
+          if (groupRes.ok) {
+            const groupJson = await groupRes.json();
+            setGroupingData(groupJson);
+          }
+        } catch (e) {
+          console.warn("Failed to load groupings", e);
+        }
+
         // Kick off details fetch immediately after main graph is loaded
-        // This ensures the main graph is interactive ASAP
         setIsDetailsLoading(true);
         fetch('./codebase-graph.details.json')
           .then(res => {
@@ -98,6 +114,44 @@ const App: React.FC = () => {
 
     fetchData();
   }, []);
+
+  // Re-run grouping logic when Mode or Data changes
+  useEffect(() => {
+    if (!rawData.nodes.length) return;
+
+    const nodePathMap = groupingData ? buildNodePathMap(groupingData, activeGroupingMode) : null;
+    const shouldUseLegacy = activeGroupingMode === 'structure' && (!nodePathMap || nodePathMap.size === 0);
+
+    setRawData(prev => {
+      // Avoid infinite loop if nothing changed? 
+      // We can't easily check deep equality here. 
+      // But this effect runs on [groupingData, activeGroupingMode].
+      // Ensure we don't depend on rawData in the array, but use functional update.
+
+      const reEnrichedNodes = prev.nodes.map(n => {
+        let modulePath: string[] = [];
+
+        if (shouldUseLegacy) {
+          modulePath = deriveModulePath(n);
+        } else if (nodePathMap && nodePathMap.has(n.id)) {
+          modulePath = nodePathMap.get(n.id)!;
+        } else {
+          modulePath = ['Other'];
+        }
+
+        return {
+          ...n,
+          modulePath,
+          module: getDisplayModule(modulePath, activeModule)
+        };
+      });
+      return { ...prev, nodes: reEnrichedNodes };
+    });
+
+    // Reset active module when switching modes to avoid invalid states
+    if (activeModule) setActiveModule(null);
+
+  }, [groupingData, activeGroupingMode]);
 
   // Calculate Total Counts & Module Counts (based on Raw Data)
   const { totalNodeCounts, moduleCounts } = useMemo(() => {
@@ -255,7 +309,10 @@ const App: React.FC = () => {
     graphView,
     setGraphView,
     activeModule,
-    setActiveModule
+    setActiveModule,
+    groupingData,
+    activeGroupingMode,
+    setActiveGroupingMode
   };
 
   if (isLoading) {
