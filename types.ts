@@ -24,6 +24,7 @@ export interface Node {
   degree?: number; // Number of VISIBLE connections (for physics/charge)
   totalDegree?: number; // Number of TOTAL connections in raw graph (for visual sizing)
   module?: string; // The architectural cluster this node belongs to
+  modulePath?: string[]; // Hierarchical path for drill-down (e.g. ['Frontend', 'Features', 'Maketplace'])
 }
 
 export interface Edge {
@@ -47,8 +48,35 @@ export interface GraphData {
 export type ViewMode = 'force' | 'structured' | 'hierarchical';
 export type GraphViewMode = 'unified' | 'frontend' | 'backend';
 
+export interface NodeDetail {
+  docstring?: string;
+  doc_summary?: string;
+  signature?: string;
+  imports?: string[];
+  params?: string[];
+  returns?: string;
+  decorators?: string[] | null;
+}
+
+export interface EdgeDetail {
+  callsite?: {
+    file: string;
+    line: number;
+  };
+  notes?: string;
+}
+
+export interface DetailsData {
+  nodes: Record<string, NodeDetail>;
+  edges: Record<string, EdgeDetail>;
+  generated_at?: string;
+  source_commit?: string;
+}
+
 export interface GraphContextType {
   data: GraphData; // The filtered data shown on canvas
+  details: DetailsData | null; // The rich details loaded asynchronously
+  isDetailsLoading: boolean;
   totalNodeCounts: Record<string, number>; // Stats based on raw data (for sidebar)
   moduleCounts: Record<string, number>; // Stats for modules
   selectedNode: Node | null;
@@ -71,8 +99,8 @@ export interface GraphContextType {
 // Radius = base + (log(totalDegree + 1) * factor)
 export const NODE_SIZE_CONFIG = {
   baseRadius: 5,
-  scaleFactor: 2.8, 
-  maxRadius: 25, 
+  scaleFactor: 2.8,
+  maxRadius: 25,
 };
 
 export const NODE_COLORS: Record<string, string> = {
@@ -97,8 +125,8 @@ export const NODE_COLORS: Record<string, string> = {
 export const EDGE_STYLES: Record<string, { stroke: string; width: number; dash?: string }> = {
   // Navigation
   route_to_page: { stroke: '#a855f7', width: 2, dash: '5,5' }, // Purple dashed
-  router_exposes: { stroke: '#d946ef', width: 2 }, 
-  
+  router_exposes: { stroke: '#d946ef', width: 2 },
+
   // React
   uses_hook: { stroke: '#10b981', width: 1.5 },
   page_uses_component: { stroke: '#3b82f6', width: 1.5 },
@@ -109,11 +137,11 @@ export const EDGE_STYLES: Record<string, { stroke: string; width: number; dash?:
   calls_api: { stroke: '#f97316', width: 3 }, // Thick orange
   api_client_calls_endpoint: { stroke: '#14b8a6', width: 2 },
   hook_calls_api_client: { stroke: '#14b8a6', width: 1.5, dash: '3,3' },
-  
+
   // Backend
   handled_by: { stroke: '#ef4444', width: 2.5 }, // Red
   handler_calls_service: { stroke: '#eab308', width: 2 },
-  
+
   // Data
   service_uses_model: { stroke: '#ec4899', width: 2 },
   repository_uses_model: { stroke: '#6366f1', width: 2 },
