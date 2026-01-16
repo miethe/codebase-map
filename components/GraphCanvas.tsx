@@ -1,7 +1,6 @@
-import React, { useEffect, useRef, useContext, useMemo } from 'react';
+import React, { useEffect, useRef, useMemo } from 'react';
 import * as d3 from 'd3';
-import { GraphContext } from '../App';
-import { Node, Edge, NODE_SIZE_CONFIG, NODE_COLORS, EDGE_STYLES } from '../types';
+import { Node, Edge, NODE_SIZE_CONFIG, EDGE_STYLES, GraphRendererProps } from '../types';
 import { getNodeColor } from '../utils/colorMapping';
 import { computeClusterLayout } from '../utils/clusterLayout';
 
@@ -143,22 +142,22 @@ const getFlowNodes = (startNodeId: string, edges: any[]) => {
     return connectedNodeIds;
 };
 
-export const GraphCanvas: React.FC = () => {
+export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, handlers }) => {
     const svgRef = useRef<SVGSVGElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const {
-        data,
         selectedNode,
-        setSelectedNode,
-        setHoveredNode,
         focusMode,
         viewMode,
-        activeModule,
-        setActiveModule,
         groupingData,
         activeColorMode,
         gitMetadata
-    } = useContext(GraphContext);
+    } = viewState;
+    const {
+        onNodeSelect,
+        onNodeHover,
+        onBackgroundClick
+    } = handlers;
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const simulationRef = useRef<d3.Simulation<Node, undefined> | null>(null);
@@ -270,7 +269,8 @@ export const GraphCanvas: React.FC = () => {
             // Background Click Handler to Clear Selection
             svg.on("click", (event) => {
                 if (event.target === svgRef.current) {
-                    setSelectedNode(null);
+                    if (onBackgroundClick) onBackgroundClick();
+                    else onNodeSelect(null);
                 }
             });
         }
@@ -553,10 +553,10 @@ export const GraphCanvas: React.FC = () => {
             }
             // Use ref for toggle check to ensure we have fresh state
             const currentSelected = selectedNodeRef.current;
-            setSelectedNode(d.id === currentSelected?.id ? null : d);
+            onNodeSelect(d.id === currentSelected?.id ? null : d);
         })
-            .on("mouseover", (event, d) => setHoveredNode(d))
-            .on("mouseout", () => setHoveredNode(null));
+            .on("mouseover", (event, d) => onNodeHover(d))
+            .on("mouseout", () => onNodeHover(null));
 
         // 4. Structured Headers (Conditional)
         const headerGroup = g.select<SVGGElement>(".headers"); // Note: headers logic was in 'enter' only previously
@@ -728,12 +728,12 @@ export const GraphCanvas: React.FC = () => {
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === 'Escape') {
-                setSelectedNode(null);
+                onNodeSelect(null);
             }
         };
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [setSelectedNode]);
+    }, [onNodeSelect]);
 
     return (
         <div ref={containerRef} className="w-full h-full bg-slate-950">

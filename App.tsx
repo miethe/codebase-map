@@ -1,7 +1,6 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
-import { GraphCanvas } from './components/GraphCanvas';
-import { GraphCanvasWebGL } from './components/GraphCanvasWebGL';
+import { GraphRenderer } from './components/GraphRenderer';
 import { Sidebar } from './components/Sidebar';
 import { GraphData, Node, GraphContextType, ViewMode, GraphViewMode, EDGE_STYLES, DetailsData, GitMetadata, DependencyGraph } from './types';
 import { Layout, Loader2, AlertCircle, ChevronDown, ChevronUp, GitBranch } from 'lucide-react';
@@ -39,8 +38,6 @@ export const GraphContext = React.createContext<GraphContextType>({
 });
 
 const App: React.FC = () => {
-  const useWebglRenderer = import.meta.env.VITE_GRAPH_RENDERER === 'webgl';
-
   const [rawData, setRawData] = useState<GraphData>({ nodes: [], edges: [] });
   const [groupingData, setGroupingData] = useState<any | null>(null);
   const [activeGroupingMode, setActiveGroupingMode] = useState<string>('structure');
@@ -393,7 +390,7 @@ const App: React.FC = () => {
       <div className="flex h-screen w-screen overflow-hidden bg-slate-950 text-slate-200">
         {/* Main Canvas Area */}
         <main className="flex-1 relative h-full w-full">
-          {useWebglRenderer ? <GraphCanvasWebGL /> : <GraphCanvas />}
+          <GraphRenderer />
 
           {/* Overlay Info / Legend Box */}
           <div className="absolute top-4 left-4 pointer-events-none flex flex-col gap-2">

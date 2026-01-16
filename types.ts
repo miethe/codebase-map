@@ -15,10 +15,13 @@ export interface Node {
   // D3 simulation properties (added at runtime)
   x?: number;
   y?: number;
+  z?: number;
   fx?: number | null;
   fy?: number | null;
+  fz?: number | null;
   vx?: number;
   vy?: number;
+  vz?: number;
   index?: number;
   // Calculated properties
   degree?: number; // Number of VISIBLE connections (for physics/charge)
@@ -200,3 +203,24 @@ export const EDGE_STYLES: Record<string, { stroke: string; width: number; dash?:
   // Misc
   default: { stroke: '#475569', width: 1 }
 };
+
+export interface GraphRendererViewState {
+  viewMode: ViewMode;
+  focusMode: boolean;
+  selectedNode: Node | null;
+  activeColorMode: string;
+  groupingData: GroupingData | null;
+  gitMetadata: GitMetadata | null;
+}
+
+export interface GraphRendererHandlers {
+  onNodeSelect: (node: Node | null) => void;
+  onNodeHover: (node: Node | null) => void;
+  onBackgroundClick?: () => void;
+}
+
+export interface GraphRendererProps {
+  data: GraphData;
+  viewState: GraphRendererViewState;
+  handlers: GraphRendererHandlers;
+}
