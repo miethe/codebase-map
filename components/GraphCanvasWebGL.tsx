@@ -261,7 +261,12 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     viewMode,
     activeColorMode,
     groupingData,
-    gitMetadata
+    gitMetadata,
+    enableMotionOptimizations,
+    enablePerformanceMode,
+    zoomSpeed,
+    panSpeed,
+    rotateSpeed
   } = viewState;
   const {
     onNodeSelect,
@@ -271,9 +276,218 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
 
   const containerRef = useRef<HTMLDivElement>(null);
   const graphRef = useRef<ForceGraphMethods | null>(null);
+  const nodePositions = useRef<Map<string, { x: number; y: number; z: number; vx?: number; vy?: number; vz?: number }>>(new Map());
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-  const [showLabels, setShowLabels] = useState(false);
+  const [reduceDetail, setReduceDetail] = useState(false);
   const labelCache = useRef<Map<string, THREE.Object3D>>(new Map());
+  const interactionTimeoutRef = useRef<number | null>(null);
+  const lastCameraRef = useRef<{ x: number; y: number; z: number; time: number } | null>(null);
+  const labelUpdateFrameRef = useRef<number | null>(null);
+  const labelUpdateTimeoutRef = useRef<number | null>(null);
+  const labelTickRef = useRef<number>(0);
+  const positionTickRef = useRef<number>(0);
+  const lastLabelUpdateRef = useRef<number>(0);
+  const labelUpdateIntervalRef = useRef<number>(250);
+  const labelVisibilityModeRef = useRef<'hidden' | 'frustum'>('frustum');
+  const graphDataRef = useRef<{ nodes: Node[]; links: Edge[] } | null>(null);
+  const graphReadyRef = useRef(false);
+  const animationPausedRef = useRef(false);
+  const pendingReheatRef = useRef(false);
+  const frustumRef = useRef(new THREE.Frustum());
+  const projScreenMatrixRef = useRef(new THREE.Matrix4());
+  const tempVectorRef = useRef(new THREE.Vector3());
+
+  const updateReduceDetail = useCallback((speed: number) => {
+    if (!enableMotionOptimizations) return;
+    const hideThreshold = 1.0;
+    const showThreshold = 0.2;
+    setReduceDetail(prev => {
+      let next = prev;
+      if (speed > hideThreshold) next = true;
+      else if (speed < showThreshold) next = false;
+      return next === prev ? prev : next;
+    });
+  }, [enableMotionOptimizations]);
+
+  const resumeAnimation = useCallback(() => {
+    const graph = graphRef.current;
+    if (!graph || !animationPausedRef.current) return;
+    animationPausedRef.current = false;
+    graph.resumeAnimation();
+  }, []);
+
+  const pauseAnimation = useCallback(() => {
+    const graph = graphRef.current;
+    if (!graph || animationPausedRef.current) return;
+    animationPausedRef.current = true;
+    graph.pauseAnimation();
+  }, []);
+
+  const registerInteraction = useCallback((speed?: number) => {
+    resumeAnimation();
+    if (!enableMotionOptimizations) return;
+    if (typeof speed === 'number') {
+      updateReduceDetail(speed);
+    }
+    if (interactionTimeoutRef.current) {
+      window.clearTimeout(interactionTimeoutRef.current);
+    }
+    interactionTimeoutRef.current = window.setTimeout(() => {
+      setReduceDetail(false);
+      interactionTimeoutRef.current = null;
+    }, 220);
+  }, [enableMotionOptimizations, resumeAnimation, updateReduceDetail]);
+
+  const requestReheat = useCallback(() => {
+    const graph = graphRef.current;
+    if (!graph) return;
+    resumeAnimation();
+    if (graphReadyRef.current) {
+      graph.d3ReheatSimulation();
+    } else {
+      pendingReheatRef.current = true;
+    }
+  }, [resumeAnimation]);
+
+  const updateCameraState = useCallback(() => {
+    const camera = graphRef.current?.camera() as THREE.Camera | undefined;
+    if (!camera) return;
+    const now = performance.now();
+    const last = lastCameraRef.current;
+    let speed = 0;
+    if (last) {
+      const dx = camera.position.x - last.x;
+      const dy = camera.position.y - last.y;
+      const dz = camera.position.z - last.z;
+      const delta = Math.sqrt((dx * dx) + (dy * dy) + (dz * dz));
+      const dt = Math.max(16, now - last.time);
+      speed = delta / dt;
+    }
+    lastCameraRef.current = {
+      x: camera.position.x,
+      y: camera.position.y,
+      z: camera.position.z,
+      time: now
+    };
+    if (!enableMotionOptimizations) return;
+    registerInteraction(speed);
+  }, [enableMotionOptimizations, registerInteraction]);
+
+  const updateLabelVisibility = useCallback(() => {
+    const graph = graphRef.current;
+    const camera = graph?.camera() as THREE.Camera | undefined;
+    if (!graph || !camera) return;
+    if (enablePerformanceMode) return;
+    const dataSnapshot = graphDataRef.current;
+    if (!dataSnapshot) return;
+    const shouldShow = !enableMotionOptimizations || !reduceDetail;
+    if (!shouldShow && labelVisibilityModeRef.current === 'hidden') return;
+    camera.updateMatrixWorld();
+    const projScreenMatrix = projScreenMatrixRef.current;
+    projScreenMatrix.copy(camera.projectionMatrix).multiply(camera.matrixWorldInverse);
+    const frustum = frustumRef.current;
+    frustum.setFromProjectionMatrix(projScreenMatrix);
+    const tempVector = tempVectorRef.current;
+    let didChange = false;
+    dataSnapshot.nodes.forEach(node => {
+      const sprite = labelCache.current.get(node.id);
+      if (!sprite) return;
+      if (!shouldShow) {
+        if (sprite.visible) {
+          sprite.visible = false;
+          didChange = true;
+        }
+        return;
+      }
+      if (labelVisibilityModeRef.current === 'hidden') {
+        sprite.visible = true;
+        didChange = true;
+      }
+      tempVector.set(node.x ?? 0, node.y ?? 0, node.z ?? 0);
+      const inView = frustum.containsPoint(tempVector);
+      if (sprite.visible !== inView) {
+        sprite.visible = inView;
+        didChange = true;
+      }
+    });
+    labelVisibilityModeRef.current = shouldShow ? 'frustum' : 'hidden';
+    if (didChange) {
+      graph.refresh();
+    }
+  }, [enableMotionOptimizations, enablePerformanceMode, reduceDetail]);
+
+  const scheduleLabelVisibilityUpdate = useCallback(() => {
+    if (enablePerformanceMode) return;
+    const now = performance.now();
+    const elapsed = now - lastLabelUpdateRef.current;
+    const interval = labelUpdateIntervalRef.current;
+    if (elapsed < interval) {
+      if (labelUpdateTimeoutRef.current !== null) return;
+      labelUpdateTimeoutRef.current = window.setTimeout(() => {
+        labelUpdateTimeoutRef.current = null;
+        scheduleLabelVisibilityUpdate();
+      }, interval - elapsed);
+      return;
+    }
+    if (labelUpdateFrameRef.current !== null) return;
+    labelUpdateFrameRef.current = window.requestAnimationFrame(() => {
+      labelUpdateFrameRef.current = null;
+      lastLabelUpdateRef.current = performance.now();
+      updateLabelVisibility();
+    });
+  }, [enablePerformanceMode, updateLabelVisibility]);
+
+  const handleEngineTick = useCallback(() => {
+    if (!graphReadyRef.current) {
+      graphReadyRef.current = true;
+    }
+    if (pendingReheatRef.current) {
+      const graph = graphRef.current;
+      if (graph) {
+        pendingReheatRef.current = false;
+        graph.d3ReheatSimulation();
+      }
+    }
+    const now = performance.now();
+    if (now - labelTickRef.current > 300) {
+      labelTickRef.current = now;
+      scheduleLabelVisibilityUpdate();
+    }
+    if (now - positionTickRef.current > 800) {
+      positionTickRef.current = now;
+      const dataSnapshot = graphDataRef.current;
+      if (!dataSnapshot) return;
+      dataSnapshot.nodes.forEach(node => {
+        if (node.x === undefined || node.y === undefined) return;
+        nodePositions.current.set(node.id, {
+          x: node.x,
+          y: node.y,
+          z: node.z ?? 0,
+          vx: node.vx,
+          vy: node.vy,
+          vz: node.vz
+        });
+      });
+    }
+  }, [scheduleLabelVisibilityUpdate]);
+
+  const handleEngineStop = useCallback(() => {
+    scheduleLabelVisibilityUpdate();
+    const dataSnapshot = graphDataRef.current;
+    if (!dataSnapshot) return;
+    dataSnapshot.nodes.forEach(node => {
+      if (node.x === undefined || node.y === undefined) return;
+      nodePositions.current.set(node.id, {
+        x: node.x,
+        y: node.y,
+        z: node.z ?? 0,
+        vx: node.vx,
+        vy: node.vy,
+        vz: node.vz
+      });
+    });
+    pauseAnimation();
+  }, [pauseAnimation, scheduleLabelVisibilityUpdate]);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -295,13 +509,75 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    return () => {
+      if (interactionTimeoutRef.current) {
+        window.clearTimeout(interactionTimeoutRef.current);
+      }
+      if (labelUpdateFrameRef.current !== null) {
+        window.cancelAnimationFrame(labelUpdateFrameRef.current);
+      }
+      if (labelUpdateTimeoutRef.current !== null) {
+        window.clearTimeout(labelUpdateTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      const graph = graphRef.current;
+      if (!graph) return;
+      try {
+        graph.pauseAnimation();
+      } catch {
+        // Ignore teardown errors on hot reload.
+      }
+      const controls = graph.controls() as any;
+      if (controls?.dispose) controls.dispose();
+      const renderer = graph.renderer();
+      renderer.dispose();
+      if ((renderer as any).forceContextLoss) {
+        (renderer as any).forceContextLoss();
+      }
+      labelCache.current.clear();
+      nodePositions.current.clear();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!enableMotionOptimizations) {
+      setReduceDetail(false);
+    }
+  }, [enableMotionOptimizations]);
+
+  useEffect(() => {
+    if (enablePerformanceMode) return;
+    scheduleLabelVisibilityUpdate();
+  }, [enableMotionOptimizations, enablePerformanceMode, reduceDetail, scheduleLabelVisibilityUpdate]);
+
+  useEffect(() => {
+    scheduleLabelVisibilityUpdate();
+  }, [dimensions.width, dimensions.height, scheduleLabelVisibilityUpdate]);
+
   const flowNodeIds = useMemo(() => {
     if (!selectedNode) return null;
     return getFlowNodes(selectedNode.id, data.edges);
   }, [selectedNode?.id, data.edges]);
 
   const visibleData = useMemo(() => {
-    let nodes = data.nodes.map(n => ({ ...n }));
+    let nodes = data.nodes.map(n => {
+      const cached = nodePositions.current.get(n.id);
+      const base = { ...n };
+      if (cached) {
+        base.x = cached.x;
+        base.y = cached.y;
+        base.z = cached.z;
+        base.vx = cached.vx;
+        base.vy = cached.vy;
+        base.vz = cached.vz;
+      }
+      return base;
+    });
     let edges = data.edges.map(e => ({ ...e }));
 
     if (focusMode && selectedNode && flowNodeIds) {
@@ -367,6 +643,40 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   }, [visibleData, viewMode, dimensions.width, dimensions.height, moduleCenters]);
 
   useEffect(() => {
+    graphDataRef.current = graphData;
+  }, [graphData]);
+
+  useEffect(() => {
+    graphReadyRef.current = false;
+    pendingReheatRef.current = false;
+  }, [graphData.nodes.length, graphData.links.length]);
+
+  useEffect(() => {
+    const nodeCount = graphData.nodes.length;
+    if (enablePerformanceMode) {
+      labelUpdateIntervalRef.current = 1200;
+      return;
+    }
+    if (!enableMotionOptimizations) {
+      labelUpdateIntervalRef.current = 250;
+      return;
+    }
+    if (reduceDetail) {
+      labelUpdateIntervalRef.current = 900;
+      return;
+    }
+    if (nodeCount > 3000) {
+      labelUpdateIntervalRef.current = 1200;
+    } else if (nodeCount > 1500) {
+      labelUpdateIntervalRef.current = 700;
+    } else if (nodeCount > 800) {
+      labelUpdateIntervalRef.current = 400;
+    } else {
+      labelUpdateIntervalRef.current = 250;
+    }
+  }, [graphData.nodes.length, reduceDetail, enableMotionOptimizations, enablePerformanceMode]);
+
+  useEffect(() => {
     let cancelled = false;
 
     const applyForces = () => {
@@ -405,7 +715,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
         graph.d3Force('flow', null);
       }
 
-      graph.d3ReheatSimulation();
+      requestReheat();
     };
 
     applyForces();
@@ -419,17 +729,17 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     dimensions.width,
     dimensions.height,
     graphData.nodes.length,
-    graphData.links.length
+    graphData.links.length,
+    requestReheat
   ]);
 
   useEffect(() => {
     let disposed = false;
     let controls: any;
-    const updateLabelState = () => {
-      const camera = graphRef.current?.camera() as THREE.Camera | undefined;
-      if (!camera) return;
-      const distance = camera.position.length();
-      setShowLabels(distance < 650);
+    const handleControlsChange = () => {
+      resumeAnimation();
+      updateCameraState();
+      scheduleLabelVisibilityUpdate();
     };
 
     const attachControls = () => {
@@ -439,29 +749,37 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
         requestAnimationFrame(attachControls);
         return;
       }
-      controls.addEventListener('change', updateLabelState);
-      updateLabelState();
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.08;
+      controls.zoomSpeed = zoomSpeed;
+      controls.panSpeed = panSpeed;
+      controls.rotateSpeed = rotateSpeed;
+      controls.screenSpacePanning = true;
+      controls.addEventListener('change', handleControlsChange);
+      handleControlsChange();
     };
 
     attachControls();
 
     return () => {
       disposed = true;
-      if (controls) controls.removeEventListener('change', updateLabelState);
+      if (controls) controls.removeEventListener('change', handleControlsChange);
     };
-  }, [dimensions.width, dimensions.height]);
+  }, [dimensions.width, dimensions.height, panSpeed, resumeAnimation, rotateSpeed, scheduleLabelVisibilityUpdate, updateCameraState, zoomSpeed]);
+
+  useEffect(() => {
+    const controls = graphRef.current?.controls() as any;
+    if (!controls) return;
+    controls.zoomSpeed = zoomSpeed;
+    controls.panSpeed = panSpeed;
+    controls.rotateSpeed = rotateSpeed;
+  }, [zoomSpeed, panSpeed, rotateSpeed]);
 
   useEffect(() => {
     labelCache.current.clear();
     graphRef.current?.refresh();
-  }, [graphData.nodes.length]);
-
-  useEffect(() => {
-    labelCache.current.forEach(object => {
-      object.visible = showLabels;
-    });
-    graphRef.current?.refresh();
-  }, [showLabels]);
+    scheduleLabelVisibilityUpdate();
+  }, [graphData.nodes.length, enablePerformanceMode, scheduleLabelVisibilityUpdate]);
 
   const nodeVal = useCallback((node: Node) => {
     const base = getNodeRadius(node);
@@ -490,16 +808,27 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   const nodeThreeObject = useCallback((node: Node) => {
     const cached = labelCache.current.get(node.id);
     if (cached) {
-      cached.visible = showLabels;
+      cached.visible = true;
       return cached;
     }
     const sprite = createLabelSprite(getCleanLabel(node));
-    sprite.visible = showLabels;
+    sprite.visible = true;
     labelCache.current.set(node.id, sprite);
     return sprite;
-  }, [showLabels]);
+  }, []);
 
-  const labelAccessor = showLabels ? nodeThreeObject : undefined;
+  const reducedDetail = enableMotionOptimizations && reduceDetail;
+  const aggressiveDetail = enablePerformanceMode || reducedDetail;
+  const labelAccessor = enablePerformanceMode ? undefined : nodeThreeObject;
+  const linkWidthScale = aggressiveDetail ? 0.2 : reducedDetail ? 0.4 : 0.5;
+  const arrowLength = aggressiveDetail ? 0 : reducedDetail ? 1.5 : 3;
+  const isHierarchical = viewMode === 'hierarchical';
+  const cooldownTicks = isHierarchical ? 180 : enablePerformanceMode ? 140 : undefined;
+  const cooldownTime = isHierarchical ? 8000 : enablePerformanceMode ? 6000 : undefined;
+  const alphaDecay = isHierarchical ? 0.05 : enablePerformanceMode ? 0.035 : 0.0228;
+  const velocityDecay = isHierarchical ? 0.6 : enablePerformanceMode ? 0.5 : 0.4;
+  const alphaMin = isHierarchical ? 0.02 : enablePerformanceMode ? 0.004 : 0;
+  const linkCurvature = aggressiveDetail ? 0 : viewMode === 'hierarchical' ? 0.25 : 0;
 
   const hasRenderableData = graphData.nodes.length > 0 || graphData.links.length > 0;
 
@@ -518,26 +847,38 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
           nodeColor={nodeColor}
           nodeOpacity={1}
           nodeThreeObject={labelAccessor}
-          nodeThreeObjectExtend={showLabels}
+          nodeThreeObjectExtend={!enablePerformanceMode}
           linkColor={linkColor}
-          linkWidth={link => (EDGE_STYLES[link.type]?.width || EDGE_STYLES.default.width) * 0.5}
+          linkWidth={link => (EDGE_STYLES[link.type]?.width || EDGE_STYLES.default.width) * linkWidthScale}
           linkOpacity={1}
-          linkCurvature={viewMode === 'hierarchical' ? 0.25 : 0}
-          linkDirectionalArrowLength={3}
-          linkDirectionalArrowRelPos={1}
-          linkDirectionalArrowColor={linkColor}
+          linkCurvature={linkCurvature}
+          linkDirectionalArrowLength={arrowLength}
+          linkDirectionalArrowRelPos={arrowLength > 0 ? 1 : 0}
+          linkDirectionalArrowColor={arrowLength > 0 ? linkColor : undefined}
+          d3AlphaDecay={alphaDecay}
+          d3VelocityDecay={velocityDecay}
+          d3AlphaMin={alphaMin}
+          warmupTicks={isHierarchical ? 30 : 0}
+          cooldownTicks={cooldownTicks}
+          cooldownTime={cooldownTime}
+          onEngineTick={handleEngineTick}
+          onEngineStop={handleEngineStop}
           enableNodeDrag
+          onNodeDrag={node => {
+            const dragged = node as Node;
+            dragged.fx = dragged.x;
+            dragged.fy = dragged.y;
+            dragged.fz = dragged.z ?? 0;
+            requestReheat();
+            registerInteraction(1.2);
+          }}
           onNodeDragEnd={node => {
             const dragged = node as Node;
-            if (viewMode === 'structured') {
-              dragged.fx = dragged.x;
-              dragged.fy = dragged.y;
-              dragged.fz = 0;
-            } else {
-              dragged.fx = null;
-              dragged.fy = null;
-              dragged.fz = null;
-            }
+            dragged.fx = dragged.x;
+            dragged.fy = dragged.y;
+            dragged.fz = dragged.z ?? 0;
+            requestReheat();
+            registerInteraction(0.2);
           }}
           onNodeHover={node => onNodeHover((node as Node) || null)}
           onNodeClick={node => {

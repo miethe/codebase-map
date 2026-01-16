@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import * as d3 from 'd3';
 import { Node, Edge, NODE_SIZE_CONFIG, EDGE_STYLES, GraphRendererProps } from '../types';
 import { getNodeColor } from '../utils/colorMapping';
@@ -151,7 +151,9 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
         viewMode,
         groupingData,
         activeColorMode,
-        gitMetadata
+        gitMetadata,
+        enableMotionOptimizations,
+        zoomSpeed
     } = viewState;
     const {
         onNodeSelect,
@@ -166,12 +168,73 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
     const zoomTransform = useRef<d3.ZoomTransform>(d3.zoomIdentity);
     // Track dragging state to prevent click events (which trigger view resets via re-render)
     const isDragging = useRef<boolean>(false);
+    const [reduceDetail, setReduceDetail] = useState(false);
+    const interactionTimeoutRef = useRef<number | null>(null);
+    const lastZoomRef = useRef<{ x: number; y: number; k: number; time: number } | null>(null);
+
+    const updateReduceDetail = useCallback((speed: number) => {
+        if (!enableMotionOptimizations) return;
+        const hideThreshold = 1.0;
+        const showThreshold = 0.25;
+        setReduceDetail(prev => {
+            let next = prev;
+            if (speed > hideThreshold) next = true;
+            else if (speed < showThreshold) next = false;
+            return next === prev ? prev : next;
+        });
+    }, [enableMotionOptimizations]);
+
+    const registerInteraction = useCallback((speed?: number) => {
+        if (!enableMotionOptimizations) return;
+        if (typeof speed === 'number') {
+            updateReduceDetail(speed);
+        }
+        if (interactionTimeoutRef.current) {
+            window.clearTimeout(interactionTimeoutRef.current);
+        }
+        interactionTimeoutRef.current = window.setTimeout(() => {
+            setReduceDetail(false);
+            interactionTimeoutRef.current = null;
+        }, 220);
+    }, [enableMotionOptimizations, updateReduceDetail]);
+
+    const handleZoomInteraction = useCallback((transform: d3.ZoomTransform) => {
+        const now = performance.now();
+        const last = lastZoomRef.current;
+        let speed = 0;
+        if (last) {
+            const dx = transform.x - last.x;
+            const dy = transform.y - last.y;
+            const dk = transform.k - last.k;
+            const delta = Math.hypot(dx, dy) + Math.abs(dk) * 260;
+            const dt = Math.max(16, now - last.time);
+            speed = delta / dt;
+        }
+        lastZoomRef.current = { x: transform.x, y: transform.y, k: transform.k, time: now };
+        if (enableMotionOptimizations) {
+            registerInteraction(speed);
+        }
+    }, [enableMotionOptimizations, registerInteraction]);
 
     // FIX: Use ref to access latest selectedNode inside D3 callbacks (which may be stale closures)
     const selectedNodeRef = useRef<Node | null>(selectedNode);
     useEffect(() => {
         selectedNodeRef.current = selectedNode;
     }, [selectedNode]);
+
+    useEffect(() => {
+        return () => {
+            if (interactionTimeoutRef.current) {
+                window.clearTimeout(interactionTimeoutRef.current);
+            }
+        };
+    }, []);
+
+    useEffect(() => {
+        if (!enableMotionOptimizations) {
+            setReduceDetail(false);
+        }
+    }, [enableMotionOptimizations]);
 
     const flowNodeIds = useMemo(() => {
         if (!selectedNode) return null;
@@ -260,9 +323,14 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
             // Initializes Zoom
             const zoom = d3.zoom<SVGSVGElement, unknown>()
                 .scaleExtent([0.1, 8])
+                .wheelDelta((event: WheelEvent) => {
+                    const base = -event.deltaY * 0.002;
+                    return base * Math.max(0.1, zoomSpeed);
+                })
                 .on("zoom", (event) => {
                     g.attr("transform", event.transform);
                     zoomTransform.current = event.transform;
+                    handleZoomInteraction(event.transform);
                 });
             svg.call(zoom).call(zoom.transform, zoomTransform.current);
 
@@ -649,6 +717,7 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
         function dragstarted(event: any, d: any) {
             d.fx = d.x;
             d.fy = d.y;
+            registerInteraction(1.2);
         }
 
         function dragged(event: any, d: any) {
@@ -658,15 +727,26 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
             }
             d.fx = event.x;
             d.fy = event.y;
+            registerInteraction(1.2);
         }
 
         function dragended(event: any, d: any) {
             if (!event.active && viewMode !== 'structured') simulation.alphaTarget(0);
             setTimeout(() => { isDragging.current = false; }, 100);
+            registerInteraction(0.2);
         }
 
-    }, [visibleNodes, visibleEdges, viewMode, clusterPositions, activeColorMode, groupingData, gitMetadata]);
+    }, [visibleNodes, visibleEdges, viewMode, clusterPositions, activeColorMode, groupingData, gitMetadata, zoomSpeed, handleZoomInteraction, registerInteraction]);
     // ^ Added dependencies so colors update when mode changes
+
+    // EFFECT: Reduced Detail Mode while Interacting
+    useEffect(() => {
+        const svg = d3.select(svgRef.current);
+        if (svg.empty()) return;
+        const shouldReduce = enableMotionOptimizations && reduceDetail;
+        svg.selectAll<SVGTextElement, Node>(".node-label")
+            .style("display", shouldReduce ? "none" : null);
+    }, [enableMotionOptimizations, reduceDetail]);
 
     // EFFECT: Styling Updates (Selection / Dimming)
     // Runs on selection changes WITHOUT re-running simulation

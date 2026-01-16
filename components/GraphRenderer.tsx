@@ -14,7 +14,12 @@ export const GraphRenderer: React.FC = () => {
     viewMode,
     activeColorMode,
     groupingData,
-    gitMetadata
+    gitMetadata,
+    enableMotionOptimizations,
+    enablePerformanceMode,
+    zoomSpeed,
+    panSpeed,
+    rotateSpeed
   } = useContext(GraphContext);
 
   const useWebglRenderer = import.meta.env.VITE_GRAPH_RENDERER === 'webgl';
@@ -27,7 +32,12 @@ export const GraphRenderer: React.FC = () => {
       selectedNode,
       activeColorMode,
       groupingData,
-      gitMetadata
+      gitMetadata,
+      enableMotionOptimizations,
+      enablePerformanceMode,
+      zoomSpeed,
+      panSpeed,
+      rotateSpeed
     },
     handlers: {
       onNodeSelect: setSelectedNode,
@@ -42,6 +52,11 @@ export const GraphRenderer: React.FC = () => {
     activeColorMode,
     groupingData,
     gitMetadata,
+    enableMotionOptimizations,
+    enablePerformanceMode,
+    zoomSpeed,
+    panSpeed,
+    rotateSpeed,
     setSelectedNode,
     setHoveredNode
   ]);

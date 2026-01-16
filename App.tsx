@@ -1,9 +1,9 @@
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { GraphRenderer } from './components/GraphRenderer';
 import { Sidebar } from './components/Sidebar';
 import { GraphData, Node, GraphContextType, ViewMode, GraphViewMode, EDGE_STYLES, DetailsData, GitMetadata, DependencyGraph } from './types';
-import { Layout, Loader2, AlertCircle, ChevronDown, ChevronUp, GitBranch } from 'lucide-react';
+import { Layout, Loader2, AlertCircle, ChevronDown, ChevronUp, GitBranch, MoreVertical } from 'lucide-react';
 
 import { deriveModulePath, getDisplayModule, buildNodePathMap } from './utils/moduleGrouping';
 import { getNodeLegendItems } from './utils/colorMapping';
@@ -35,6 +35,16 @@ export const GraphContext = React.createContext<GraphContextType>({
   setActiveGroupingMode: () => { },
   activeColorMode: 'type',
   setActiveColorMode: () => { },
+  enableMotionOptimizations: true,
+  setEnableMotionOptimizations: () => { },
+  enablePerformanceMode: false,
+  setEnablePerformanceMode: () => { },
+  zoomSpeed: 1,
+  setZoomSpeed: () => { },
+  panSpeed: 0.6,
+  setPanSpeed: () => { },
+  rotateSpeed: 0.8,
+  setRotateSpeed: () => { },
 });
 
 const App: React.FC = () => {
@@ -59,6 +69,13 @@ const App: React.FC = () => {
   const [activeModule, setActiveModule] = useState<string | null>(null);
   const [isLegendOpen, setIsLegendOpen] = useState(false);
   const [isNodeLegendOpen, setIsNodeLegendOpen] = useState(true); // Open by default
+  const [enableMotionOptimizations, setEnableMotionOptimizations] = useState(true);
+  const [enablePerformanceMode, setEnablePerformanceMode] = useState(false);
+  const [zoomSpeed, setZoomSpeed] = useState(1);
+  const [panSpeed, setPanSpeed] = useState(0.6);
+  const [rotateSpeed, setRotateSpeed] = useState(0.8);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const settingsRef = useRef<HTMLDivElement>(null);
 
 
   // Fetch data on mount
@@ -357,9 +374,30 @@ const App: React.FC = () => {
     setActiveGroupingMode,
     activeColorMode,
     setActiveColorMode,
+    enableMotionOptimizations,
+    setEnableMotionOptimizations,
+    enablePerformanceMode,
+    setEnablePerformanceMode,
+    zoomSpeed,
+    setZoomSpeed,
+    panSpeed,
+    setPanSpeed,
+    rotateSpeed,
+    setRotateSpeed,
     gitMetadata,
     dependencyData
   };
+
+  useEffect(() => {
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (!settingsRef.current) return;
+      if (!settingsRef.current.contains(event.target as Node)) {
+        setIsSettingsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, []);
 
   if (isLoading) {
     return (
@@ -475,6 +513,95 @@ const App: React.FC = () => {
                       <span className="text-[10px] text-slate-400 capitalize truncate leading-tight">{key.replace(/_/g, ' ')}</span>
                     </div>
                   ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Render Settings Menu */}
+          <div ref={settingsRef} className="absolute top-4 right-4 pointer-events-none">
+            <div className="pointer-events-auto flex flex-col items-end">
+              <button
+                type="button"
+                onClick={() => setIsSettingsOpen(!isSettingsOpen)}
+                className="h-9 w-9 rounded-full border border-slate-700/70 bg-slate-900/90 text-slate-200 flex items-center justify-center shadow-lg hover:border-indigo-400/60 hover:text-indigo-300 transition-colors"
+                aria-label="Render settings"
+              >
+                <MoreVertical size={16} />
+              </button>
+
+              {isSettingsOpen && (
+                <div className="mt-2 w-64 rounded-lg border border-slate-700/60 bg-slate-900/95 backdrop-blur-md shadow-xl p-3">
+                  <div className="text-[10px] uppercase tracking-[0.2em] text-slate-500">Render Settings</div>
+                  <div className="mt-2 space-y-3">
+                    <label className="flex items-center justify-between text-xs text-slate-300">
+                      <span>Reduce detail while moving</span>
+                      <input
+                        type="checkbox"
+                        className="h-3 w-3 accent-indigo-500"
+                        checked={enableMotionOptimizations}
+                        onChange={(event) => setEnableMotionOptimizations(event.target.checked)}
+                      />
+                    </label>
+                    <label className="flex items-center justify-between text-xs text-slate-300">
+                      <span>Performance mode</span>
+                      <input
+                        type="checkbox"
+                        className="h-3 w-3 accent-indigo-500"
+                        checked={enablePerformanceMode}
+                        onChange={(event) => setEnablePerformanceMode(event.target.checked)}
+                      />
+                    </label>
+                  </div>
+
+                  <div className="mt-4 text-[10px] uppercase tracking-[0.2em] text-slate-500">Interaction</div>
+                  <div className="mt-2 space-y-3">
+                    <div>
+                      <div className="flex items-center justify-between text-[11px] text-slate-300">
+                        <span>Zoom speed</span>
+                        <span className="text-[10px] text-slate-500">{zoomSpeed.toFixed(1)}x</span>
+                      </div>
+                      <input
+                        type="range"
+                        min="0.3"
+                        max="2.5"
+                        step="0.1"
+                        value={zoomSpeed}
+                        onChange={(event) => setZoomSpeed(Number(event.target.value))}
+                        className="mt-1 w-full accent-indigo-500"
+                      />
+                    </div>
+                    <div>
+                      <div className="flex items-center justify-between text-[11px] text-slate-300">
+                        <span>Pan speed</span>
+                        <span className="text-[10px] text-slate-500">{panSpeed.toFixed(1)}x</span>
+                      </div>
+                      <input
+                        type="range"
+                        min="0.2"
+                        max="2.5"
+                        step="0.1"
+                        value={panSpeed}
+                        onChange={(event) => setPanSpeed(Number(event.target.value))}
+                        className="mt-1 w-full accent-indigo-500"
+                      />
+                    </div>
+                    <div>
+                      <div className="flex items-center justify-between text-[11px] text-slate-300">
+                        <span>Rotate speed</span>
+                        <span className="text-[10px] text-slate-500">{rotateSpeed.toFixed(1)}x</span>
+                      </div>
+                      <input
+                        type="range"
+                        min="0.2"
+                        max="2.5"
+                        step="0.1"
+                        value={rotateSpeed}
+                        onChange={(event) => setRotateSpeed(Number(event.target.value))}
+                        className="mt-1 w-full accent-indigo-500"
+                      />
+                    </div>
+                  </div>
                 </div>
               )}
             </div>

@@ -130,6 +130,16 @@ export interface GraphContextType {
   // Visualization Support
   activeColorMode: string;
   setActiveColorMode: (mode: string) => void;
+  enableMotionOptimizations: boolean;
+  setEnableMotionOptimizations: (enabled: boolean) => void;
+  enablePerformanceMode: boolean;
+  setEnablePerformanceMode: (enabled: boolean) => void;
+  zoomSpeed: number;
+  setZoomSpeed: (value: number) => void;
+  panSpeed: number;
+  setPanSpeed: (value: number) => void;
+  rotateSpeed: number;
+  setRotateSpeed: (value: number) => void;
   // Metadata Support
   gitMetadata: GitMetadata | null;
   dependencyData: DependencyGraph | null;
@@ -211,6 +221,11 @@ export interface GraphRendererViewState {
   activeColorMode: string;
   groupingData: GroupingData | null;
   gitMetadata: GitMetadata | null;
+  enableMotionOptimizations: boolean;
+  enablePerformanceMode: boolean;
+  zoomSpeed: number;
+  panSpeed: number;
+  rotateSpeed: number;
 }
 
 export interface GraphRendererHandlers {
