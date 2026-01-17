@@ -36,3 +36,11 @@
 
 ## Configuration & Secrets
 - Local config: set `GEMINI_API_KEY` in `.env.local` (do not commit secrets).
+
+## Suggested Skills Usage by Task
+- **Graph readability / LOD / aggregation / hierarchy** → Data Visualization
+- **Custom force layouts / edge bundling / interaction mechanics** → d3-visualization
+- **WebGL/Three.js rendering / 2.5D layered views** → 3d-visualizer
+- **d3-viz** (`.codex/skills/d3js/SKILL.md`)
+  - Overlaps with d3-visualization but still useful for low-level SVG/Canvas control and bespoke graph interactions.
+- **New skill definition or external skill installation** → skill-creator / skill-installer
