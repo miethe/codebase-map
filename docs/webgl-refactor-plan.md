@@ -4,9 +4,10 @@
 - Replace SVG graph rendering with a GPU-backed renderer that scales to 10k+ nodes.
 - Preserve current interaction patterns (hover, select, focus, filters) and sidebar UX.
 - Keep the data model and JSON inputs stable during migration.
+- Maintain an explicit SVG fallback behind a renderer flag.
 
 ## Scope
-- Core renderer (`components/GraphCanvas.tsx`) and supporting graph layout code.
+- Core renderers (`components/GraphCanvas.tsx`, `components/GraphCanvasWebGL.tsx`) and supporting graph layout code.
 - Optional performance work: force simulation in a Web Worker.
 - Hybrid approach for labels/overlays if needed for readability.
 
@@ -31,15 +32,30 @@
    - If using `react-force-graph`, test built-in simulation vs worker offload.
    - Add a performance toggle: reduced detail while panning/zooming.
 
-5. **Feature Parity & Cleanup (2–3 days)**
-   - Port color modes, legends, module grouping, and view modes.
-   - Validate data integration for groupings, git metadata, and dependencies.
-   - Remove unused SVG-specific code paths and assets.
+5. **Feature Parity & Dual-Renderer Cleanup (2–4 days)**
+   - Parse WebGL gaps vs SVG baseline:
+     - Hierarchical mode still gated to SVG; module group boxes + labels missing in WebGL.
+     - Structured column headers missing in WebGL.
+     - Edge dash styles (dashed relationships) not represented.
+     - Node/edge tooltip parity (type/id/degree + link type) missing.
+     - Selection flow label dimming (hide non-flow labels) missing.
+     - ESC-to-clear selection not mirrored.
+     - Collision force + architecture-flow alignment differences in Map view.
+   - Port remaining behaviors into WebGL:
+     - Hierarchical overlays (module boxes + labels) as ThreeJS overlay objects.
+     - Structured headers as sprites aligned with column layout.
+     - Dash styling via link particles or custom materials.
+     - Tooltips + selection-driven label visibility.
+     - Parity forces for Map/Systems/Stacked views (charge, link distance, collide).
+   - Cleanup + future-proofing:
+     - Keep SVG renderer intact behind `VITE_GRAPH_RENDERER=svg`.
+     - Fully separate SVG-specific logic into its own module folder (no shared state leakage).
+     - Consolidate shared helpers (label cleaning, flow traversal) to avoid drift.
 
 ## Milestones & Deliverables
 - M1: Spike branch with FPS baseline and renderer decision.
-- M2: WebGL renderer integrated behind a feature flag (`GRAPH_RENDERER=webgl|svg`).
-- M3: Full parity with current UI interactions; SVG path optional fallback.
+- M2: WebGL renderer integrated behind a feature flag (`VITE_GRAPH_RENDERER=webgl|svg`).
+- M3: Full parity with current UI interactions; SVG path optional fallback flag.
 - M4: Worker-based simulation (if needed) and performance report.
 
 ## Risks & Mitigations

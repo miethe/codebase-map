@@ -22,7 +22,8 @@ export const GraphRenderer: React.FC = () => {
     rotateSpeed
   } = useContext(GraphContext);
 
-  const useWebglRenderer = import.meta.env.VITE_GRAPH_RENDERER === 'webgl';
+  const rendererMode = (import.meta.env.VITE_GRAPH_RENDERER || 'svg').toLowerCase();
+  const useWebglRenderer = rendererMode === 'webgl';
 
   const rendererProps = useMemo<GraphRendererProps>(() => ({
     data,

@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
 import ForceGraph3D, { ForceGraphMethods } from 'react-force-graph-3d';
+import { forceCollide, forceX, forceY, forceZ } from 'd3-force-3d';
 import { Node, Edge, GraphRendererProps, NODE_SIZE_CONFIG, EDGE_STYLES } from '../types';
 import { getNodeColor } from '../utils/colorMapping';
 import { computeClusterLayout } from '../utils/clusterLayout';
@@ -167,15 +168,16 @@ const getLinkEndpointId = (endpoint?: Edge['source'] | Edge['target']) => {
 
 const createModuleForce = (
   moduleCenters: Record<string, { x: number; y: number }>,
-  strength: number
+  strength: number | ((node: Node) => number)
 ) => {
   let nodes: Node[] = [];
   const force = (alpha: number) => {
     nodes.forEach(node => {
       const center = moduleCenters[node.module || 'Other'];
       if (!center || node.x === undefined || node.y === undefined) return;
-      node.vx = (node.vx || 0) + (center.x - node.x) * strength * alpha;
-      node.vy = (node.vy || 0) + (center.y - node.y) * strength * alpha;
+      const appliedStrength = typeof strength === 'function' ? strength(node) : strength;
+      node.vx = (node.vx || 0) + (center.x - node.x) * appliedStrength * alpha;
+      node.vy = (node.vy || 0) + (center.y - node.y) * appliedStrength * alpha;
     });
   };
   force.initialize = (newNodes: Node[]) => {
@@ -184,14 +186,84 @@ const createModuleForce = (
   return force;
 };
 
-const createFlowForce = (width: number, height: number, strength: number) => {
+const MAX_UINT32 = 0xffffffff;
+const directionCache = new Map<string, { x: number; y: number; z: number }>();
+
+const hashString = (input: string) => {
+  let hash = 2166136261;
+  for (let i = 0; i < input.length; i += 1) {
+    hash ^= input.charCodeAt(i);
+    hash = Math.imul(hash, 16777619);
+  }
+  return hash >>> 0;
+};
+
+const getStableDirection = (key: string) => {
+  const cached = directionCache.get(key);
+  if (cached) return cached;
+  const u = hashString(`${key}|u`) / MAX_UINT32;
+  const v = hashString(`${key}|v`) / MAX_UINT32;
+  const theta = 2 * Math.PI * u;
+  const phi = Math.acos(2 * v - 1);
+  const sinPhi = Math.sin(phi);
+  const dir = {
+    x: Math.cos(theta) * sinPhi,
+    y: Math.sin(theta) * sinPhi,
+    z: Math.cos(phi)
+  };
+  directionCache.set(key, dir);
+  return dir;
+};
+
+const getBalloonRadius = (node: Node, maxRadius: number) => {
+  const layer = ARCHITECTURE_FLOW[node.type] ?? 0.5;
+  const minRadius = maxRadius * 0.2;
+  return minRadius + (maxRadius - minRadius) * layer;
+};
+
+const getChargeStrength = (node: Node, mode: string) => {
+  const degree = node.degree || 0;
+  const base = mode === 'hierarchical' ? -110 : -140;
+  const scale = mode === 'hierarchical' ? 20 : 24;
+  const maxRepel = mode === 'hierarchical' ? -750 : -850;
+  const strength = base - (degree * scale);
+  return Math.max(maxRepel, strength);
+};
+
+const getLinkDistance = (link: any, mode: string) => {
+  if (mode === 'structured') return 0;
+  const src = link.source as Node;
+  const tgt = link.target as Node;
+  const degreeBoost = Math.sqrt((src.degree || 0) + (tgt.degree || 0)) * 5;
+  if (mode === 'hierarchical') {
+    const sameModule = src.module === tgt.module;
+    const base = sameModule ? 55 : 170;
+    return Math.min(260, base + degreeBoost);
+  }
+  return Math.min(170, 70 + degreeBoost);
+};
+
+const getModulePullStrength = (node: Node) => {
+  const degree = node.degree || 0;
+  const base = 0.25;
+  const extra = Math.min(0.35, Math.sqrt(degree) * 0.06);
+  return base + extra;
+};
+
+const isDashedLink = (link: Edge) => Boolean(EDGE_STYLES[link.type]?.dash);
+
+const createBalloonForce = (maxRadius: number, strength: number) => {
   let nodes: Node[] = [];
   const force = (alpha: number) => {
     nodes.forEach(node => {
-      if (node.x === undefined || node.y === undefined) return;
-      const targetX = width * (ARCHITECTURE_FLOW[node.type] || 0.5);
-      node.vx = (node.vx || 0) + (targetX - node.x) * strength * alpha;
-      node.vy = (node.vy || 0) + (height / 2 - node.y) * strength * alpha;
+      const dir = getStableDirection(node.id);
+      const radius = getBalloonRadius(node, maxRadius);
+      const targetX = dir.x * radius;
+      const targetY = dir.y * radius;
+      const targetZ = dir.z * radius;
+      node.vx = (node.vx || 0) + (targetX - (node.x || 0)) * strength * alpha;
+      node.vy = (node.vy || 0) + (targetY - (node.y || 0)) * strength * alpha;
+      node.vz = (node.vz || 0) + (targetZ - (node.z || 0)) * strength * alpha;
     });
   };
   force.initialize = (newNodes: Node[]) => {
@@ -200,31 +272,81 @@ const createFlowForce = (width: number, height: number, strength: number) => {
   return force;
 };
 
-const createLabelSprite = (text: string) => {
+type TextSpriteOptions = {
+  fontSize: number;
+  fontWeight: number;
+  padding: number;
+  textColor: string;
+  backgroundColor?: string;
+  fontFamily?: string;
+  scale: number;
+};
+
+const createTextSprite = (text: string, options: TextSpriteOptions) => {
   const canvas = document.createElement('canvas');
   const context = canvas.getContext('2d');
   if (!context) return new THREE.Object3D();
-  const fontSize = 32;
-  const padding = 12;
-  context.font = `600 ${fontSize}px "JetBrains Mono", monospace`;
+  const {
+    fontSize,
+    fontWeight,
+    padding,
+    textColor,
+    backgroundColor,
+    fontFamily = '"JetBrains Mono", monospace',
+    scale
+  } = options;
+  context.font = `${fontWeight} ${fontSize}px ${fontFamily}`;
   const textWidth = context.measureText(text).width;
   canvas.width = Math.ceil(textWidth + padding * 2);
   canvas.height = Math.ceil(fontSize + padding * 2);
-  context.font = `600 ${fontSize}px "JetBrains Mono", monospace`;
-  context.fillStyle = 'rgba(15, 23, 42, 0.82)';
-  context.fillRect(0, 0, canvas.width, canvas.height);
-  context.fillStyle = '#e2e8f0';
+  context.font = `${fontWeight} ${fontSize}px ${fontFamily}`;
+  if (backgroundColor) {
+    context.fillStyle = backgroundColor;
+    context.fillRect(0, 0, canvas.width, canvas.height);
+  }
+  context.fillStyle = textColor;
   context.textBaseline = 'middle';
   context.fillText(text, padding, canvas.height / 2);
   const texture = new THREE.CanvasTexture(canvas);
   texture.minFilter = THREE.LinearFilter;
-  const material = new THREE.SpriteMaterial({ map: texture, depthWrite: false });
+  const material = new THREE.SpriteMaterial({ map: texture, depthWrite: false, transparent: true });
   const sprite = new THREE.Sprite(material);
-  const scale = 0.18;
   sprite.scale.set(canvas.width * scale, canvas.height * scale, 1);
+  return sprite;
+};
+
+const createLabelSprite = (text: string) => {
+  const sprite = createTextSprite(text, {
+    fontSize: 32,
+    fontWeight: 600,
+    padding: 12,
+    textColor: '#e2e8f0',
+    backgroundColor: 'rgba(15, 23, 42, 0.82)',
+    scale: 0.18
+  });
   sprite.position.set(0, 12, 0);
   return sprite;
 };
+
+const createHeaderSprite = (text: string) => createTextSprite(text.toUpperCase(), {
+  fontSize: 22,
+  fontWeight: 700,
+  padding: 8,
+  textColor: '#94a3b8',
+  backgroundColor: 'rgba(15, 23, 42, 0.65)',
+  fontFamily: '"Inter", sans-serif',
+  scale: 0.16
+});
+
+const createModuleLabelSprite = (text: string) => createTextSprite(text, {
+  fontSize: 20,
+  fontWeight: 600,
+  padding: 8,
+  textColor: '#94a3b8',
+  backgroundColor: 'rgba(15, 23, 42, 0.7)',
+  fontFamily: '"Inter", sans-serif',
+  scale: 0.15
+});
 
 const applyStructuredLayout = (nodes: Node[], width: number, height: number) => {
   const groupsCount = 7;
@@ -250,9 +372,12 @@ const applyStructuredLayout = (nodes: Node[], width: number, height: number) => 
       node.fz = 0;
       node.x = node.fx;
       node.y = node.fy;
+      node.z = 0;
     });
   });
 };
+
+const STRUCTURED_HEADERS = ['Routes', 'Pages', 'Components', 'Hooks', 'API', 'Services', 'Data'];
 
 export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState, handlers }) => {
   const {
@@ -280,6 +405,12 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [reduceDetail, setReduceDetail] = useState(false);
   const labelCache = useRef<Map<string, THREE.Object3D>>(new Map());
+  const overlayGroupRef = useRef<THREE.Group | null>(null);
+  const moduleOverlayRef = useRef<THREE.Group | null>(null);
+  const headerOverlayRef = useRef<THREE.Group | null>(null);
+  const moduleOverlayCache = useRef<Map<string, { box: THREE.LineLoop; label: THREE.Sprite }>>(new Map());
+  const headerLabelCache = useRef<THREE.Sprite[]>([]);
+  const overlayTickRef = useRef<number>(0);
   const interactionTimeoutRef = useRef<number | null>(null);
   const lastCameraRef = useRef<{ x: number; y: number; z: number; time: number } | null>(null);
   const labelUpdateFrameRef = useRef<number | null>(null);
@@ -373,6 +504,11 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     registerInteraction(speed);
   }, [enableMotionOptimizations, registerInteraction]);
 
+  const flowNodeIds = useMemo(() => {
+    if (!selectedNode) return null;
+    return getFlowNodes(selectedNode.id, data.edges);
+  }, [selectedNode?.id, data.edges]);
+
   const updateLabelVisibility = useCallback(() => {
     const graph = graphRef.current;
     const camera = graph?.camera() as THREE.Camera | undefined;
@@ -381,6 +517,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     const dataSnapshot = graphDataRef.current;
     if (!dataSnapshot) return;
     const shouldShow = !enableMotionOptimizations || !reduceDetail;
+    const restrictToFlow = Boolean(selectedNode && !focusMode && flowNodeIds);
     if (!shouldShow && labelVisibilityModeRef.current === 'hidden') return;
     camera.updateMatrixWorld();
     const projScreenMatrix = projScreenMatrixRef.current;
@@ -392,7 +529,8 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     dataSnapshot.nodes.forEach(node => {
       const sprite = labelCache.current.get(node.id);
       if (!sprite) return;
-      if (!shouldShow) {
+      const allowLabel = shouldShow && (!restrictToFlow || flowNodeIds?.has(node.id));
+      if (!allowLabel) {
         if (sprite.visible) {
           sprite.visible = false;
           didChange = true;
@@ -414,7 +552,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     if (didChange) {
       graph.refresh();
     }
-  }, [enableMotionOptimizations, enablePerformanceMode, reduceDetail]);
+  }, [enableMotionOptimizations, enablePerformanceMode, reduceDetail, selectedNode, focusMode, flowNodeIds]);
 
   const scheduleLabelVisibilityUpdate = useCallback(() => {
     if (enablePerformanceMode) return;
@@ -437,6 +575,161 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     });
   }, [enablePerformanceMode, updateLabelVisibility]);
 
+  const ensureOverlayGroups = useCallback(() => {
+    const graph = graphRef.current;
+    if (!graph) return null;
+    if (overlayGroupRef.current) return overlayGroupRef.current;
+    const scene = graph.scene();
+    const overlayGroup = new THREE.Group();
+    overlayGroup.name = 'graph-overlays';
+    const moduleGroup = new THREE.Group();
+    moduleGroup.name = 'module-overlays';
+    const headerGroup = new THREE.Group();
+    headerGroup.name = 'header-overlays';
+    overlayGroup.add(moduleGroup);
+    overlayGroup.add(headerGroup);
+    scene.add(overlayGroup);
+    overlayGroupRef.current = overlayGroup;
+    moduleOverlayRef.current = moduleGroup;
+    headerOverlayRef.current = headerGroup;
+    return overlayGroup;
+  }, []);
+
+  const disposeSprite = (sprite: THREE.Sprite) => {
+    const material = sprite.material as THREE.SpriteMaterial;
+    if (material.map) material.map.dispose();
+    material.dispose();
+  };
+
+  const disposeLine = (line: THREE.LineLoop) => {
+    line.geometry.dispose();
+    const material = line.material as THREE.Material;
+    material.dispose();
+  };
+
+  const updateStructuredHeaders = useCallback(() => {
+    ensureOverlayGroups();
+    const headerGroup = headerOverlayRef.current;
+    if (!headerGroup) return;
+    const isStructured = viewMode === 'structured';
+    headerGroup.visible = isStructured;
+    if (!isStructured) return;
+    if (!dimensions.width || !dimensions.height) return;
+    if (headerLabelCache.current.length !== STRUCTURED_HEADERS.length) {
+      headerLabelCache.current.forEach(sprite => {
+        headerGroup.remove(sprite);
+        disposeSprite(sprite);
+      });
+      headerLabelCache.current = STRUCTURED_HEADERS.map(label => {
+        const sprite = createHeaderSprite(label);
+        headerGroup.add(sprite);
+        return sprite;
+      });
+    }
+    const colWidth = dimensions.width / (STRUCTURED_HEADERS.length + 1);
+    const startX = colWidth * 0.8;
+    headerLabelCache.current.forEach((sprite, idx) => {
+      sprite.position.set(startX + (idx * colWidth), 30, 0);
+    });
+    if (animationPausedRef.current) {
+      graphRef.current?.refresh();
+    }
+  }, [dimensions.width, dimensions.height, ensureOverlayGroups, viewMode]);
+
+  const updateModuleOverlays = useCallback(() => {
+    if (viewMode !== 'hierarchical') {
+      if (moduleOverlayRef.current) moduleOverlayRef.current.visible = false;
+      return;
+    }
+    ensureOverlayGroups();
+    const moduleGroup = moduleOverlayRef.current;
+    if (!moduleGroup) return;
+    moduleGroup.visible = true;
+    const dataSnapshot = graphDataRef.current;
+    if (!dataSnapshot) return;
+
+    const boundsMap = new Map<string, { minX: number; minY: number; maxX: number; maxY: number }>();
+    dataSnapshot.nodes.forEach(node => {
+      if (node.x === undefined || node.y === undefined) return;
+      const key = node.module || 'Other';
+      const entry = boundsMap.get(key) || {
+        minX: node.x,
+        minY: node.y,
+        maxX: node.x,
+        maxY: node.y
+      };
+      entry.minX = Math.min(entry.minX, node.x);
+      entry.minY = Math.min(entry.minY, node.y);
+      entry.maxX = Math.max(entry.maxX, node.x);
+      entry.maxY = Math.max(entry.maxY, node.y);
+      boundsMap.set(key, entry);
+    });
+
+    const dimmed = Boolean(selectedNode && !focusMode);
+    const boxOpacity = dimmed ? 0.1 : 0.5;
+    const labelOpacity = dimmed ? 0.2 : 0.8;
+
+    moduleOverlayCache.current.forEach((entry, key) => {
+      if (boundsMap.has(key)) return;
+      moduleGroup.remove(entry.box);
+      moduleGroup.remove(entry.label);
+      disposeLine(entry.box);
+      disposeSprite(entry.label);
+      moduleOverlayCache.current.delete(key);
+    });
+
+    boundsMap.forEach((bounds, key) => {
+      let entry = moduleOverlayCache.current.get(key);
+      if (!entry) {
+        const geometry = new THREE.BufferGeometry();
+        const positions = new Float32Array(15);
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        const material = new THREE.LineBasicMaterial({
+          color: 0x334155,
+          transparent: true,
+          opacity: boxOpacity
+        });
+        const box = new THREE.LineLoop(geometry, material);
+        box.renderOrder = 1;
+        const label = createModuleLabelSprite(key);
+        label.renderOrder = 2;
+        moduleGroup.add(box);
+        moduleGroup.add(label);
+        entry = { box, label };
+        moduleOverlayCache.current.set(key, entry);
+      }
+
+      const pad = 25;
+      const boxX = bounds.minX - pad;
+      const boxY = bounds.minY - pad - 10;
+      const boxW = Math.max(50, (bounds.maxX - bounds.minX) + (pad * 2));
+      const boxH = Math.max(50, (bounds.maxY - bounds.minY) + (pad * 2) + 10);
+      const x1 = boxX;
+      const y1 = boxY;
+      const x2 = boxX + boxW;
+      const y2 = boxY + boxH;
+
+      const geometry = entry.box.geometry as THREE.BufferGeometry;
+      const attr = geometry.getAttribute('position') as THREE.BufferAttribute;
+      const array = attr.array as Float32Array;
+      array[0] = x1; array[1] = y1; array[2] = 0;
+      array[3] = x2; array[4] = y1; array[5] = 0;
+      array[6] = x2; array[7] = y2; array[8] = 0;
+      array[9] = x1; array[10] = y2; array[11] = 0;
+      array[12] = x1; array[13] = y1; array[14] = 0;
+      attr.needsUpdate = true;
+      geometry.computeBoundingSphere();
+
+      const material = entry.box.material as THREE.LineBasicMaterial;
+      material.opacity = boxOpacity;
+      entry.label.material.opacity = labelOpacity;
+      entry.label.position.set(boxX + 10, boxY + 15, 0);
+    });
+    if (animationPausedRef.current) {
+      graphRef.current?.refresh();
+    }
+  }, [ensureOverlayGroups, focusMode, selectedNode, viewMode]);
+
   const handleEngineTick = useCallback(() => {
     if (!graphReadyRef.current) {
       graphReadyRef.current = true;
@@ -452,6 +745,10 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     if (now - labelTickRef.current > 300) {
       labelTickRef.current = now;
       scheduleLabelVisibilityUpdate();
+    }
+    if (viewMode === 'hierarchical' && now - overlayTickRef.current > 220) {
+      overlayTickRef.current = now;
+      updateModuleOverlays();
     }
     if (now - positionTickRef.current > 800) {
       positionTickRef.current = now;
@@ -469,7 +766,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
         });
       });
     }
-  }, [scheduleLabelVisibilityUpdate]);
+  }, [scheduleLabelVisibilityUpdate, updateModuleOverlays, viewMode]);
 
   const handleEngineStop = useCallback(() => {
     scheduleLabelVisibilityUpdate();
@@ -486,8 +783,11 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
         vz: node.vz
       });
     });
+    if (viewMode === 'hierarchical') {
+      updateModuleOverlays();
+    }
     pauseAnimation();
-  }, [pauseAnimation, scheduleLabelVisibilityUpdate]);
+  }, [pauseAnimation, scheduleLabelVisibilityUpdate, updateModuleOverlays, viewMode]);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -534,6 +834,21 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       }
       const controls = graph.controls() as any;
       if (controls?.dispose) controls.dispose();
+      if (overlayGroupRef.current) {
+        graph.scene().remove(overlayGroupRef.current);
+      }
+      moduleOverlayCache.current.forEach(entry => {
+        disposeLine(entry.box);
+        disposeSprite(entry.label);
+      });
+      moduleOverlayCache.current.clear();
+      headerLabelCache.current.forEach(sprite => {
+        disposeSprite(sprite);
+      });
+      headerLabelCache.current = [];
+      overlayGroupRef.current = null;
+      moduleOverlayRef.current = null;
+      headerOverlayRef.current = null;
       const renderer = graph.renderer();
       renderer.dispose();
       if ((renderer as any).forceContextLoss) {
@@ -559,10 +874,23 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     scheduleLabelVisibilityUpdate();
   }, [dimensions.width, dimensions.height, scheduleLabelVisibilityUpdate]);
 
-  const flowNodeIds = useMemo(() => {
-    if (!selectedNode) return null;
-    return getFlowNodes(selectedNode.id, data.edges);
-  }, [selectedNode?.id, data.edges]);
+  useEffect(() => {
+    scheduleLabelVisibilityUpdate();
+  }, [selectedNode?.id, focusMode, flowNodeIds, scheduleLabelVisibilityUpdate]);
+
+  useEffect(() => {
+    updateStructuredHeaders();
+  }, [updateStructuredHeaders]);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onNodeSelect(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onNodeSelect]);
 
   const visibleData = useMemo(() => {
     let nodes = data.nodes.map(n => {
@@ -579,6 +907,16 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       return base;
     });
     let edges = data.edges.map(e => ({ ...e }));
+
+    const visibleDegreeMap = new Map<string, number>();
+    edges.forEach(e => {
+      visibleDegreeMap.set(e.from, (visibleDegreeMap.get(e.from) || 0) + 1);
+      visibleDegreeMap.set(e.to, (visibleDegreeMap.get(e.to) || 0) + 1);
+    });
+
+    nodes.forEach(n => {
+      n.degree = visibleDegreeMap.get(n.id) || 0;
+    });
 
     if (focusMode && selectedNode && flowNodeIds) {
       const nodeSet = new Set(nodes.filter(n => flowNodeIds.has(n.id)).map(n => n.id));
@@ -606,6 +944,20 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
         node.fx = null;
         node.fy = null;
         node.fz = null;
+      });
+    }
+
+    if (viewMode === 'force' && dimensions.width && dimensions.height) {
+      const centerY = dimensions.height / 2;
+      const jitter = 30;
+      nodes.forEach(node => {
+        if (node.x === undefined || node.y === undefined || node.z === undefined) {
+          const dir = getStableDirection(node.id);
+          const targetX = (ARCHITECTURE_FLOW[node.type] ?? 0.5) * dimensions.width;
+          if (node.x === undefined) node.x = targetX + (dir.x * jitter);
+          if (node.y === undefined) node.y = centerY + (dir.y * jitter);
+          if (node.z === undefined) node.z = 0;
+        }
       });
     }
 
@@ -645,6 +997,12 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   useEffect(() => {
     graphDataRef.current = graphData;
   }, [graphData]);
+
+  useEffect(() => {
+    if (viewMode === 'hierarchical') {
+      updateModuleOverlays();
+    }
+  }, [graphData.nodes.length, graphData.links.length, viewMode, updateModuleOverlays, selectedNode?.id, focusMode]);
 
   useEffect(() => {
     graphReadyRef.current = false;
@@ -694,25 +1052,51 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
         return;
       }
 
-      const strength = viewMode === 'structured' ? 0 : viewMode === 'hierarchical' ? -80 : -120;
       if (chargeForce?.strength) {
-        chargeForce.strength(strength);
+        chargeForce.strength((node: Node) => {
+          if (viewMode === 'structured') return 0;
+          return getChargeStrength(node, viewMode);
+        });
       }
 
       if (linkForce?.distance) {
-        const distance = viewMode === 'structured' ? 0 : viewMode === 'hierarchical' ? 80 : 60;
-        linkForce.distance(distance);
+        linkForce.distance((link: any) => getLinkDistance(link, viewMode));
+      }
+
+      graph.d3Force('center', null);
+
+      if (viewMode === 'structured') {
+        graph.d3Force('collide', null);
+      } else {
+        graph.d3Force('collide', forceCollide<Node>()
+          .radius((node: Node) => {
+            if (viewMode === 'structured') return 0;
+            const extra = Math.log1p(node.degree || 0) * 5;
+            return getNodeRadius(node) + 6 + extra;
+          })
+          .iterations(2)
+          .strength(0.8));
       }
 
       if (viewMode === 'hierarchical' && moduleCenters) {
-        graph.d3Force('module', createModuleForce(moduleCenters, 0.12));
-        graph.d3Force('flow', null);
+        graph.d3Force('module', createModuleForce(moduleCenters, getModulePullStrength));
+        graph.d3Force('x', null);
+        graph.d3Force('y', null);
+        graph.d3Force('z', forceZ<Node>().z(0).strength(0.05));
       } else if (viewMode === 'force' && dimensions.width && dimensions.height) {
-        graph.d3Force('flow', createFlowForce(dimensions.width, dimensions.height, 0.08));
         graph.d3Force('module', null);
+        graph.d3Force('x', forceX<Node>()
+          .x((node: Node) => (ARCHITECTURE_FLOW[node.type] ?? 0.5) * dimensions.width)
+          .strength(0.15));
+        graph.d3Force('y', forceY<Node>()
+          .y(dimensions.height / 2)
+          .strength(0.05));
+        graph.d3Force('z', forceZ<Node>().z(0).strength(0.05));
       } else {
         graph.d3Force('module', null);
-        graph.d3Force('flow', null);
+        graph.d3Force('x', null);
+        graph.d3Force('y', null);
+        graph.d3Force('z', null);
       }
 
       requestReheat();
@@ -786,6 +1170,12 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     return selectedNode?.id === node.id ? base + 3 : base;
   }, [selectedNode?.id]);
 
+  const nodeTooltip = useCallback((node: Node) => (
+    `Type: ${node.type}\nID: ${node.id}\nVisible Connections: ${node.degree || 0}\nTotal Connections: ${node.totalDegree || 0}`
+  ), []);
+
+  const linkTooltip = useCallback((link: Edge) => link.type, []);
+
   const nodeColor = useCallback((node: Node) => {
     const base = getNodeColor(node, activeColorMode, groupingData, gitMetadata);
     if (!selectedNode || focusMode) return base;
@@ -821,6 +1211,22 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   const aggressiveDetail = enablePerformanceMode || reducedDetail;
   const labelAccessor = enablePerformanceMode ? undefined : nodeThreeObject;
   const linkWidthScale = aggressiveDetail ? 0.2 : reducedDetail ? 0.4 : 0.5;
+  const linkWidth = useCallback((link: Edge) => {
+    const base = EDGE_STYLES[link.type]?.width || EDGE_STYLES.default.width;
+    const dashScale = isDashedLink(link) ? 0.6 : 1;
+    return base * linkWidthScale * dashScale;
+  }, [linkWidthScale]);
+  const linkDirectionalParticles = useCallback((link: Edge) => {
+    if (aggressiveDetail) return 0;
+    if (!isDashedLink(link)) return 0;
+    return reducedDetail ? 2 : 4;
+  }, [aggressiveDetail, reducedDetail]);
+  const linkParticleWidth = useCallback((link: Edge) => {
+    if (aggressiveDetail) return 0;
+    if (!isDashedLink(link)) return 0;
+    const base = EDGE_STYLES[link.type]?.width || EDGE_STYLES.default.width;
+    return Math.max(0.8, base * (reducedDetail ? 0.35 : 0.5));
+  }, [aggressiveDetail, reducedDetail]);
   const arrowLength = aggressiveDetail ? 0 : reducedDetail ? 1.5 : 3;
   const isHierarchical = viewMode === 'hierarchical';
   const cooldownTicks = isHierarchical ? 180 : enablePerformanceMode ? 140 : undefined;
@@ -843,18 +1249,23 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
           backgroundColor="#0f172a"
           nodeRelSize={3}
           nodeVal={nodeVal}
-          nodeLabel={node => getCleanLabel(node)}
+          nodeLabel={nodeTooltip}
           nodeColor={nodeColor}
           nodeOpacity={1}
           nodeThreeObject={labelAccessor}
           nodeThreeObjectExtend={!enablePerformanceMode}
+          linkLabel={linkTooltip}
           linkColor={linkColor}
-          linkWidth={link => (EDGE_STYLES[link.type]?.width || EDGE_STYLES.default.width) * linkWidthScale}
+          linkWidth={linkWidth}
           linkOpacity={1}
           linkCurvature={linkCurvature}
           linkDirectionalArrowLength={arrowLength}
           linkDirectionalArrowRelPos={arrowLength > 0 ? 1 : 0}
           linkDirectionalArrowColor={arrowLength > 0 ? linkColor : undefined}
+          linkDirectionalParticles={linkDirectionalParticles}
+          linkDirectionalParticleSpeed={0}
+          linkDirectionalParticleWidth={linkParticleWidth}
+          linkDirectionalParticleColor={linkColor}
           d3AlphaDecay={alphaDecay}
           d3VelocityDecay={velocityDecay}
           d3AlphaMin={alphaMin}
