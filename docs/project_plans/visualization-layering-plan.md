@@ -189,6 +189,16 @@ All passes share the same camera pose and dimensions.
 - Finalize node/edge fields and group sets.
 - Update `types.ts` to include new optional fields.
 
+#### Phase 0 Decisions (Confirmed)
+- Hierarchy levels: `repo → package → module → folder → file → symbol`. Cluster nodes represent aggregates at any level.
+- Group set IDs: `structure`, `layer`, `ownership` (ownership optional if data is missing).
+- Initial LOD thresholds (normalized zoom scale `k`, where `k=1` is default view):
+  - LOD0: `k < 0.45` (overview clusters)
+  - LOD1: `0.45 ≤ k < 0.9` (mid clusters)
+  - LOD2: `0.9 ≤ k < 1.8` (files + key symbols)
+  - LOD3: `k ≥ 1.8` (detail symbols)
+  - Apply hysteresis of ±0.1 to reduce LOD jitter.
+
 ### Phase 1 — Data Pipeline (3–5 days)
 - Implement hierarchy + layer inference in `code_map/` scripts.
 - Generate LOD graphs and updated groupings.
@@ -234,4 +244,3 @@ All passes share the same camera pose and dimensions.
 - Which hierarchy should be the primary cluster path: path-based or semantic tags?
 - Do we want dynamic clustering (community detection) in addition to path-based groups?
 - Should the app load all LOD files up-front or fetch on demand, or use hybrid graph patching?
-- What are the default LOD thresholds for zoom levels (needs tuning)?

@@ -1,7 +1,24 @@
 
+export type NodeKind = 'repo' | 'package' | 'module' | 'folder' | 'file' | 'symbol' | 'cluster';
+export type NodeLayer = 'ui' | 'api' | 'domain' | 'data' | 'infra' | 'tests' | 'shared' | 'external';
+export type NodeExternality = 'internal' | 'vendor' | 'third_party';
+export type EdgeDistanceClass = 'local' | 'cross-folder' | 'cross-module' | 'cross-package' | 'cross-service';
+export type EdgeConfidence = 'static' | 'heuristic' | 'dynamic';
+
 export interface Node {
   id: string;
   type: string;
+  kind?: NodeKind;
+  layer?: NodeLayer;
+  cluster_id?: string;
+  cluster_path?: string[];
+  size?: number;
+  hotness?: number;
+  bus_factor?: number;
+  entrypoint?: boolean;
+  externality?: NodeExternality;
+  generated?: boolean;
+  label_short?: string;
   label?: string; // Optional, inferred from ID if missing
   file?: string;
   // API Normalization fields
@@ -38,6 +55,10 @@ export interface Edge {
   from: string;
   to: string;
   type: string;
+  weight?: number;
+  distance_class?: EdgeDistanceClass;
+  confidence?: EdgeConfidence;
+  bidirectional?: boolean;
   // D3 simulation properties (added at runtime)
   source?: Node | string;
   target?: Node | string;
