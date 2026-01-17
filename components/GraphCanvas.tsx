@@ -187,7 +187,8 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
     const {
         onNodeSelect,
         onNodeHover,
-        onBackgroundClick
+        onBackgroundClick,
+        onZoomChange
     } = handlers;
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -240,10 +241,13 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
             speed = delta / dt;
         }
         lastZoomRef.current = { x: transform.x, y: transform.y, k: transform.k, time: now };
+        if (onZoomChange) {
+            onZoomChange(transform.k);
+        }
         if (enableMotionOptimizations) {
             registerInteraction(speed);
         }
-    }, [enableMotionOptimizations, registerInteraction]);
+    }, [enableMotionOptimizations, onZoomChange, registerInteraction]);
 
     // FIX: Use ref to access latest selectedNode inside D3 callbacks (which may be stale closures)
     const selectedNodeRef = useRef<Node | null>(selectedNode);
@@ -573,7 +577,9 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
             })
             .attr("stroke-width", (d) => {
                 const style = EDGE_STYLES[d.type] || EDGE_STYLES.default;
-                return style.width;
+                const weight = d.weight || 1;
+                const weightScale = Math.min(3, 1 + Math.log1p(weight) * 0.6);
+                return style.width * weightScale;
             })
             .attr("stroke-dasharray", (d) => {
                 const style = EDGE_STYLES[d.type] || EDGE_STYLES.default;

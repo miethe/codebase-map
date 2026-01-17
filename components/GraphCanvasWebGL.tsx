@@ -396,7 +396,8 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   const {
     onNodeSelect,
     onNodeHover,
-    onBackgroundClick
+    onBackgroundClick,
+    onZoomChange
   } = handlers;
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -424,6 +425,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   const graphReadyRef = useRef(false);
   const animationPausedRef = useRef(false);
   const pendingReheatRef = useRef(false);
+  const zoomBaselineRef = useRef<number | null>(null);
   const frustumRef = useRef(new THREE.Frustum());
   const projScreenMatrixRef = useRef(new THREE.Matrix4());
   const tempVectorRef = useRef(new THREE.Vector3());
@@ -500,9 +502,24 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       z: camera.position.z,
       time: now
     };
+    if (onZoomChange) {
+      const controls = graphRef.current?.controls() as any;
+      const target = controls?.target || new THREE.Vector3();
+      const distance = camera.position.distanceTo(target);
+      if (!zoomBaselineRef.current) {
+        zoomBaselineRef.current = distance || 1;
+      }
+      const baseline = zoomBaselineRef.current || 1;
+      const zoom = baseline / Math.max(distance, 1);
+      onZoomChange(zoom);
+    }
     if (!enableMotionOptimizations) return;
     registerInteraction(speed);
-  }, [enableMotionOptimizations, registerInteraction]);
+  }, [enableMotionOptimizations, onZoomChange, registerInteraction]);
+
+  useEffect(() => {
+    zoomBaselineRef.current = null;
+  }, [data.nodes.length, data.edges.length, viewMode]);
 
   const flowNodeIds = useMemo(() => {
     if (!selectedNode) return null;
@@ -1215,7 +1232,9 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   const linkWidth = useCallback((link: Edge) => {
     const base = EDGE_STYLES[link.type]?.width || EDGE_STYLES.default.width;
     const dashScale = isDashedLink(link) ? 0.6 : 1;
-    return base * linkWidthScale * dashScale;
+    const weight = link.weight || 1;
+    const weightScale = Math.min(3, 1 + Math.log1p(weight) * 0.6);
+    return base * linkWidthScale * dashScale * weightScale;
   }, [linkWidthScale]);
   const linkDirectionalParticles = useCallback((link: Edge) => {
     if (aggressiveDetail) return 0;

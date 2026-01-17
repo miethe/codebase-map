@@ -73,6 +73,13 @@ export interface GraphData {
   source_commit?: string;
 }
 
+export interface GraphLODData {
+  lod0?: GraphData;
+  lod1?: GraphData;
+  lod2?: GraphData;
+  lod3?: GraphData;
+}
+
 export interface GroupSet {
   id: string;
   label: string;
@@ -126,6 +133,7 @@ export interface DetailsData {
 
 export interface GraphContextType {
   data: GraphData; // The filtered data shown on canvas
+  lodData?: GraphLODData | null;
   details: DetailsData | null; // The rich details loaded asynchronously
   isDetailsLoading: boolean;
   totalNodeCounts: Record<string, number>; // Stats based on raw data (for sidebar)
@@ -161,6 +169,8 @@ export interface GraphContextType {
   setPanSpeed: (value: number) => void;
   rotateSpeed: number;
   setRotateSpeed: (value: number) => void;
+  zoomLevel: number;
+  setZoomLevel: (value: number) => void;
   // Metadata Support
   gitMetadata: GitMetadata | null;
   dependencyData: DependencyGraph | null;
@@ -253,6 +263,7 @@ export interface GraphRendererHandlers {
   onNodeSelect: (node: Node | null) => void;
   onNodeHover: (node: Node | null) => void;
   onBackgroundClick?: () => void;
+  onZoomChange?: (zoomLevel: number) => void;
 }
 
 export interface GraphRendererProps {

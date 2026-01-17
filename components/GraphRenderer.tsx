@@ -3,6 +3,7 @@ import { GraphContext } from '../App';
 import { GraphCanvas } from './GraphCanvas';
 import { GraphCanvasWebGL } from './GraphCanvasWebGL';
 import { GraphRendererProps } from '../types';
+import { useGraphLOD } from '../utils/useGraphLOD';
 
 export const GraphRenderer: React.FC = () => {
   const {
@@ -15,18 +16,31 @@ export const GraphRenderer: React.FC = () => {
     activeColorMode,
     groupingData,
     gitMetadata,
+    graphView,
+    activeModule,
     enableMotionOptimizations,
     enablePerformanceMode,
     zoomSpeed,
     panSpeed,
-    rotateSpeed
+    rotateSpeed,
+    lodData,
+    zoomLevel,
+    setZoomLevel
   } = useContext(GraphContext);
 
   const rendererMode = (import.meta.env.VITE_GRAPH_RENDERER || 'svg').toLowerCase();
   const useWebglRenderer = rendererMode === 'webgl';
 
+  const allowLod = Boolean(lodData) && graphView === 'unified' && !activeModule;
+  const { graphData, toggleCluster } = useGraphLOD({
+    baseData: data,
+    lodData,
+    zoomLevel,
+    allowLod
+  });
+
   const rendererProps = useMemo<GraphRendererProps>(() => ({
-    data,
+    data: graphData,
     viewState: {
       viewMode,
       focusMode,
@@ -41,25 +55,36 @@ export const GraphRenderer: React.FC = () => {
       rotateSpeed
     },
     handlers: {
-      onNodeSelect: setSelectedNode,
+      onNodeSelect: (node) => {
+        if (allowLod && node?.kind === 'cluster') {
+          const clusterId = node.cluster_id || node.id;
+          toggleCluster(clusterId);
+          return;
+        }
+        setSelectedNode(node);
+      },
       onNodeHover: setHoveredNode,
-      onBackgroundClick: () => setSelectedNode(null)
+      onBackgroundClick: () => setSelectedNode(null),
+      onZoomChange: setZoomLevel
     }
   }), [
-    data,
+    graphData,
     viewMode,
     focusMode,
     selectedNode,
     activeColorMode,
     groupingData,
     gitMetadata,
+    allowLod,
+    toggleCluster,
     enableMotionOptimizations,
     enablePerformanceMode,
     zoomSpeed,
     panSpeed,
     rotateSpeed,
     setSelectedNode,
-    setHoveredNode
+    setHoveredNode,
+    setZoomLevel
   ]);
 
   return useWebglRenderer ? (

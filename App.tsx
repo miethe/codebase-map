@@ -2,7 +2,7 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { GraphRenderer } from './components/GraphRenderer';
 import { Sidebar } from './components/Sidebar';
-import { GraphData, Node, GraphContextType, ViewMode, GraphViewMode, EDGE_STYLES, DetailsData, GitMetadata, DependencyGraph } from './types';
+import { GraphData, GraphLODData, Node, GraphContextType, ViewMode, GraphViewMode, EDGE_STYLES, DetailsData, GitMetadata, DependencyGraph } from './types';
 import { Layout, Loader2, AlertCircle, ChevronDown, ChevronUp, GitBranch, MoreVertical } from 'lucide-react';
 
 import { deriveModulePath, getDisplayModule, buildNodePathMap } from './utils/moduleGrouping';
@@ -14,6 +14,7 @@ const BACKEND_TYPES = new Set(['api_endpoint', 'endpoint', 'handler', 'service',
 
 export const GraphContext = React.createContext<GraphContextType>({
   data: { nodes: [], edges: [] },
+  lodData: null,
   totalNodeCounts: {},
   moduleCounts: {},
   selectedNode: null,
@@ -45,11 +46,14 @@ export const GraphContext = React.createContext<GraphContextType>({
   setPanSpeed: () => { },
   rotateSpeed: 0.8,
   setRotateSpeed: () => { },
+  zoomLevel: 1,
+  setZoomLevel: () => { },
 });
 
 const App: React.FC = () => {
   const [rawData, setRawData] = useState<GraphData>({ nodes: [], edges: [] });
   const [groupingData, setGroupingData] = useState<any | null>(null);
+  const [lodData, setLodData] = useState<GraphLODData | null>(null);
   const [activeGroupingMode, setActiveGroupingMode] = useState<string>('structure');
   const [activeColorMode, setActiveColorMode] = useState<string>('type');
 
@@ -74,6 +78,7 @@ const App: React.FC = () => {
   const [zoomSpeed, setZoomSpeed] = useState(1);
   const [panSpeed, setPanSpeed] = useState(0.6);
   const [rotateSpeed, setRotateSpeed] = useState(0.8);
+  const [zoomLevel, setZoomLevel] = useState(1);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const settingsRef = useRef<HTMLDivElement>(null);
 
@@ -100,6 +105,31 @@ const App: React.FC = () => {
         });
 
         setRawData({ ...data, nodes: enrichedNodes });
+
+        // Load LOD datasets (optional)
+        try {
+          const lodLevels = [0, 1, 2, 3];
+          const lodResults = await Promise.all(lodLevels.map(async level => {
+            try {
+              const res = await fetch(`./codebase-graph.lod${level}.json`);
+              if (!res.ok) return null;
+              return await res.json();
+            } catch {
+              return null;
+            }
+          }));
+          const nextLodData: GraphLODData = {
+            lod0: lodResults[0] || undefined,
+            lod1: lodResults[1] || undefined,
+            lod2: lodResults[2] || undefined,
+            lod3: lodResults[3] || undefined
+          };
+          if (nextLodData.lod0 || nextLodData.lod1 || nextLodData.lod2 || nextLodData.lod3) {
+            setLodData(nextLodData);
+          }
+        } catch (e) {
+          console.warn("Failed to load LOD data", e);
+        }
 
         // Load Groupings
         try {
@@ -351,6 +381,7 @@ const App: React.FC = () => {
   // Derived context value
   const contextValue: GraphContextType = {
     data: filteredData,
+    lodData,
     details,
     isDetailsLoading,
     totalNodeCounts,
@@ -384,6 +415,8 @@ const App: React.FC = () => {
     setPanSpeed,
     rotateSpeed,
     setRotateSpeed,
+    zoomLevel,
+    setZoomLevel,
     gitMetadata,
     dependencyData
   };
