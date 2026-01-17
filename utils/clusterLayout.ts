@@ -42,10 +42,10 @@ export const computeClusterLayout = (
     });
 
     const clusterNodes: ClusterNode[] = Array.from(clusters.entries()).map(([id, data]) => {
-        // Estimate box size based on node count
-        // Assuming roughly square packing: area ~= count * nodeArea
-        // nodeArea ~= (25px * 2)^2 = 2500
-        const side = Math.sqrt(data.count * 2500) + 50; // +50 padding
+        // Estimate box size based on node count with extra padding for large clusters
+        const baseArea = 2600;
+        const sizePadding = 80 + (Math.sqrt(data.count) * 6);
+        const side = Math.sqrt(data.count * baseArea) + sizePadding;
         return {
             id,
             nodeCount: data.count,
@@ -95,21 +95,27 @@ export const computeClusterLayout = (
 
     // 3. Run Headless Simulation
     const simulation = d3.forceSimulation(clusterNodes)
-        .force("charge", d3.forceManyBody().strength(-500)) // Repel
+        .force("charge", d3.forceManyBody<ClusterNode>().strength((d: ClusterNode) => {
+            const magnitude = -220 - (Math.sqrt(d.nodeCount) * 45);
+            return Math.max(-1200, magnitude);
+        }))
         .force("center", d3.forceCenter(width / 2, height / 2).strength(0.1))
-        .force("collide", d3.forceCollide().radius((d: any) => d.width / 1.5).strength(0.8)) // Prevent overlap
+        .force("collide", d3.forceCollide<ClusterNode>().radius((d: ClusterNode) => (d.width / 2) + 40).strength(0.9))
         .force("link", d3.forceLink(clusterLinks)
             .id((d: any) => d.id)
             .distance((d: any) => {
-                // Inverse relationship: High weight = Short distance
-                // Max weight likely around 10-50 for tight couples.
-                // Min dist 100, Max dist 600
+                const source = d.source as ClusterNode;
+                const target = d.target as ClusterNode;
+                const sizeBoost = (Math.sqrt(source.nodeCount) + Math.sqrt(target.nodeCount)) * 14;
                 const w = d.weight;
-                return Math.max(150, 600 - (w * 20));
+                const distance = 220 + sizeBoost - (w * 18);
+                return Math.max(180, Math.min(720, distance));
             })
             .strength((d: any) => {
-                // Stronger pull for higher weights
-                return Math.min(0.5, d.weight * 0.05);
+                const source = d.source as ClusterNode;
+                const target = d.target as ClusterNode;
+                const sizeFactor = 1 / (1 + (Math.sqrt(source.nodeCount + target.nodeCount) / 20));
+                return Math.min(0.5, d.weight * 0.05 * sizeFactor);
             })
         )
         .stop();

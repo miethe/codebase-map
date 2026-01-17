@@ -33,6 +33,35 @@ const ARCHITECTURE_FLOW: Record<string, number> = {
     'type': 0.5 // Types can be everywhere, keep central
 };
 
+const getChargeStrength = (node: Node, mode: string) => {
+    const degree = node.degree || 0;
+    const base = mode === 'hierarchical' ? -110 : -140;
+    const scale = mode === 'hierarchical' ? 20 : 24;
+    const maxRepel = mode === 'hierarchical' ? -750 : -850;
+    const strength = base - (degree * scale);
+    return Math.max(maxRepel, strength);
+};
+
+const getLinkDistance = (link: any, mode: string) => {
+    if (mode === 'structured') return 0;
+    const src = link.source as Node;
+    const tgt = link.target as Node;
+    const degreeBoost = Math.sqrt((src.degree || 0) + (tgt.degree || 0)) * 5;
+    if (mode === 'hierarchical') {
+        const sameModule = src.module === tgt.module;
+        const base = sameModule ? 55 : 170;
+        return Math.min(260, base + degreeBoost);
+    }
+    return Math.min(170, 70 + degreeBoost);
+};
+
+const getModulePullStrength = (node: Node) => {
+    const degree = node.degree || 0;
+    const base = 0.25;
+    const extra = Math.min(0.35, Math.sqrt(degree) * 0.06);
+    return base + extra;
+};
+
 // Helper: Calculate Node Radius using Logarithmic Scale
 const getNodeRadius = (node: Node) => {
     // formula: base + (log(totalDegree + 1) * factor)
@@ -426,24 +455,14 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
         // Configure Forces
         const linkForce = simulation.force<d3.ForceLink<Node, any>>("link");
         if (linkForce) {
-            linkForce.links(visibleEdges).distance((d: any) => {
-                if (viewMode === 'structured') return 0;
-                if (viewMode === 'hierarchical') {
-                    const srcMod = (d.source as Node).module;
-                    const tgtMod = (d.target as Node).module;
-                    return srcMod === tgtMod ? 30 : 100;
-                }
-                return 50;
-            });
+            linkForce.links(visibleEdges).distance((d: any) => getLinkDistance(d, viewMode));
         }
 
         const chargeForce = simulation.force<d3.ForceManyBody<Node>>("charge");
         if (chargeForce) {
             chargeForce.strength((d: any) => {
                 if (viewMode === 'structured') return 0;
-                const degree = d.degree || 0;
-                const base = viewMode === 'hierarchical' ? -80 : -120;
-                return Math.max(-800, base - (degree * 30));
+                return getChargeStrength(d, viewMode);
             });
         }
 
@@ -462,13 +481,13 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
                 forceX.x((d: any) => {
                     const center = moduleCenters[d.module || 'Other'];
                     return center ? center.x : width / 2;
-                }).strength(0.6);
+                }).strength((d: any) => getModulePullStrength(d));
             }
             if (forceY) {
                 forceY.y((d: any) => {
                     const center = moduleCenters[d.module || 'Other'];
                     return center ? center.y : height / 2;
-                }).strength(0.6);
+                }).strength((d: any) => getModulePullStrength(d));
             }
         } else {
             // Standard Map Flow
@@ -487,7 +506,8 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
         if (collideForce) {
             collideForce.radius((d: any) => {
                 if (viewMode === 'structured') return 0;
-                return getNodeRadius(d) + 5;
+                const extra = Math.log1p(d.degree || 0) * 5;
+                return getNodeRadius(d) + 6 + extra;
             }).iterations(2).strength(0.8);
         }
 

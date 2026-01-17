@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
 import ForceGraph3D, { ForceGraphMethods } from 'react-force-graph-3d';
-import { forceCollide, forceX, forceY, forceZ } from 'd3-force-3d';
+import { forceCollide, forceZ } from 'd3-force-3d';
 import { Node, Edge, GraphRendererProps, NODE_SIZE_CONFIG, EDGE_STYLES } from '../types';
 import { getNodeColor } from '../utils/colorMapping';
 import { computeClusterLayout } from '../utils/clusterLayout';
@@ -948,15 +948,14 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     }
 
     if (viewMode === 'force' && dimensions.width && dimensions.height) {
-      const centerY = dimensions.height / 2;
-      const jitter = 30;
+      const maxRadius = Math.min(dimensions.width, dimensions.height) * 0.45;
       nodes.forEach(node => {
         if (node.x === undefined || node.y === undefined || node.z === undefined) {
           const dir = getStableDirection(node.id);
-          const targetX = (ARCHITECTURE_FLOW[node.type] ?? 0.5) * dimensions.width;
-          if (node.x === undefined) node.x = targetX + (dir.x * jitter);
-          if (node.y === undefined) node.y = centerY + (dir.y * jitter);
-          if (node.z === undefined) node.z = 0;
+          const radius = getBalloonRadius(node, maxRadius);
+          if (node.x === undefined) node.x = dir.x * radius;
+          if (node.y === undefined) node.y = dir.y * radius;
+          if (node.z === undefined) node.z = dir.z * radius;
         }
       });
     }
@@ -1080,20 +1079,20 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
 
       if (viewMode === 'hierarchical' && moduleCenters) {
         graph.d3Force('module', createModuleForce(moduleCenters, getModulePullStrength));
+        graph.d3Force('balloon', null);
         graph.d3Force('x', null);
         graph.d3Force('y', null);
         graph.d3Force('z', forceZ<Node>().z(0).strength(0.05));
       } else if (viewMode === 'force' && dimensions.width && dimensions.height) {
         graph.d3Force('module', null);
-        graph.d3Force('x', forceX<Node>()
-          .x((node: Node) => (ARCHITECTURE_FLOW[node.type] ?? 0.5) * dimensions.width)
-          .strength(0.15));
-        graph.d3Force('y', forceY<Node>()
-          .y(dimensions.height / 2)
-          .strength(0.05));
-        graph.d3Force('z', forceZ<Node>().z(0).strength(0.05));
+        const maxRadius = Math.min(dimensions.width, dimensions.height) * 0.45;
+        graph.d3Force('balloon', createBalloonForce(maxRadius, 0.12));
+        graph.d3Force('x', null);
+        graph.d3Force('y', null);
+        graph.d3Force('z', null);
       } else {
         graph.d3Force('module', null);
+        graph.d3Force('balloon', null);
         graph.d3Force('x', null);
         graph.d3Force('y', null);
         graph.d3Force('z', null);
