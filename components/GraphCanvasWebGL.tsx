@@ -998,9 +998,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   }, [graphData]);
 
   useEffect(() => {
-    if (viewMode === 'hierarchical') {
-      updateModuleOverlays();
-    }
+    updateModuleOverlays();
   }, [graphData.nodes.length, graphData.links.length, viewMode, updateModuleOverlays, selectedNode?.id, focusMode]);
 
   useEffect(() => {
@@ -1138,6 +1136,10 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       controls.panSpeed = panSpeed;
       controls.rotateSpeed = rotateSpeed;
       controls.screenSpacePanning = true;
+
+      // Lock rotation in hierarchical (Systems) view
+      controls.enableRotate = viewMode !== 'hierarchical';
+
       controls.addEventListener('change', handleControlsChange);
       handleControlsChange();
     };
@@ -1148,7 +1150,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       disposed = true;
       if (controls) controls.removeEventListener('change', handleControlsChange);
     };
-  }, [dimensions.width, dimensions.height, panSpeed, resumeAnimation, rotateSpeed, scheduleLabelVisibilityUpdate, updateCameraState, zoomSpeed]);
+  }, [dimensions.width, dimensions.height, panSpeed, resumeAnimation, rotateSpeed, scheduleLabelVisibilityUpdate, updateCameraState, zoomSpeed, viewMode]);
 
   useEffect(() => {
     const controls = graphRef.current?.controls() as any;
@@ -1299,6 +1301,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
             if (onBackgroundClick) onBackgroundClick();
             else onNodeSelect(null);
           }}
+          numDimensions={viewMode === 'hierarchical' ? 2 : 3}
         />
       )}
     </div>
