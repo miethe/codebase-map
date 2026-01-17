@@ -9,6 +9,14 @@ from hashlib import sha1
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
+try:
+    from .metadata_utils import package_from_path
+except ImportError:  # pragma: no cover - fallback for direct script execution
+    import sys
+
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+    from scripts.code_map.metadata_utils import package_from_path
+
 
 def _utc_now_iso() -> str:
     return (
@@ -196,8 +204,8 @@ def build_groupings(graph: Dict[str, Any]) -> Dict[str, Any]:
         ),
         GroupSet(
             id="layer",
-            label="Node Type",
-            source="extractor",
+            label="Layer",
+            source="inferred",
         ),
         GroupSet(
             id="ownership",
@@ -256,13 +264,16 @@ def build_groupings(graph: Dict[str, Any]) -> Dict[str, Any]:
         if not node_id:
             continue
         node_type = node.get("type")
-        if node_type:
-            add_group("layer", f"type:{node_type}", node_type, node_id)
+        layer = node.get("layer") or node_type
+        if layer:
+            add_group("layer", f"layer:{layer}", str(layer), node_id)
 
         file_path = node.get("file")
         directory = _dir_for_path(file_path)
         package = node.get("package")
         if directory or package:
+            if not package and file_path:
+                package = package_from_path(Path(file_path))
             package_label = package or "unknown-package"
             dir_label = directory or "."
             group_id = f"package:{package_label}/dir:{dir_label}"

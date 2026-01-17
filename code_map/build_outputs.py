@@ -79,6 +79,166 @@ def _format_list(values: Iterable[str]) -> str:
     return ", ".join(sorted(set(values)))
 
 
+def _guess_prefix(graph_path: Path) -> str:
+    name = graph_path.name
+    if name.endswith(".unified.json"):
+        return name[: -len(".unified.json")]
+    if name.endswith(".json"):
+        return name[: -len(".json")]
+    return name
+
+
+def _find_cluster_id(cluster_path: Optional[List[str]], prefix: str) -> Optional[str]:
+    if not cluster_path:
+        return None
+    for item in cluster_path:
+        if item.startswith(prefix):
+            return item
+    return None
+
+
+def _cluster_id_for_lod(node: Dict[str, Any], lod: int) -> Optional[str]:
+    cluster_path = node.get("cluster_path")
+    if lod == 0:
+        return _find_cluster_id(cluster_path, "package:") or _find_cluster_id(cluster_path, "repo:")
+    if lod == 1:
+        return (
+            _find_cluster_id(cluster_path, "module:")
+            or _find_cluster_id(cluster_path, "folder:")
+            or _find_cluster_id(cluster_path, "package:")
+        )
+    if lod == 2:
+        return (
+            _find_cluster_id(cluster_path, "file:")
+            or _find_cluster_id(cluster_path, "folder:")
+            or _find_cluster_id(cluster_path, "module:")
+            or _find_cluster_id(cluster_path, "package:")
+        )
+    if lod == 3:
+        return node.get("cluster_id") or f"symbol:{node.get('id')}"
+    return None
+
+
+def _cluster_label(cluster_id: str) -> str:
+    if ":" not in cluster_id:
+        return cluster_id
+    return cluster_id.split(":", 1)[-1]
+
+
+def _cluster_type(lod: int) -> str:
+    return {0: "package", 1: "module", 2: "file", 3: "symbol"}.get(lod, "cluster")
+
+
+def _aggregate_lod_graph(
+    nodes: List[Dict[str, Any]],
+    edges: List[Dict[str, Any]],
+    lod: int,
+    base_metadata: Dict[str, Any],
+) -> Dict[str, Any]:
+    if lod == 3:
+        return {
+            **base_metadata,
+            "source": f"lod{lod}",
+            "nodes": nodes,
+            "edges": edges,
+        }
+
+    cluster_nodes: Dict[str, Dict[str, Any]] = {}
+    node_to_cluster: Dict[str, str] = {}
+
+    for node in nodes:
+        node_id = node.get("id")
+        if not node_id:
+            continue
+        cluster_id = _cluster_id_for_lod(node, lod)
+        if not cluster_id:
+            continue
+        node_to_cluster[node_id] = cluster_id
+        cluster = cluster_nodes.get(cluster_id)
+        if not cluster:
+            cluster = {
+                "id": cluster_id,
+                "type": _cluster_type(lod),
+                "kind": "cluster",
+                "label": _cluster_label(cluster_id),
+                "label_short": _cluster_label(cluster_id).split("/")[-1],
+                "size": 0,
+                "member_count": 0,
+                "member_layers": {},
+                "cluster_id": cluster_id,
+            }
+            cluster_path = node.get("cluster_path") or []
+            if cluster_id in cluster_path:
+                idx = cluster_path.index(cluster_id)
+                cluster["cluster_path"] = cluster_path[: idx + 1]
+            cluster_nodes[cluster_id] = cluster
+        cluster["member_count"] += 1
+        cluster["size"] += node.get("size") or 0
+        layer = node.get("layer") or "unknown"
+        cluster["member_layers"][layer] = cluster["member_layers"].get(layer, 0) + 1
+
+    for cluster_id, cluster in cluster_nodes.items():
+        layer_counts = cluster.get("member_layers") or {}
+        if layer_counts:
+            dominant_layer = max(layer_counts.items(), key=lambda item: item[1])[0]
+            cluster["layer"] = dominant_layer
+        cluster.pop("member_layers", None)
+
+    aggregated_edges: Dict[tuple[str, str, str], Dict[str, Any]] = {}
+    for edge in edges:
+        source = edge.get("from")
+        target = edge.get("to")
+        if not source or not target:
+            continue
+        source_cluster = node_to_cluster.get(source)
+        target_cluster = node_to_cluster.get(target)
+        if not source_cluster or not target_cluster:
+            continue
+        if source_cluster == target_cluster:
+            continue
+        edge_type = edge.get("type") or "default"
+        key = (source_cluster, target_cluster, edge_type)
+        agg = aggregated_edges.get(key)
+        if not agg:
+            agg = {
+                "from": source_cluster,
+                "to": target_cluster,
+                "type": edge_type,
+                "weight": 0,
+                "confidence": edge.get("confidence") or "static",
+            }
+            aggregated_edges[key] = agg
+        agg["weight"] += edge.get("weight") or 1
+
+    return {
+        **base_metadata,
+        "source": f"lod{lod}",
+        "nodes": list(cluster_nodes.values()),
+        "edges": list(aggregated_edges.values()),
+    }
+
+
+def build_lod_graphs(
+    graph: Dict[str, Any],
+    out_dir: Path,
+    prefix: str,
+) -> None:
+    nodes = graph.get("nodes", []) or []
+    edges = graph.get("edges", []) or []
+    base_metadata = {
+        "schema_version": graph.get("schema_version"),
+        "generated_at": graph.get("generated_at"),
+        "source_commit": graph.get("source_commit"),
+    }
+    for lod in range(4):
+        payload = _aggregate_lod_graph(nodes, edges, lod, base_metadata)
+        out_path = out_dir / f"{prefix}.lod{lod}.json"
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        with out_path.open("w", encoding="utf-8") as handle:
+            json.dump(payload, handle, indent=2, sort_keys=True)
+            handle.write("\n")
+
+
 def build_hooks_table(
     nodes: List[Dict[str, Any]],
     edges: List[Dict[str, Any]],
@@ -176,7 +336,11 @@ def build_schemas_table(
     return _format_table(["Schema", "File", "Handlers"], rows)
 
 
-def build_outputs(graph_path: Path, details_path: Optional[Path] = None) -> None:
+def build_outputs(
+    graph_path: Path,
+    details_path: Optional[Path] = None,
+    lod_out_dir: Optional[Path] = None,
+) -> None:
     graph = _load_graph(graph_path)
     nodes = graph.get("nodes", [])
     edges = graph.get("edges", [])
@@ -189,6 +353,10 @@ def build_outputs(graph_path: Path, details_path: Optional[Path] = None) -> None
     _ = hooks_table
     _ = api_clients_table
     _ = schemas_table
+
+    prefix = _guess_prefix(graph_path)
+    out_dir = lod_out_dir or graph_path.parent
+    build_lod_graphs(graph, out_dir, prefix)
 
 
 def main() -> None:
@@ -203,9 +371,15 @@ def main() -> None:
         default="docs/architecture/codebase-graph/codebase-graph.details.json",
         help="Optional details JSON path",
     )
+    parser.add_argument(
+        "--lod-out-dir",
+        default=None,
+        help="Directory for LOD output JSON files (defaults to graph directory)",
+    )
     args = parser.parse_args()
 
-    build_outputs(Path(args.graph), Path(args.details))
+    lod_out = Path(args.lod_out_dir) if args.lod_out_dir else None
+    build_outputs(Path(args.graph), Path(args.details), lod_out)
 
 
 if __name__ == "__main__":

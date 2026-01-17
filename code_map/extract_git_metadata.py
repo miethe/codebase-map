@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import subprocess
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Dict, Iterable, List
 
@@ -17,6 +18,27 @@ def _run_git(args: Iterable[str]) -> str:
     if result.returncode != 0:
         raise RuntimeError(result.stderr.strip() or "git command failed")
     return result.stdout
+
+
+def _extract_change_counts(log_output: str, files: List[str]) -> Dict[str, int]:
+    counts = {path: 0 for path in files}
+    current_timestamp = 0
+    for line in log_output.splitlines():
+        entry = line.strip()
+        if not entry:
+            continue
+        if entry.startswith("###"):
+            parts = entry[3:].split("|", 1)
+            if parts and parts[0].isdigit():
+                current_timestamp = int(parts[0]) * 1000
+            else:
+                current_timestamp = 0
+            _ = current_timestamp
+            continue
+        file_path = entry
+        if file_path in counts:
+            counts[file_path] += 1
+    return counts
 
 
 def extract_git_metadata() -> Dict[str, Dict[str, Any]]:
@@ -51,11 +73,16 @@ def extract_git_metadata() -> Dict[str, Dict[str, Any]]:
         if record["last_modified"] == 0 and current_timestamp:
             record["last_modified"] = current_timestamp
 
+    since = (datetime.now(timezone.utc) - timedelta(days=30)).strftime("%Y-%m-%d")
+    recent_log = _run_git(["log", "--since", since, "--name-only", "--format=###%at|%an"])
+    recent_counts = _extract_change_counts(recent_log, files)
+
     output: Dict[str, Dict[str, Any]] = {}
     for path, record in stats.items():
         output[path] = {
             "last_modified": record["last_modified"],
             "change_count": record["changes"],
+            "change_count_30d": recent_counts.get(path, 0),
             "unique_authors": len(record["authors"]),
         }
     return output

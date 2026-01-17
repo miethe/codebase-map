@@ -31,12 +31,20 @@ def package_from_path(path: Path) -> Optional[str]:
     except Exception:
         rel = path
     parts = list(rel.parts)
-    if "skillmeat" not in parts:
+    if not parts:
         return None
-    idx = parts.index("skillmeat")
-    if idx + 1 < len(parts):
-        return f"skillmeat.{parts[idx + 1]}"
-    return "skillmeat"
+    if "skillmeat" in parts:
+        idx = parts.index("skillmeat")
+        if idx + 1 < len(parts):
+            return f"skillmeat.{parts[idx + 1]}"
+        return "skillmeat"
+    if parts[0] in {"packages", "apps", "services", "libs", "modules"} and len(parts) > 1:
+        return f"{parts[0]}/{parts[1]}"
+    if parts[0] in {"src", "lib"}:
+        return parts[0]
+    if len(parts) > 1:
+        return parts[0]
+    return None
 
 
 def doc_summary_from_docstring(docstring: Optional[str]) -> Optional[str]:
