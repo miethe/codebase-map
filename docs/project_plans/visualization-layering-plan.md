@@ -5,19 +5,20 @@
 - Introduce multi-layer clustering so zooming reveals nested structure rather than spaghetti.
 - Treat clusters as first-class entities (cluster nodes + aggregated edges) that can be expanded.
 - Enable FalkorDB-style “map layers” and stable, repeatable views for screenshots.
-- Keep interactions fast (LOD, culling, budgets) and compatible with WebGL/SVG renderers.
+- Keep interactions fast (LOD, culling, budgets) and **optimized for WebGL**, with SVG only as a fallback.
 
 ## Non-Goals (for this plan)
 - Replace the renderer (covered by `docs/project_plans/webgl-refactor-plan.md`).
 - Add AI features or workflow integrations (tracked elsewhere).
+- Provide full SVG feature parity (SVG is fallback-only and may be deprecated).
 
 ## Current Baseline (Relevant Files)
-- Rendering: `components/GraphCanvas.tsx`, `components/GraphCanvasWebGL.tsx`, `components/GraphRenderer.tsx`
+- Rendering: `components/GraphCanvasWebGL.tsx` (primary), `components/GraphRenderer.tsx`, `components/GraphCanvas.tsx` (SVG fallback, optional)
 - Layout helpers: `utils/clusterLayout.ts`, `utils/moduleGrouping.ts`
 - Metrics: `utils/graphAnalytics.ts`
 - Data model: `types.ts`, `constants.ts`
 - Graph data: `codebase-graph.*.json`, `metadata.json`, `codebase-graph.groupings.json`
-- Scraping pipeline now in `code_map/` (Python scripts)
+- Scraping pipeline now in `code_map/` (Python scripts; **not** `scripts/code_map/`)
 
 ---
 
@@ -27,8 +28,8 @@
 Add fields to `types.ts` and graph JSON:
 - `kind`: `repo|package|module|folder|file|symbol|cluster` (explicit hierarchy level).
 - `layer`: `ui|api|domain|data|infra|tests|shared|external` (architectural strata).
-- `cluster_id`: stable cluster id for the current hierarchy level.
-- `cluster_path`: array of parent cluster ids (root → leaf).
+- `cluster_id`: **stable, deterministic** cluster id for the current hierarchy level.
+- `cluster_path`: array of parent cluster ids (root → leaf), derived from deterministic ids.
 - `size`: numeric (LOC/tokens/byte size/complexity proxy).
 - `hotness`: churn score (commits/30d, last_modified age).
 - `bus_factor`: unique author count.
@@ -66,7 +67,7 @@ Extend `codebase-graph.groupings.json` to include group sets for each hierarchy 
 
 ### 2.1 Hierarchy + Layer Inference
 Update `code_map/build_groupings.py` and `code_map/metadata_utils.py` to:
-- Build deterministic `cluster_id` and `cluster_path` using repo-relative path.
+- Build deterministic `cluster_id` and `cluster_path` using repo-relative path (hash or stable slug).
 - Add `kind` and `layer` by heuristics (path prefixes, framework imports).
 - Map `entrypoint` flags from framework-specific entry files (e.g. `index.tsx`, routers).
 
@@ -92,7 +93,7 @@ Keep existing files intact to preserve compatibility.
 ## 3) Runtime Aggregation & LOD System
 
 ### 3.1 LOD Selection Strategy
-Create a zoom-based LOD system in `GraphRenderer`:
+Create a zoom-based LOD system in `GraphRenderer` with data selection in a renderer-agnostic hook (e.g., `useGraphLOD`):
 - LOD0 (overview): clusters only, edges bundled, label budget low.
 - LOD1 (mid): cluster nodes + major edges.
 - LOD2 (close): files + key symbols, selective edges.
@@ -114,6 +115,11 @@ Create a zoom-based LOD system in `GraphRenderer`:
 - Clicking a cluster enters “drill mode” (camera zoom + graph swap).
 - Back button or breadcrumb to pop back up a layer.
 - “Context ring” visualization: neighbors outside drill scope in low opacity.
+  
+### 3.5 Hybrid Graph Expansion
+- Allow partial expansion within a higher LOD (e.g., mostly LOD1 with a single LOD2 subtree).
+- Use a “graph patching” approach: merge expanded children into the current graph instead of replacing the entire dataset.
+- Keep positions stable by seeding children at the parent cluster’s `(x, y)` with slight jitter.
 
 ---
 
@@ -137,13 +143,18 @@ Add one-click presets with deterministic camera framing:
 - “Hide tests/generated/vendor” toggle.
 - “Only cross-boundary edges” toggle for overview.
 
+### 4.4 Summary Glyphs (Cluster Composition)
+- Add optional mini-glyphs on cluster nodes (e.g., mini bars for layer composition or a heat tint for churn).
+- Keep glyph rendering in WebGL; omit in SVG fallback if it complicates the path.
+
 ---
 
 ## 5) Rendering & Performance Plan
 
 ### 5.1 Renderer Abstraction
-- Keep `GraphRenderer` responsible for choosing LOD and data sources.
+- Keep `GraphRenderer` responsible for choosing LOD and data sources via `useGraphLOD`.
 - LOD switching should not re-run heavy layouts on every zoom tick.
+- WebGL is the primary renderer; SVG is optional fallback and may be deprecated later.
 
 ### 5.2 Performance Techniques
 - Cache layout positions per LOD to avoid recompute.
@@ -187,11 +198,13 @@ All passes share the same camera pose and dimensions.
 - Add LOD switching in `GraphRenderer`.
 - Implement cluster expansion/collapse.
 - Add superedge aggregation and edge bundling.
+- Ensure WebGL-first implementation; defer SVG parity unless needed.
 
 ### Phase 3 — UX & Presets (3–4 days)
 - Add view presets (Architecture/Backbone/Hotspots/Risk).
 - Add toggles and filters.
 - Implement label budget + collision avoidance.
+ - Add summary glyphs for cluster nodes (WebGL first).
 
 ### Phase 4 — Export & Repeatability (2–3 days)
 - Add export pipeline and deterministic camera presets.
@@ -213,11 +226,12 @@ All passes share the same camera pose and dimensions.
 - **LOD jitter**: add hysteresis thresholds for zoom switching.
 - **Performance regression**: enforce node/edge budgets; use WebGL for large graphs.
 - **Schema churn**: keep old JSON files and add new ones in parallel.
+- **Orphan nodes at high LOD**: create a `shared/utils` cluster strategy to avoid “dust cloud” views.
 
 ---
 
 ## 10) Open Questions
 - Which hierarchy should be the primary cluster path: path-based or semantic tags?
 - Do we want dynamic clustering (community detection) in addition to path-based groups?
-- Should the app load all LOD files up-front or fetch on demand?
+- Should the app load all LOD files up-front or fetch on demand, or use hybrid graph patching?
 - What are the default LOD thresholds for zoom levels (needs tuning)?
