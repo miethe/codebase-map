@@ -137,11 +137,20 @@ export interface GraphContextType {
   details: DetailsData | null; // The rich details loaded asynchronously
   isDetailsLoading: boolean;
   totalNodeCounts: Record<string, number>; // Stats based on raw data (for sidebar)
+  totalEdgeCounts: Record<string, number>; // Stats based on raw data (for sidebar)
   moduleCounts: Record<string, number>; // Stats for modules
   selectedNode: Node | null;
   setSelectedNode: (node: Node | null) => void;
   filters: Record<string, boolean>;
   setFilters: (filters: Record<string, boolean>) => void;
+  edgeTypeFilters: Record<string, boolean>;
+  setEdgeTypeFilters: (filters: Record<string, boolean>) => void;
+  hideIntraFileEdges: boolean;
+  setHideIntraFileEdges: (enabled: boolean) => void;
+  hideTestGeneratedVendor: boolean;
+  setHideTestGeneratedVendor: (enabled: boolean) => void;
+  onlyCrossBoundaryEdges: boolean;
+  setOnlyCrossBoundaryEdges: (enabled: boolean) => void;
   hoveredNode: Node | null;
   setHoveredNode: (node: Node | null) => void;
   focusMode: boolean;
@@ -257,6 +266,7 @@ export interface GraphRendererViewState {
   zoomSpeed: number;
   panSpeed: number;
   rotateSpeed: number;
+  zoomLevel: number;
 }
 
 export interface GraphRendererHandlers {

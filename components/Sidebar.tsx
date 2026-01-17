@@ -5,7 +5,7 @@ import { NODE_COLORS, EDGE_STYLES, Node, Edge } from '../types';
 import {
     Search, Filter, Layers, Zap, Database, Globe, Box, Info,
     GitGraph, Grid, Server, Terminal, FileCode, GitBranch,
-    ChevronDown, ChevronRight, ArrowRight, Activity, Laptop, LayoutGrid, Focus, Check, Minus, Workflow, ChevronLeft, Home, Download
+    ChevronDown, ChevronRight, ArrowRight, Activity, Laptop, LayoutGrid, Focus, Check, Minus, Workflow, ChevronLeft, Home, Download, Flame, AlertTriangle
 } from 'lucide-react';
 import { computeClusterMetrics } from '../utils/graphAnalytics';
 import { generateCursorRules } from '../utils/rulesGenerator';
@@ -120,11 +120,20 @@ export const Sidebar: React.FC = () => {
         details,
         isDetailsLoading,
         totalNodeCounts,
+        totalEdgeCounts,
         moduleCounts,
         selectedNode,
         setSelectedNode,
         filters,
         setFilters,
+        edgeTypeFilters,
+        setEdgeTypeFilters,
+        hideIntraFileEdges,
+        setHideIntraFileEdges,
+        hideTestGeneratedVendor,
+        setHideTestGeneratedVendor,
+        onlyCrossBoundaryEdges,
+        setOnlyCrossBoundaryEdges,
         focusMode,
         setFocusMode,
         viewMode,
@@ -141,6 +150,7 @@ export const Sidebar: React.FC = () => {
         gitMetadata
     } = useContext(GraphContext);
     const [searchTerm, setSearchTerm] = useState("");
+    const [activePreset, setActivePreset] = useState<string>('');
 
     const toggleFilter = (type: string) => {
         setFilters({ ...filters, [type]: !filters[type] });
@@ -159,6 +169,96 @@ export const Sidebar: React.FC = () => {
             newFilters[t] = targetState;
         });
         setFilters(newFilters);
+    };
+
+    const allEdgeTypes = useMemo(() => Object.keys(totalEdgeCounts), [totalEdgeCounts]);
+    const activeEdgeTypeCount = allEdgeTypes.filter(t => edgeTypeFilters[t] !== false).length;
+    const isAllEdgesChecked = activeEdgeTypeCount === allEdgeTypes.length && allEdgeTypes.length > 0;
+    const isEdgesIndeterminate = activeEdgeTypeCount > 0 && !isAllEdgesChecked;
+
+    const toggleEdgeFilter = (type: string) => {
+        const current = edgeTypeFilters[type] !== false;
+        setEdgeTypeFilters({ ...edgeTypeFilters, [type]: !current });
+    };
+
+    const handleToggleAllEdges = () => {
+        const targetState = !isAllEdgesChecked;
+        const nextFilters: Record<string, boolean> = { ...edgeTypeFilters };
+        allEdgeTypes.forEach(type => {
+            nextFilters[type] = targetState;
+        });
+        setEdgeTypeFilters(nextFilters);
+    };
+
+    const applyPreset = (presetId: string) => {
+        setActivePreset(presetId);
+        setFocusMode(false);
+        setGraphView('unified');
+        setActiveModule(null);
+
+        const resetNodeFilters = () => {
+            const nextFilters: Record<string, boolean> = {};
+            Object.keys(totalNodeCounts).forEach(type => {
+                nextFilters[type] = true;
+            });
+            setFilters(nextFilters);
+        };
+
+        const resetEdgeFilters = () => {
+            const nextFilters: Record<string, boolean> = {};
+            Object.keys(totalEdgeCounts).forEach(type => {
+                nextFilters[type] = true;
+            });
+            setEdgeTypeFilters(nextFilters);
+        };
+
+        const hasGrouping = (id: string) => Boolean(groupingData?.group_sets?.some((set: any) => set.id === id));
+
+        resetNodeFilters();
+        resetEdgeFilters();
+
+        switch (presetId) {
+            case 'architecture': {
+                setViewMode('hierarchical');
+                if (hasGrouping('layer')) {
+                    setActiveGroupingMode('layer');
+                    setActiveColorMode('layer');
+                } else {
+                    setActiveGroupingMode('structure');
+                    setActiveColorMode('module');
+                }
+                setHideTestGeneratedVendor(true);
+                setHideIntraFileEdges(false);
+                setOnlyCrossBoundaryEdges(true);
+                break;
+            }
+            case 'backbone': {
+                setViewMode('force');
+                setActiveColorMode('module');
+                setHideTestGeneratedVendor(true);
+                setHideIntraFileEdges(true);
+                setOnlyCrossBoundaryEdges(true);
+                break;
+            }
+            case 'hotspots': {
+                setViewMode('force');
+                setActiveColorMode(gitMetadata ? 'churn' : 'type');
+                setHideTestGeneratedVendor(false);
+                setHideIntraFileEdges(false);
+                setOnlyCrossBoundaryEdges(false);
+                break;
+            }
+            case 'risk': {
+                setViewMode('force');
+                setActiveColorMode(gitMetadata ? 'recency' : 'type');
+                setHideTestGeneratedVendor(true);
+                setHideIntraFileEdges(true);
+                setOnlyCrossBoundaryEdges(true);
+                break;
+            }
+            default:
+                break;
+        }
     };
 
     const immediateEdges = useMemo(() => {
@@ -596,6 +696,63 @@ export const Sidebar: React.FC = () => {
                     </div>
                 </CollapsibleSection>
 
+                <CollapsibleSection title="View Presets" icon={<LayoutGrid size={14} />} defaultOpen={true}>
+                    <div className="grid grid-cols-2 gap-2">
+                        <button
+                            onClick={() => applyPreset('architecture')}
+                            className={`rounded border px-3 py-2 text-left text-xs transition-colors ${activePreset === 'architecture'
+                                ? 'bg-indigo-500/20 border-indigo-500/40 text-indigo-200'
+                                : 'bg-slate-800/40 border-slate-700/60 text-slate-300 hover:bg-slate-800'
+                                }`}
+                        >
+                            <div className="flex items-center gap-2 font-medium">
+                                <Layers size={12} />
+                                Architecture
+                            </div>
+                            <div className="text-[10px] text-slate-500 mt-1">Layered overview + cross-boundary edges.</div>
+                        </button>
+                        <button
+                            onClick={() => applyPreset('backbone')}
+                            className={`rounded border px-3 py-2 text-left text-xs transition-colors ${activePreset === 'backbone'
+                                ? 'bg-indigo-500/20 border-indigo-500/40 text-indigo-200'
+                                : 'bg-slate-800/40 border-slate-700/60 text-slate-300 hover:bg-slate-800'
+                                }`}
+                        >
+                            <div className="flex items-center gap-2 font-medium">
+                                <Workflow size={12} />
+                                Backbone
+                            </div>
+                            <div className="text-[10px] text-slate-500 mt-1">Cross-module dependencies only.</div>
+                        </button>
+                        <button
+                            onClick={() => applyPreset('hotspots')}
+                            className={`rounded border px-3 py-2 text-left text-xs transition-colors ${activePreset === 'hotspots'
+                                ? 'bg-amber-500/20 border-amber-500/40 text-amber-200'
+                                : 'bg-slate-800/40 border-slate-700/60 text-slate-300 hover:bg-slate-800'
+                                }`}
+                        >
+                            <div className="flex items-center gap-2 font-medium">
+                                <Flame size={12} />
+                                Hotspots
+                            </div>
+                            <div className="text-[10px] text-slate-500 mt-1">Churn-focused heat map.</div>
+                        </button>
+                        <button
+                            onClick={() => applyPreset('risk')}
+                            className={`rounded border px-3 py-2 text-left text-xs transition-colors ${activePreset === 'risk'
+                                ? 'bg-rose-500/20 border-rose-500/40 text-rose-200'
+                                : 'bg-slate-800/40 border-slate-700/60 text-slate-300 hover:bg-slate-800'
+                                }`}
+                        >
+                            <div className="flex items-center gap-2 font-medium">
+                                <AlertTriangle size={12} />
+                                Risk
+                            </div>
+                            <div className="text-[10px] text-slate-500 mt-1">Recency + cross-boundary edges.</div>
+                        </button>
+                    </div>
+                </CollapsibleSection>
+
                 {/* Module / Cluster Focus */}
                 <CollapsibleSection title="Focus Cluster" icon={<Focus size={14} />} defaultOpen={true}>
                     <div className="space-y-2">
@@ -744,6 +901,96 @@ export const Sidebar: React.FC = () => {
                                 </span>
                             </label>
                         ))}
+                    </div>
+                </CollapsibleSection>
+
+                <CollapsibleSection title="Edge Filters" icon={<GitBranch size={14} />} defaultOpen={false}>
+                    <div className="space-y-3">
+                        <label className="flex items-center justify-between p-2 rounded bg-slate-800/40 border border-slate-700/50">
+                            <div className="flex flex-col">
+                                <span className="text-xs font-medium text-slate-300">Only Cross-Boundary Edges</span>
+                                <span className="text-[10px] text-slate-500">Hide intra-module or local edges.</span>
+                            </div>
+                            <input
+                                type="checkbox"
+                                checked={onlyCrossBoundaryEdges}
+                                onChange={() => setOnlyCrossBoundaryEdges(!onlyCrossBoundaryEdges)}
+                                className="rounded border-slate-600 bg-slate-700 text-indigo-500 focus:ring-offset-slate-900 accent-indigo-500"
+                            />
+                        </label>
+                        <label className="flex items-center justify-between p-2 rounded bg-slate-800/40 border border-slate-700/50">
+                            <div className="flex flex-col">
+                                <span className="text-xs font-medium text-slate-300">Hide Intra-File Edges</span>
+                                <span className="text-[10px] text-slate-500">Remove symbol-level chatter.</span>
+                            </div>
+                            <input
+                                type="checkbox"
+                                checked={hideIntraFileEdges}
+                                onChange={() => setHideIntraFileEdges(!hideIntraFileEdges)}
+                                className="rounded border-slate-600 bg-slate-700 text-indigo-500 focus:ring-offset-slate-900 accent-indigo-500"
+                            />
+                        </label>
+                        <label className="flex items-center justify-between p-2 rounded bg-slate-800/40 border border-slate-700/50">
+                            <div className="flex flex-col">
+                                <span className="text-xs font-medium text-slate-300">Hide Tests/Generated/Vendor</span>
+                                <span className="text-[10px] text-slate-500">Keep runtime-only paths visible.</span>
+                            </div>
+                            <input
+                                type="checkbox"
+                                checked={hideTestGeneratedVendor}
+                                onChange={() => setHideTestGeneratedVendor(!hideTestGeneratedVendor)}
+                                className="rounded border-slate-600 bg-slate-700 text-indigo-500 focus:ring-offset-slate-900 accent-indigo-500"
+                            />
+                        </label>
+
+                        <div className="border-t border-slate-800/80 pt-3">
+                            <div
+                                className="flex items-center justify-between p-2 mb-2 rounded bg-slate-800/50 hover:bg-slate-800 cursor-pointer border border-slate-700/50 transition-colors"
+                                onClick={handleToggleAllEdges}
+                            >
+                                <div className="flex items-center gap-2">
+                                    <div
+                                        className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${isAllEdgesChecked || isEdgesIndeterminate
+                                            ? 'bg-indigo-600 border-indigo-600'
+                                            : 'bg-slate-700 border-slate-600'
+                                            }`}
+                                    >
+                                        {isAllEdgesChecked && <Check size={10} className="text-white" />}
+                                        {isEdgesIndeterminate && <Minus size={10} className="text-white" />}
+                                    </div>
+                                    <span className="text-xs font-medium text-slate-300">Toggle All Edge Types</span>
+                                </div>
+                            </div>
+                            <div className="space-y-1">
+                                {Object.entries(totalEdgeCounts).sort((a: [string, number], b: [string, number]) => b[1] - a[1]).map(([type, count]) => (
+                                    <label
+                                        key={type}
+                                        className="flex items-center justify-between p-2 rounded hover:bg-slate-800 cursor-pointer group transition-colors"
+                                        title={`Toggle visibility for ${type} edges`}
+                                    >
+                                        <div className="flex items-center gap-2 text-slate-300 group-hover:text-white transition-colors">
+                                            <input
+                                                type="checkbox"
+                                                checked={edgeTypeFilters[type] !== false}
+                                                onChange={() => toggleEdgeFilter(type)}
+                                                className="rounded border-slate-600 bg-slate-700 text-indigo-500 focus:ring-offset-slate-900 accent-indigo-500"
+                                            />
+                                            <span
+                                                className="inline-block w-2.5 h-2.5 rounded-full"
+                                                style={{ backgroundColor: EDGE_STYLES[type]?.stroke || EDGE_STYLES.default.stroke }}
+                                            />
+                                            <span className="capitalize text-xs">{type.replace(/_/g, ' ')}</span>
+                                        </div>
+                                        <span className="text-[10px] text-slate-500 bg-slate-900 px-1 rounded">{count}</span>
+                                    </label>
+                                ))}
+                                {Object.keys(totalEdgeCounts).length === 0 && (
+                                    <div className="text-xs text-slate-600 italic px-2 py-1">
+                                        No edge types available.
+                                    </div>
+                                )}
+                            </div>
+                        </div>
                     </div>
                 </CollapsibleSection>
             </div>

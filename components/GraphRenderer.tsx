@@ -52,7 +52,8 @@ export const GraphRenderer: React.FC = () => {
       enablePerformanceMode,
       zoomSpeed,
       panSpeed,
-      rotateSpeed
+      rotateSpeed,
+      zoomLevel
     },
     handlers: {
       onNodeSelect: (node) => {
@@ -82,6 +83,7 @@ export const GraphRenderer: React.FC = () => {
     zoomSpeed,
     panSpeed,
     rotateSpeed,
+    zoomLevel,
     setSelectedNode,
     setHoveredNode,
     setZoomLevel

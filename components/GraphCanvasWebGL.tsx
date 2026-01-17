@@ -285,7 +285,9 @@ type TextSpriteOptions = {
 const createTextSprite = (text: string, options: TextSpriteOptions) => {
   const canvas = document.createElement('canvas');
   const context = canvas.getContext('2d');
-  if (!context) return new THREE.Object3D();
+  if (!context) {
+    return new THREE.Sprite(new THREE.SpriteMaterial({ transparent: true }));
+  }
   const {
     fontSize,
     fontWeight,
@@ -312,6 +314,10 @@ const createTextSprite = (text: string, options: TextSpriteOptions) => {
   const material = new THREE.SpriteMaterial({ map: texture, depthWrite: false, transparent: true });
   const sprite = new THREE.Sprite(material);
   sprite.scale.set(canvas.width * scale, canvas.height * scale, 1);
+  sprite.userData.labelSize = {
+    width: canvas.width * scale,
+    height: canvas.height * scale
+  };
   return sprite;
 };
 
@@ -347,6 +353,82 @@ const createModuleLabelSprite = (text: string) => createTextSprite(text, {
   fontFamily: '"Inter", sans-serif',
   scale: 0.15
 });
+
+const getLabelBudget = (zoomLevel: number, nodeCount: number) => {
+  const base = zoomLevel < 0.45 ? 70
+    : zoomLevel < 0.9 ? 130
+      : zoomLevel < 1.8 ? 240
+        : 420;
+  const scaled = Math.max(40, Math.floor(nodeCount * 0.18));
+  const budget = Math.max(30, Math.min(base, scaled));
+  return Math.min(nodeCount, budget);
+};
+
+const getLabelPriority = (node: Node, selectedId?: string | null, flowNodeIds?: Set<string> | null, zoomLevel?: number) => {
+  let score = node.totalDegree || node.degree || 0;
+  if (node.kind === 'cluster') score += 40;
+  if (node.entrypoint) score += 60;
+  if (node.size) score += Math.min(60, Math.log1p(node.size) * 6);
+  if (node.hotness) score += Math.min(80, node.hotness);
+  if (flowNodeIds?.has(node.id)) score += 120;
+  if (selectedId && node.id === selectedId) score += 2000;
+  if (zoomLevel && zoomLevel < 0.6 && node.kind === 'cluster') score += 120;
+  return score;
+};
+
+const shouldForceLabel = (node: Node, selectedId?: string | null, zoomLevel?: number) => {
+  if (selectedId && node.id === selectedId) return true;
+  if (zoomLevel !== undefined && zoomLevel < 0.45 && node.kind === 'cluster') return true;
+  return false;
+};
+
+const getGlyphIntensity = (node: Node) => {
+  if (node.hotness !== undefined) {
+    return Math.max(0.2, Math.min(1, node.hotness / 100));
+  }
+  if (node.size !== undefined) {
+    return Math.max(0.2, Math.min(1, Math.log1p(node.size) / 6));
+  }
+  if (node.totalDegree !== undefined) {
+    return Math.max(0.2, Math.min(1, Math.log1p(node.totalDegree) / 4));
+  }
+  return 0.35;
+};
+
+const createClusterGlyphSprite = (node: Node) => {
+  const size = 48;
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const context = canvas.getContext('2d');
+  if (!context) return null;
+  const intensity = getGlyphIntensity(node);
+  const outer = 18 + (intensity * 6);
+  const inner = 10 + (intensity * 3);
+  const gradient = context.createRadialGradient(size / 2, size / 2, inner, size / 2, size / 2, outer);
+  gradient.addColorStop(0, `rgba(248, 113, 113, ${0.7 * intensity})`);
+  gradient.addColorStop(1, `rgba(56, 189, 248, ${0.35 * (1 - intensity)})`);
+  context.strokeStyle = gradient;
+  context.lineWidth = 4;
+  context.beginPath();
+  context.arc(size / 2, size / 2, outer, 0, Math.PI * 2);
+  context.stroke();
+
+  context.fillStyle = `rgba(148, 163, 184, ${0.6 + (0.2 * intensity)})`;
+  context.beginPath();
+  context.arc(size / 2, size / 2, inner * 0.35, 0, Math.PI * 2);
+  context.fill();
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.minFilter = THREE.LinearFilter;
+  const material = new THREE.SpriteMaterial({ map: texture, depthWrite: false, transparent: true });
+  const sprite = new THREE.Sprite(material);
+  const scale = 0.22 + (intensity * 0.08);
+  sprite.scale.set(size * scale, size * scale, 1);
+  sprite.position.set(0, -8, 0);
+  sprite.renderOrder = 1;
+  return sprite;
+};
 
 const applyStructuredLayout = (nodes: Node[], width: number, height: number) => {
   const groupsCount = 7;
@@ -391,7 +473,8 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     enablePerformanceMode,
     zoomSpeed,
     panSpeed,
-    rotateSpeed
+    rotateSpeed,
+    zoomLevel
   } = viewState;
   const {
     onNodeSelect,
@@ -405,7 +488,9 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   const nodePositions = useRef<Map<string, { x: number; y: number; z: number; vx?: number; vy?: number; vz?: number }>>(new Map());
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [reduceDetail, setReduceDetail] = useState(false);
-  const labelCache = useRef<Map<string, THREE.Object3D>>(new Map());
+  const nodeObjectCache = useRef<Map<string, THREE.Object3D>>(new Map());
+  const labelCache = useRef<Map<string, THREE.Sprite>>(new Map());
+  const glyphCache = useRef<Map<string, THREE.Sprite>>(new Map());
   const overlayGroupRef = useRef<THREE.Group | null>(null);
   const moduleOverlayRef = useRef<THREE.Group | null>(null);
   const headerOverlayRef = useRef<THREE.Group | null>(null);
@@ -429,6 +514,10 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   const frustumRef = useRef(new THREE.Frustum());
   const projScreenMatrixRef = useRef(new THREE.Matrix4());
   const tempVectorRef = useRef(new THREE.Vector3());
+  const cameraRightRef = useRef(new THREE.Vector3());
+  const cameraUpRef = useRef(new THREE.Vector3());
+  const tempVectorBRef = useRef(new THREE.Vector3());
+  const tempVectorCRef = useRef(new THREE.Vector3());
 
   const updateReduceDetail = useCallback((speed: number) => {
     if (!enableMotionOptimizations) return;
@@ -542,7 +631,25 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     const frustum = frustumRef.current;
     frustum.setFromProjectionMatrix(projScreenMatrix);
     const tempVector = tempVectorRef.current;
+    const tempVectorB = tempVectorBRef.current;
+    const tempVectorC = tempVectorCRef.current;
+    const rightVec = cameraRightRef.current;
+    const upVec = cameraUpRef.current;
+    rightVec.set(1, 0, 0).applyQuaternion(camera.quaternion);
+    upVec.set(0, 1, 0).applyQuaternion(camera.quaternion);
+    const width = Math.max(1, dimensions.width);
+    const height = Math.max(1, dimensions.height);
+
+    const candidates: Node[] = [];
     let didChange = false;
+    const setGlyphVisibility = (nodeId: string, visible: boolean) => {
+      const glyph = glyphCache.current.get(nodeId);
+      if (glyph && glyph.visible !== visible) {
+        glyph.visible = visible;
+        didChange = true;
+      }
+    };
+
     dataSnapshot.nodes.forEach(node => {
       const sprite = labelCache.current.get(node.id);
       if (!sprite) return;
@@ -552,24 +659,100 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
           sprite.visible = false;
           didChange = true;
         }
+        setGlyphVisibility(node.id, false);
         return;
-      }
-      if (labelVisibilityModeRef.current === 'hidden') {
-        sprite.visible = true;
-        didChange = true;
       }
       tempVector.set(node.x ?? 0, node.y ?? 0, node.z ?? 0);
       const inView = frustum.containsPoint(tempVector);
-      if (sprite.visible !== inView) {
-        sprite.visible = inView;
+      if (!inView) {
+        if (sprite.visible) {
+          sprite.visible = false;
+          didChange = true;
+        }
+        setGlyphVisibility(node.id, false);
+        return;
+      }
+      candidates.push(node);
+    });
+
+    const labelBudget = getLabelBudget(zoomLevel, dataSnapshot.nodes.length);
+    const ranked = candidates
+      .map(node => ({
+        node,
+        score: getLabelPriority(node, selectedNode?.id, flowNodeIds || undefined, zoomLevel)
+      }))
+      .sort((a, b) => b.score - a.score);
+
+    const placed: Array<{ x1: number; y1: number; x2: number; y2: number }> = [];
+    let shown = 0;
+
+    const projectToScreen = (vector: THREE.Vector3) => {
+      vector.project(camera);
+      return {
+        x: (vector.x * 0.5 + 0.5) * width,
+        y: (-vector.y * 0.5 + 0.5) * height
+      };
+    };
+
+    const collides = (bounds: { x1: number; y1: number; x2: number; y2: number }) => {
+      return placed.some(other =>
+        !(bounds.x2 < other.x1 || bounds.x1 > other.x2 || bounds.y2 < other.y1 || bounds.y1 > other.y2)
+      );
+    };
+
+    ranked.forEach(entry => {
+      const node = entry.node;
+      const sprite = labelCache.current.get(node.id);
+      if (!sprite) return;
+      const force = shouldForceLabel(node, selectedNode?.id, zoomLevel);
+      if (!force && shown >= labelBudget) {
+        if (sprite.visible) {
+          sprite.visible = false;
+          didChange = true;
+        }
+        setGlyphVisibility(node.id, false);
+        return;
+      }
+      const labelSize = sprite.userData.labelSize || { width: 12, height: 6 };
+      const halfW = labelSize.width / 2;
+      const halfH = labelSize.height / 2;
+      const center = tempVectorB.set(node.x ?? 0, node.y ?? 0, node.z ?? 0).add(sprite.position);
+
+      tempVectorC.copy(center).addScaledVector(rightVec, halfW).addScaledVector(upVec, halfH);
+      const corner1 = projectToScreen(tempVectorC);
+      tempVector.copy(center).addScaledVector(rightVec, -halfW).addScaledVector(upVec, -halfH);
+      const corner2 = projectToScreen(tempVector);
+
+      const padding = 2;
+      const bounds = {
+        x1: Math.min(corner1.x, corner2.x) - padding,
+        y1: Math.min(corner1.y, corner2.y) - padding,
+        x2: Math.max(corner1.x, corner2.x) + padding,
+        y2: Math.max(corner1.y, corner2.y) + padding
+      };
+
+      if (!force && collides(bounds)) {
+        if (sprite.visible) {
+          sprite.visible = false;
+          didChange = true;
+        }
+        setGlyphVisibility(node.id, false);
+        return;
+      }
+      if (!sprite.visible) {
+        sprite.visible = true;
         didChange = true;
       }
+      setGlyphVisibility(node.id, true);
+      placed.push(bounds);
+      shown += 1;
     });
+
     labelVisibilityModeRef.current = shouldShow ? 'frustum' : 'hidden';
     if (didChange) {
       graph.refresh();
     }
-  }, [enableMotionOptimizations, enablePerformanceMode, reduceDetail, selectedNode, focusMode, flowNodeIds]);
+  }, [enableMotionOptimizations, enablePerformanceMode, reduceDetail, selectedNode, focusMode, flowNodeIds, zoomLevel, dimensions.width, dimensions.height]);
 
   const scheduleLabelVisibilityUpdate = useCallback(() => {
     if (enablePerformanceMode) return;
@@ -871,7 +1054,11 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       if ((renderer as any).forceContextLoss) {
         (renderer as any).forceContextLoss();
       }
+      labelCache.current.forEach(sprite => disposeSprite(sprite));
+      glyphCache.current.forEach(sprite => disposeSprite(sprite));
       labelCache.current.clear();
+      glyphCache.current.clear();
+      nodeObjectCache.current.clear();
       nodePositions.current.clear();
     };
   }, []);
@@ -1178,7 +1365,11 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   }, [zoomSpeed, panSpeed, rotateSpeed]);
 
   useEffect(() => {
+    labelCache.current.forEach(sprite => disposeSprite(sprite));
+    glyphCache.current.forEach(sprite => disposeSprite(sprite));
     labelCache.current.clear();
+    glyphCache.current.clear();
+    nodeObjectCache.current.clear();
     graphRef.current?.refresh();
     scheduleLabelVisibilityUpdate();
   }, [graphData.nodes.length, enablePerformanceMode, scheduleLabelVisibilityUpdate]);
@@ -1214,15 +1405,29 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   }, [selectedNode, focusMode, flowNodeIds]);
 
   const nodeThreeObject = useCallback((node: Node) => {
-    const cached = labelCache.current.get(node.id);
+    const cached = nodeObjectCache.current.get(node.id);
     if (cached) {
-      cached.visible = true;
+      const labelSprite = labelCache.current.get(node.id);
+      if (labelSprite) labelSprite.visible = true;
       return cached;
     }
-    const sprite = createLabelSprite(getCleanLabel(node));
-    sprite.visible = true;
-    labelCache.current.set(node.id, sprite);
-    return sprite;
+    const group = new THREE.Group();
+    const labelSprite = createLabelSprite(getCleanLabel(node));
+    labelSprite.visible = true;
+    labelCache.current.set(node.id, labelSprite);
+    group.add(labelSprite);
+
+    if (node.kind === 'cluster') {
+      const glyphSprite = createClusterGlyphSprite(node);
+      if (glyphSprite) {
+        glyphSprite.visible = true;
+        glyphCache.current.set(node.id, glyphSprite);
+        group.add(glyphSprite);
+      }
+    }
+
+    nodeObjectCache.current.set(node.id, group);
+    return group;
   }, []);
 
   const reducedDetail = enableMotionOptimizations && reduceDetail;

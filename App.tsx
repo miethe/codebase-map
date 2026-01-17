@@ -16,11 +16,20 @@ export const GraphContext = React.createContext<GraphContextType>({
   data: { nodes: [], edges: [] },
   lodData: null,
   totalNodeCounts: {},
+  totalEdgeCounts: {},
   moduleCounts: {},
   selectedNode: null,
   setSelectedNode: () => { },
   filters: {},
   setFilters: () => { },
+  edgeTypeFilters: {},
+  setEdgeTypeFilters: () => { },
+  hideIntraFileEdges: false,
+  setHideIntraFileEdges: () => { },
+  hideTestGeneratedVendor: false,
+  setHideTestGeneratedVendor: () => { },
+  onlyCrossBoundaryEdges: false,
+  setOnlyCrossBoundaryEdges: () => { },
   hoveredNode: null,
   setHoveredNode: () => { },
   focusMode: false,
@@ -237,9 +246,10 @@ const App: React.FC = () => {
   }, [groupingData, activeGroupingMode]);
 
   // Calculate Total Counts & Module Counts (based on Raw Data)
-  const { totalNodeCounts, moduleCounts } = useMemo(() => {
+  const { totalNodeCounts, moduleCounts, totalEdgeCounts } = useMemo(() => {
     const tCounts: Record<string, number> = {};
     const mCounts: Record<string, number> = {};
+    const eCounts: Record<string, number> = {};
 
     rawData.nodes.forEach(n => {
       tCounts[n.type] = (tCounts[n.type] || 0) + 1;
@@ -253,7 +263,12 @@ const App: React.FC = () => {
       }
     });
 
-    return { totalNodeCounts: tCounts, moduleCounts: mCounts };
+    rawData.edges.forEach(e => {
+      const edgeType = e.type || 'default';
+      eCounts[edgeType] = (eCounts[edgeType] || 0) + 1;
+    });
+
+    return { totalNodeCounts: tCounts, moduleCounts: mCounts, totalEdgeCounts: eCounts };
   }, [rawData, activeModule]);
 
   const nodeLegendItems = useMemo(() => {
@@ -274,6 +289,10 @@ const App: React.FC = () => {
   }, [rawData]);
 
   const [filters, setFilters] = useState<Record<string, boolean>>({});
+  const [edgeTypeFilters, setEdgeTypeFilters] = useState<Record<string, boolean>>({});
+  const [hideIntraFileEdges, setHideIntraFileEdges] = useState(false);
+  const [hideTestGeneratedVendor, setHideTestGeneratedVendor] = useState(false);
+  const [onlyCrossBoundaryEdges, setOnlyCrossBoundaryEdges] = useState(false);
 
   // Sync initial filters when data loads
   useEffect(() => {
@@ -282,9 +301,59 @@ const App: React.FC = () => {
     }
   }, [initialFilters]);
 
+  const initialEdgeFilters = useMemo(() => {
+    const filters: Record<string, boolean> = {};
+    if (rawData.edges) {
+      rawData.edges.forEach(e => {
+        const edgeType = e.type || 'default';
+        filters[edgeType] = true;
+      });
+    }
+    return filters;
+  }, [rawData]);
+
+  useEffect(() => {
+    if (Object.keys(initialEdgeFilters).length > 0) {
+      setEdgeTypeFilters(initialEdgeFilters);
+    }
+  }, [initialEdgeFilters]);
+
   // --- Filtering Engine ---
   const filteredData = useMemo(() => {
     if (!rawData.nodes || !rawData.edges) return { nodes: [], edges: [] };
+
+    const nodeIndex = new Map<string, Node>();
+    rawData.nodes.forEach(n => nodeIndex.set(n.id, n));
+
+    const isNonProdNode = (node: Node) => {
+      if (node.layer === 'tests') return true;
+      if (node.externality && node.externality !== 'internal') return true;
+      if (node.generated) return true;
+      if (node.type === 'external_dependency') return true;
+      const haystack = `${node.file || ''} ${node.id || ''}`.toLowerCase();
+      if (/(^|\/)(__tests__|__mocks__|tests?|specs?|fixtures?)(\/|$)/i.test(haystack)) return true;
+      if (/\.(spec|test)\.[jt]sx?$/.test(haystack)) return true;
+      if (/(^|\/)(generated|vendor|third_party|dist|build)(\/|$)/i.test(haystack)) return true;
+      return false;
+    };
+
+    const isIntraFileEdge = (edge: Edge) => {
+      const source = nodeIndex.get(edge.from);
+      const target = nodeIndex.get(edge.to);
+      if (!source?.file || !target?.file) return false;
+      return source.file === target.file;
+    };
+
+    const isCrossBoundaryEdge = (edge: Edge) => {
+      if (edge.distance_class) return edge.distance_class !== 'local';
+      const source = nodeIndex.get(edge.from);
+      const target = nodeIndex.get(edge.to);
+      if (!source || !target) return true;
+      const sourceTop = source.modulePath?.[0] || source.module || source.file;
+      const targetTop = target.modulePath?.[0] || target.module || target.file;
+      if (sourceTop && targetTop) return sourceTop !== targetTop;
+      return source.id !== target.id;
+    };
 
     // 0. Pre-calculate Total Degrees from Raw Data (for visual sizing)
     const totalDegreeMap = new Map<string, number>();
@@ -340,14 +409,17 @@ const App: React.FC = () => {
         return false;
       }
 
-      // B. Filter by Explicit Type Toggle (Sidebar)
+      // B. Filter by Test/Generated/Vendor Toggle
+      if (hideTestGeneratedVendor && isNonProdNode(n) && !contextNodeIds.has(n.id)) return false;
+
+      // C. Filter by Explicit Type Toggle (Sidebar)
       if (filters[n.type] === false) return false;
 
-      // C. Check Selection Context
+      // D. Check Selection Context
       // If a node is selected, it should be visible even if view mode would hide it
       if (contextNodeIds.has(n.id)) return true;
 
-      // D. Filter by View Mode (Frontend vs Backend)
+      // E. Filter by View Mode (Frontend vs Backend)
       if (graphView === 'frontend') {
         return FRONTEND_TYPES.has(n.type);
       }
@@ -368,15 +440,20 @@ const App: React.FC = () => {
     const visibleNodeIds = new Set(visibleNodes.map(n => n.id));
 
     // 4. Filter Edges
-    const visibleEdges = rawData.edges.filter(e =>
-      visibleNodeIds.has(e.from) && visibleNodeIds.has(e.to)
-    );
+    const visibleEdges = rawData.edges.filter(e => {
+      if (!visibleNodeIds.has(e.from) || !visibleNodeIds.has(e.to)) return false;
+      const edgeType = e.type || 'default';
+      if (edgeTypeFilters[edgeType] === false) return false;
+      if (hideIntraFileEdges && isIntraFileEdge(e)) return false;
+      if (onlyCrossBoundaryEdges && !isCrossBoundaryEdge(e)) return false;
+      return true;
+    });
 
     return {
       nodes: visibleNodes,
       edges: visibleEdges
     };
-  }, [rawData, filters, graphView, selectedNode, activeModule]);
+  }, [rawData, filters, edgeTypeFilters, graphView, selectedNode, activeModule, hideIntraFileEdges, hideTestGeneratedVendor, onlyCrossBoundaryEdges]);
 
   // Derived context value
   const contextValue: GraphContextType = {
@@ -385,11 +462,20 @@ const App: React.FC = () => {
     details,
     isDetailsLoading,
     totalNodeCounts,
+    totalEdgeCounts,
     moduleCounts,
     selectedNode,
     setSelectedNode,
     filters,
     setFilters,
+    edgeTypeFilters,
+    setEdgeTypeFilters,
+    hideIntraFileEdges,
+    setHideIntraFileEdges,
+    hideTestGeneratedVendor,
+    setHideTestGeneratedVendor,
+    onlyCrossBoundaryEdges,
+    setOnlyCrossBoundaryEdges,
     hoveredNode,
     setHoveredNode,
     focusMode,
