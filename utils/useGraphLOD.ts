@@ -45,6 +45,13 @@ const attachTotalDegree = (graph: GraphData): GraphData => {
   };
 };
 
+const filterEdgesToNodes = (graph: GraphData): GraphData => {
+  const nodeIds = new Set(graph.nodes.map(node => node.id));
+  const filteredEdges = graph.edges.filter(edge => nodeIds.has(edge.from) && nodeIds.has(edge.to));
+  if (filteredEdges.length === graph.edges.length) return graph;
+  return { ...graph, edges: filteredEdges };
+};
+
 const bundleClusterEdges = (nodes: Node[], edges: Edge[]): Edge[] => {
   const nodeIndex = new Map(nodes.map(node => [node.id, node]));
   const bundledEdges = new Map<string, Edge>();
@@ -152,7 +159,7 @@ export const useGraphLOD = ({
 
   const graphData = useMemo(() => {
     if (!allowLod) {
-      return attachTotalDegree(baseData);
+      return attachTotalDegree(filterEdgesToNodes(baseData));
     }
 
     const activeData = getLodData(lodData, lodLevel) || baseData;
@@ -170,7 +177,7 @@ export const useGraphLOD = ({
       };
     }
 
-    return attachTotalDegree(nextGraph);
+    return attachTotalDegree(filterEdgesToNodes(nextGraph));
   }, [allowLod, baseData, expandedClusters, lodData, lodLevel]);
 
   return {

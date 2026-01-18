@@ -175,73 +175,80 @@
       },
       "notes": "method_name=buildApiUrl"
     },
-    "api_client:skillmeat/web/lib/api/groups.ts::addArtifactToGroup->api_endpoint:POST /api/v1/groups/{groupId}/artifacts/{artifactId}:api_client_calls_endpoint": {
+    "api_client:skillmeat/web/lib/api/groups.ts::addArtifactToGroup->api_endpoint:POST /api/v1/groups/{groupId}/artifacts:api_client_calls_endpoint": {
       "callsite": {
         "file": "skillmeat/web/lib/api/groups.ts",
-        "line": 96
+        "line": 98
+      },
+      "notes": "method_name=buildApiUrl"
+    },
+    "api_client:skillmeat/web/lib/api/groups.ts::copyGroup->api_endpoint:POST /api/v1/groups/{groupId}/copy:api_client_calls_endpoint": {
+      "callsite": {
+        "file": "skillmeat/web/lib/api/groups.ts",
+        "line": 192
       },
       "notes": "method_name=buildApiUrl"
     },
     "api_client:skillmeat/web/lib/api/groups.ts::createGroup->api_endpoint:POST /api/v1/groups:api_client_calls_endpoint": {
       "callsite": {
         "file": "skillmeat/web/lib/api/groups.ts",
-        "line": 47
+        "line": 48
       },
       "notes": "method_name=buildApiUrl"
     },
     "api_client:skillmeat/web/lib/api/groups.ts::deleteGroup->api_endpoint:DELETE /api/v1/groups/{id}:api_client_calls_endpoint": {
       "callsite": {
         "file": "skillmeat/web/lib/api/groups.ts",
-        "line": 77
+        "line": 78
       },
       "notes": "method_name=buildApiUrl"
     },
     "api_client:skillmeat/web/lib/api/groups.ts::fetchGroup->api_endpoint:GET /api/v1/groups/{id}:api_client_calls_endpoint": {
       "callsite": {
         "file": "skillmeat/web/lib/api/groups.ts",
-        "line": 36
+        "line": 37
       },
       "notes": "method_name=buildApiUrl"
     },
     "api_client:skillmeat/web/lib/api/groups.ts::fetchGroups->api_endpoint:GET /api/v1/groups:api_client_calls_endpoint": {
       "callsite": {
         "file": "skillmeat/web/lib/api/groups.ts",
-        "line": 25
+        "line": 26
       },
       "notes": "method_name=buildApiUrl"
     },
     "api_client:skillmeat/web/lib/api/groups.ts::moveArtifactToGroup->api_endpoint:POST /api/v1/groups/{sourceGroupId}/artifacts/{artifactId}/move:api_client_calls_endpoint": {
       "callsite": {
         "file": "skillmeat/web/lib/api/groups.ts",
-        "line": 152
+        "line": 154
       },
       "notes": "method_name=buildApiUrl"
     },
     "api_client:skillmeat/web/lib/api/groups.ts::removeArtifactFromGroup->api_endpoint:DELETE /api/v1/groups/{groupId}/artifacts/{artifactId}:api_client_calls_endpoint": {
       "callsite": {
         "file": "skillmeat/web/lib/api/groups.ts",
-        "line": 111
+        "line": 113
       },
       "notes": "method_name=buildApiUrl"
     },
     "api_client:skillmeat/web/lib/api/groups.ts::reorderArtifactsInGroup->api_endpoint:POST /api/v1/groups/{groupId}/artifacts/reorder:api_client_calls_endpoint": {
       "callsite": {
         "file": "skillmeat/web/lib/api/groups.ts",
-        "line": 128
+        "line": 130
       },
       "notes": "method_name=buildApiUrl"
     },
     "api_client:skillmeat/web/lib/api/groups.ts::reorderGroups->api_endpoint:PUT /api/v1/collections/{collectionId}/groups/reorder:api_client_calls_endpoint": {
       "callsite": {
         "file": "skillmeat/web/lib/api/groups.ts",
-        "line": 169
+        "line": 171
       },
       "notes": "method_name=buildApiUrl"
     },
     "api_client:skillmeat/web/lib/api/groups.ts::updateGroup->api_endpoint:PUT /api/v1/groups/{id}:api_client_calls_endpoint": {
       "callsite": {
         "file": "skillmeat/web/lib/api/groups.ts",
-        "line": 62
+        "line": 63
       },
       "notes": "method_name=buildApiUrl"
     },
@@ -291,6 +298,34 @@
       "callsite": {
         "file": "skillmeat/web/lib/api/merge.ts",
         "line": 125
+      },
+      "notes": "method_name=buildApiUrl"
+    },
+    "api_client:skillmeat/web/lib/api/settings.ts::clearGitHubToken->api_endpoint:DELETE /api/v1/settings/github-token:api_client_calls_endpoint": {
+      "callsite": {
+        "file": "skillmeat/web/lib/api/settings.ts",
+        "line": 114
+      },
+      "notes": "method_name=buildApiUrl"
+    },
+    "api_client:skillmeat/web/lib/api/settings.ts::getGitHubTokenStatus->api_endpoint:GET /api/v1/settings/github-token/status:api_client_calls_endpoint": {
+      "callsite": {
+        "file": "skillmeat/web/lib/api/settings.ts",
+        "line": 70
+      },
+      "notes": "method_name=buildApiUrl"
+    },
+    "api_client:skillmeat/web/lib/api/settings.ts::setGitHubToken->api_endpoint:POST /api/v1/settings/github-token:api_client_calls_endpoint": {
+      "callsite": {
+        "file": "skillmeat/web/lib/api/settings.ts",
+        "line": 47
+      },
+      "notes": "method_name=buildApiUrl"
+    },
+    "api_client:skillmeat/web/lib/api/settings.ts::validateGitHubToken->api_endpoint:POST /api/v1/settings/github-token/validate:api_client_calls_endpoint": {
+      "callsite": {
+        "file": "skillmeat/web/lib/api/settings.ts",
+        "line": 90
       },
       "notes": "method_name=buildApiUrl"
     },
@@ -494,14 +529,14 @@
     "handler:skillmeat/api/routers/artifacts.py::add_skip_preference->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/skip_preferences.py::SkipPreferenceManager:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/artifacts.py",
-        "line": 5836
+        "line": 5841
       },
       "notes": "method_name=SkipPreferenceManager"
     },
     "handler:skillmeat/api/routers/artifacts.py::add_tag_to_artifact->service:skillmeat.core.services::TagService:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/artifacts.py",
-        "line": 6168
+        "line": 6173
       },
       "notes": "method_name=TagService"
     },
@@ -545,7 +580,7 @@
     "handler:skillmeat/api/routers/artifacts.py::check_artifact_upstream->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/artifact.py::ArtifactType:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/artifacts.py",
-        "line": 2078
+        "line": 2083
       },
       "notes": "method_name=ArtifactType"
     },
@@ -555,7 +590,7 @@
     "handler:skillmeat/api/routers/artifacts.py::clear_skip_preferences->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/skip_preferences.py::SkipPreferenceManager:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/artifacts.py",
-        "line": 6005
+        "line": 6010
       },
       "notes": "method_name=SkipPreferenceManager"
     },
@@ -608,21 +643,21 @@
     "handler:skillmeat/api/routers/artifacts.py::create_artifact_file->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/artifact.py::ArtifactType:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/artifacts.py",
-        "line": 5123
+        "line": 5128
       },
       "notes": "method_name=ArtifactType"
     },
     "handler:skillmeat/api/routers/artifacts.py::delete_artifact->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/artifact.py::ArtifactType:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/artifacts.py",
-        "line": 2673
+        "line": 2678
       },
       "notes": "method_name=ArtifactType"
     },
     "handler:skillmeat/api/routers/artifacts.py::delete_artifact_file->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/artifact.py::ArtifactType:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/artifacts.py",
-        "line": 5391
+        "line": 5396
       },
       "notes": "method_name=ArtifactType"
     },
@@ -635,14 +670,14 @@
     "handler:skillmeat/api/routers/artifacts.py::deploy_artifact->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/artifact.py::ArtifactType:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/artifacts.py",
-        "line": 2794
+        "line": 2799
       },
       "notes": "method_name=ArtifactType"
     },
     "handler:skillmeat/api/routers/artifacts.py::deploy_artifact->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/deployment.py::DeploymentManager:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/artifacts.py",
-        "line": 2837
+        "line": 2842
       },
       "notes": "method_name=DeploymentManager"
     },
@@ -672,7 +707,7 @@
     "handler:skillmeat/api/routers/artifacts.py::discovery_health_check->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/discovery_metrics.py::discovery_metrics:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/artifacts.py",
-        "line": 5761
+        "line": 5766
       },
       "notes": "method_name=get_stats"
     },
@@ -682,21 +717,21 @@
     "handler:skillmeat/api/routers/artifacts.py::fetch_github_metadata->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/cache.py::MetadataCache:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/artifacts.py",
-        "line": 5602
+        "line": 5607
       },
       "notes": "method_name=MetadataCache"
     },
     "handler:skillmeat/api/routers/artifacts.py::fetch_github_metadata->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/github_metadata.py::GitHubMetadataExtractor:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/artifacts.py",
-        "line": 5618
+        "line": 5623
       },
       "notes": "method_name=GitHubMetadataExtractor"
     },
     "handler:skillmeat/api/routers/artifacts.py::fetch_github_metadata->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/validation.py::validate_github_source:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/artifacts.py",
-        "line": 5590
+        "line": 5595
       },
       "notes": "method_name=validate_github_source"
     },
@@ -706,7 +741,7 @@
     "handler:skillmeat/api/routers/artifacts.py::get_artifact->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/artifact.py::ArtifactType:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/artifacts.py",
-        "line": 1963
+        "line": 1968
       },
       "notes": "method_name=ArtifactType"
     },
@@ -716,7 +751,7 @@
     "handler:skillmeat/api/routers/artifacts.py::get_artifact_diff->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/artifact.py::ArtifactType:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/artifacts.py",
-        "line": 3582
+        "line": 3587
       },
       "notes": "method_name=ArtifactType"
     },
@@ -726,7 +761,7 @@
     "handler:skillmeat/api/routers/artifacts.py::get_artifact_file_content->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/artifact.py::ArtifactType:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/artifacts.py",
-        "line": 4575
+        "line": 4580
       },
       "notes": "method_name=ArtifactType"
     },
@@ -736,7 +771,7 @@
     "handler:skillmeat/api/routers/artifacts.py::get_artifact_tags->service:skillmeat.core.services::TagService:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/artifacts.py",
-        "line": 6139
+        "line": 6144
       },
       "notes": "method_name=TagService"
     },
@@ -746,14 +781,14 @@
     "handler:skillmeat/api/routers/artifacts.py::get_artifact_upstream_diff->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/artifact.py::ArtifactType:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/artifacts.py",
-        "line": 3947
+        "line": 3952
       },
       "notes": "method_name=ArtifactType"
     },
     "handler:skillmeat/api/routers/artifacts.py::get_discovery_metrics->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/discovery_metrics.py::discovery_metrics:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/artifacts.py",
-        "line": 5707
+        "line": 5712
       },
       "notes": "method_name=get_stats"
     },
@@ -763,7 +798,7 @@
     "handler:skillmeat/api/routers/artifacts.py::get_version_graph->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/artifact.py::ArtifactType:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/artifacts.py",
-        "line": 3449
+        "line": 3454
       },
       "notes": "method_name=ArtifactType"
     },
@@ -773,7 +808,7 @@
     "handler:skillmeat/api/routers/artifacts.py::list_artifact_files->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/artifact.py::ArtifactType:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/artifacts.py",
-        "line": 4341
+        "line": 4346
       },
       "notes": "method_name=ArtifactType"
     },
@@ -783,7 +818,7 @@
     "handler:skillmeat/api/routers/artifacts.py::list_artifacts->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/artifact.py::ArtifactType:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/artifacts.py",
-        "line": 1705
+        "line": 1710
       },
       "notes": "method_name=ArtifactType"
     },
@@ -793,7 +828,7 @@
     "handler:skillmeat/api/routers/artifacts.py::list_skip_preferences->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/skip_preferences.py::SkipPreferenceManager:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/artifacts.py",
-        "line": 6085
+        "line": 6090
       },
       "notes": "method_name=SkipPreferenceManager"
     },
@@ -803,14 +838,14 @@
     "handler:skillmeat/api/routers/artifacts.py::remove_skip_preference->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/skip_preferences.py::SkipPreferenceManager:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/artifacts.py",
-        "line": 5925
+        "line": 5930
       },
       "notes": "method_name=SkipPreferenceManager"
     },
     "handler:skillmeat/api/routers/artifacts.py::remove_tag_from_artifact->service:skillmeat.core.services::TagService:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/artifacts.py",
-        "line": 6199
+        "line": 6204
       },
       "notes": "method_name=TagService"
     },
@@ -823,7 +858,7 @@
     "handler:skillmeat/api/routers/artifacts.py::sync_artifact->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/artifact.py::ArtifactType:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/artifacts.py",
-        "line": 2946
+        "line": 2951
       },
       "notes": "method_name=ArtifactType"
     },
@@ -833,14 +868,14 @@
     "handler:skillmeat/api/routers/artifacts.py::undeploy_artifact->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/artifact.py::ArtifactType:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/artifacts.py",
-        "line": 3300
+        "line": 3305
       },
       "notes": "method_name=ArtifactType"
     },
     "handler:skillmeat/api/routers/artifacts.py::undeploy_artifact->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/deployment.py::DeploymentManager:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/artifacts.py",
-        "line": 3316
+        "line": 3321
       },
       "notes": "method_name=DeploymentManager"
     },
@@ -853,14 +888,14 @@
     "handler:skillmeat/api/routers/artifacts.py::update_artifact->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/artifact.py::ArtifactMetadata:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/artifacts.py",
-        "line": 2305
+        "line": 2310
       },
       "notes": "method_name=ArtifactMetadata"
     },
     "handler:skillmeat/api/routers/artifacts.py::update_artifact->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/artifact.py::ArtifactType:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/artifacts.py",
-        "line": 2247
+        "line": 2252
       },
       "notes": "method_name=ArtifactType"
     },
@@ -873,7 +908,7 @@
     "handler:skillmeat/api/routers/artifacts.py::update_artifact_file_content->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/artifact.py::ArtifactType:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/artifacts.py",
-        "line": 4847
+        "line": 4852
       },
       "notes": "method_name=ArtifactType"
     },
@@ -886,28 +921,28 @@
     "handler:skillmeat/api/routers/artifacts.py::update_artifact_parameters->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/artifact.py::ArtifactMetadata:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/artifacts.py",
-        "line": 2561
+        "line": 2566
       },
       "notes": "method_name=ArtifactMetadata"
     },
     "handler:skillmeat/api/routers/artifacts.py::update_artifact_parameters->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/artifact.py::ArtifactType:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/artifacts.py",
-        "line": 2436
+        "line": 2441
       },
       "notes": "method_name=ArtifactType"
     },
     "handler:skillmeat/api/routers/artifacts.py::update_artifact_parameters->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/github_metadata.py::GitHubMetadataExtractor:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/artifacts.py",
-        "line": 2491
+        "line": 2496
       },
       "notes": "method_name=GitHubMetadataExtractor"
     },
     "handler:skillmeat/api/routers/artifacts.py::update_artifact_parameters->service:skillmeat.core.services::TagService:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/artifacts.py",
-        "line": 2602
+        "line": 2607
       },
       "notes": "method_name=TagService"
     },
@@ -1145,6 +1180,12 @@
       "notes": "role=request"
     },
     "handler:skillmeat/api/routers/groups.py::add_artifacts_to_group->schema:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/api/schemas/groups.py::GroupWithArtifactsResponse:handler_uses_schema": {
+      "notes": "role=response"
+    },
+    "handler:skillmeat/api/routers/groups.py::copy_group->schema:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/api/schemas/groups.py::CopyGroupRequest:handler_uses_schema": {
+      "notes": "role=request"
+    },
+    "handler:skillmeat/api/routers/groups.py::copy_group->schema:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/api/schemas/groups.py::GroupResponse:handler_uses_schema": {
       "notes": "role=response"
     },
     "handler:skillmeat/api/routers/groups.py::create_group->schema:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/api/schemas/groups.py::GroupCreateRequest:handler_uses_schema": {
@@ -1586,6 +1627,42 @@
     "handler:skillmeat/api/routers/ratings.py::submit_rating->schema:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/api/schemas/scoring.py::UserRatingResponse:handler_uses_schema": {
       "notes": "role=response"
     },
+    "handler:skillmeat/api/routers/settings.py::get_github_token_status->schema:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/api/schemas/settings.py::GitHubTokenStatusResponse:handler_uses_schema": {
+      "notes": "role=response"
+    },
+    "handler:skillmeat/api/routers/settings.py::get_github_token_status->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/github_client.py::GitHubClientWrapper:handler_calls_service": {
+      "callsite": {
+        "file": "skillmeat/api/routers/settings.py",
+        "line": 195
+      },
+      "notes": "method_name=GitHubClientWrapper"
+    },
+    "handler:skillmeat/api/routers/settings.py::set_github_token->schema:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/api/schemas/settings.py::GitHubTokenRequest:handler_uses_schema": {
+      "notes": "role=request"
+    },
+    "handler:skillmeat/api/routers/settings.py::set_github_token->schema:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/api/schemas/settings.py::MessageResponse:handler_uses_schema": {
+      "notes": "role=response"
+    },
+    "handler:skillmeat/api/routers/settings.py::set_github_token->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/github_client.py::GitHubClientWrapper:handler_calls_service": {
+      "callsite": {
+        "file": "skillmeat/api/routers/settings.py",
+        "line": 118
+      },
+      "notes": "method_name=GitHubClientWrapper"
+    },
+    "handler:skillmeat/api/routers/settings.py::validate_github_token->schema:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/api/schemas/settings.py::GitHubTokenRequest:handler_uses_schema": {
+      "notes": "role=request"
+    },
+    "handler:skillmeat/api/routers/settings.py::validate_github_token->schema:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/api/schemas/settings.py::GitHubTokenValidationResponse:handler_uses_schema": {
+      "notes": "role=response"
+    },
+    "handler:skillmeat/api/routers/settings.py::validate_github_token->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/github_client.py::GitHubClientWrapper:handler_calls_service": {
+      "callsite": {
+        "file": "skillmeat/api/routers/settings.py",
+        "line": 266
+      },
+      "notes": "method_name=GitHubClientWrapper"
+    },
     "handler:skillmeat/api/routers/tags.py::create_tag->schema:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/api/schemas/tags.py::TagCreateRequest:handler_uses_schema": {
       "notes": "role=request"
     },
@@ -1677,7 +1754,7 @@
     "handler:skillmeat/api/routers/user_collections.py::list_collection_artifacts->service:skillmeat.api.services::get_artifact_metadata:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/user_collections.py",
-        "line": 673
+        "line": 846
       },
       "notes": "method_name=get_artifact_metadata"
     },
@@ -3235,7 +3312,7 @@
     "hook:skillmeat/web/hooks/use-groups.ts::useAddArtifactToGroup->api_endpoint:DELETE /api/v1/groups/{groupId}/artifacts/{artifactId}:calls_api": {
       "callsite": {
         "file": "skillmeat/web/hooks/use-groups.ts",
-        "line": 426
+        "line": 429
       },
       "notes": "via=direct, method_name=apiRequest"
     },
@@ -3270,21 +3347,28 @@
     "hook:skillmeat/web/hooks/use-groups.ts::useAddArtifactToGroup->api_endpoint:POST /api/v1/groups/{groupId}/artifacts/reorder:calls_api": {
       "callsite": {
         "file": "skillmeat/web/hooks/use-groups.ts",
-        "line": 473
+        "line": 476
       },
       "notes": "via=direct, method_name=apiRequest"
     },
-    "hook:skillmeat/web/hooks/use-groups.ts::useAddArtifactToGroup->api_endpoint:POST /api/v1/groups/{groupId}/artifacts/{artifactId}:calls_api": {
+    "hook:skillmeat/web/hooks/use-groups.ts::useAddArtifactToGroup->api_endpoint:POST /api/v1/groups/{groupId}/artifacts:calls_api": {
       "callsite": {
         "file": "skillmeat/web/hooks/use-groups.ts",
-        "line": 383
+        "line": 386
+      },
+      "notes": "via=direct, method_name=apiRequest"
+    },
+    "hook:skillmeat/web/hooks/use-groups.ts::useAddArtifactToGroup->api_endpoint:POST /api/v1/groups/{groupId}/copy:calls_api": {
+      "callsite": {
+        "file": "skillmeat/web/hooks/use-groups.ts",
+        "line": 600
       },
       "notes": "via=direct, method_name=apiRequest"
     },
     "hook:skillmeat/web/hooks/use-groups.ts::useAddArtifactToGroup->api_endpoint:POST /api/v1/groups/{sourceGroupId}/artifacts/{artifactId}/move:calls_api": {
       "callsite": {
         "file": "skillmeat/web/hooks/use-groups.ts",
-        "line": 541
+        "line": 544
       },
       "notes": "via=direct, method_name=apiRequest"
     },
@@ -3309,6 +3393,104 @@
       },
       "notes": "via=direct, method_name=apiRequest"
     },
+    "hook:skillmeat/web/hooks/use-groups.ts::useCopyGroup->api_client:skillmeat/web/lib/api.ts::apiConfig:hook_calls_api_client": {
+      "callsite": {
+        "file": "skillmeat/web/hooks/use-groups.ts",
+        "line": null
+      },
+      "notes": "via=api_client"
+    },
+    "hook:skillmeat/web/hooks/use-groups.ts::useCopyGroup->api_client:skillmeat/web/lib/api.ts::apiRequest:hook_calls_api_client": {
+      "callsite": {
+        "file": "skillmeat/web/hooks/use-groups.ts",
+        "line": null
+      },
+      "notes": "via=api_client"
+    },
+    "hook:skillmeat/web/hooks/use-groups.ts::useCopyGroup->api_endpoint:DELETE /api/v1/groups/{groupId}/artifacts/{artifactId}:calls_api": {
+      "callsite": {
+        "file": "skillmeat/web/hooks/use-groups.ts",
+        "line": 429
+      },
+      "notes": "via=direct, method_name=apiRequest"
+    },
+    "hook:skillmeat/web/hooks/use-groups.ts::useCopyGroup->api_endpoint:DELETE /api/v1/groups/{id}:calls_api": {
+      "callsite": {
+        "file": "skillmeat/web/hooks/use-groups.ts",
+        "line": 292
+      },
+      "notes": "via=direct, method_name=apiRequest"
+    },
+    "hook:skillmeat/web/hooks/use-groups.ts::useCopyGroup->api_endpoint:GET /api/v1/groups/{groupId}/artifacts:calls_api": {
+      "callsite": {
+        "file": "skillmeat/web/hooks/use-groups.ts",
+        "line": 152
+      },
+      "notes": "via=direct, method_name=apiRequest"
+    },
+    "hook:skillmeat/web/hooks/use-groups.ts::useCopyGroup->api_endpoint:GET /api/v1/groups/{id}:calls_api": {
+      "callsite": {
+        "file": "skillmeat/web/hooks/use-groups.ts",
+        "line": 112
+      },
+      "notes": "via=direct, method_name=apiRequest"
+    },
+    "hook:skillmeat/web/hooks/use-groups.ts::useCopyGroup->api_endpoint:GET /api/v1/groups:calls_api": {
+      "callsite": {
+        "file": "skillmeat/web/hooks/use-groups.ts",
+        "line": 64
+      },
+      "notes": "via=direct, method_name=apiRequest"
+    },
+    "hook:skillmeat/web/hooks/use-groups.ts::useCopyGroup->api_endpoint:POST /api/v1/groups/{groupId}/artifacts/reorder:calls_api": {
+      "callsite": {
+        "file": "skillmeat/web/hooks/use-groups.ts",
+        "line": 476
+      },
+      "notes": "via=direct, method_name=apiRequest"
+    },
+    "hook:skillmeat/web/hooks/use-groups.ts::useCopyGroup->api_endpoint:POST /api/v1/groups/{groupId}/artifacts:calls_api": {
+      "callsite": {
+        "file": "skillmeat/web/hooks/use-groups.ts",
+        "line": 386
+      },
+      "notes": "via=direct, method_name=apiRequest"
+    },
+    "hook:skillmeat/web/hooks/use-groups.ts::useCopyGroup->api_endpoint:POST /api/v1/groups/{groupId}/copy:calls_api": {
+      "callsite": {
+        "file": "skillmeat/web/hooks/use-groups.ts",
+        "line": 600
+      },
+      "notes": "via=direct, method_name=apiRequest"
+    },
+    "hook:skillmeat/web/hooks/use-groups.ts::useCopyGroup->api_endpoint:POST /api/v1/groups/{sourceGroupId}/artifacts/{artifactId}/move:calls_api": {
+      "callsite": {
+        "file": "skillmeat/web/hooks/use-groups.ts",
+        "line": 544
+      },
+      "notes": "via=direct, method_name=apiRequest"
+    },
+    "hook:skillmeat/web/hooks/use-groups.ts::useCopyGroup->api_endpoint:POST /api/v1/groups:calls_api": {
+      "callsite": {
+        "file": "skillmeat/web/hooks/use-groups.ts",
+        "line": 191
+      },
+      "notes": "via=direct, method_name=apiRequest"
+    },
+    "hook:skillmeat/web/hooks/use-groups.ts::useCopyGroup->api_endpoint:PUT /api/v1/collections/{collectionId}/groups/reorder:calls_api": {
+      "callsite": {
+        "file": "skillmeat/web/hooks/use-groups.ts",
+        "line": 338
+      },
+      "notes": "via=direct, method_name=apiRequest"
+    },
+    "hook:skillmeat/web/hooks/use-groups.ts::useCopyGroup->api_endpoint:PUT /api/v1/groups/{id}:calls_api": {
+      "callsite": {
+        "file": "skillmeat/web/hooks/use-groups.ts",
+        "line": 246
+      },
+      "notes": "via=direct, method_name=apiRequest"
+    },
     "hook:skillmeat/web/hooks/use-groups.ts::useCreateGroup->api_client:skillmeat/web/lib/api.ts::apiConfig:hook_calls_api_client": {
       "callsite": {
         "file": "skillmeat/web/hooks/use-groups.ts",
@@ -3326,7 +3508,7 @@
     "hook:skillmeat/web/hooks/use-groups.ts::useCreateGroup->api_endpoint:DELETE /api/v1/groups/{groupId}/artifacts/{artifactId}:calls_api": {
       "callsite": {
         "file": "skillmeat/web/hooks/use-groups.ts",
-        "line": 426
+        "line": 429
       },
       "notes": "via=direct, method_name=apiRequest"
     },
@@ -3361,21 +3543,28 @@
     "hook:skillmeat/web/hooks/use-groups.ts::useCreateGroup->api_endpoint:POST /api/v1/groups/{groupId}/artifacts/reorder:calls_api": {
       "callsite": {
         "file": "skillmeat/web/hooks/use-groups.ts",
-        "line": 473
+        "line": 476
       },
       "notes": "via=direct, method_name=apiRequest"
     },
-    "hook:skillmeat/web/hooks/use-groups.ts::useCreateGroup->api_endpoint:POST /api/v1/groups/{groupId}/artifacts/{artifactId}:calls_api": {
+    "hook:skillmeat/web/hooks/use-groups.ts::useCreateGroup->api_endpoint:POST /api/v1/groups/{groupId}/artifacts:calls_api": {
       "callsite": {
         "file": "skillmeat/web/hooks/use-groups.ts",
-        "line": 383
+        "line": 386
+      },
+      "notes": "via=direct, method_name=apiRequest"
+    },
+    "hook:skillmeat/web/hooks/use-groups.ts::useCreateGroup->api_endpoint:POST /api/v1/groups/{groupId}/copy:calls_api": {
+      "callsite": {
+        "file": "skillmeat/web/hooks/use-groups.ts",
+        "line": 600
       },
       "notes": "via=direct, method_name=apiRequest"
     },
     "hook:skillmeat/web/hooks/use-groups.ts::useCreateGroup->api_endpoint:POST /api/v1/groups/{sourceGroupId}/artifacts/{artifactId}/move:calls_api": {
       "callsite": {
         "file": "skillmeat/web/hooks/use-groups.ts",
-        "line": 541
+        "line": 544
       },
       "notes": "via=direct, method_name=apiRequest"
     },
@@ -3417,7 +3606,7 @@
     "hook:skillmeat/web/hooks/use-groups.ts::useDeleteGroup->api_endpoint:DELETE /api/v1/groups/{groupId}/artifacts/{artifactId}:calls_api": {
       "callsite": {
         "file": "skillmeat/web/hooks/use-groups.ts",
-        "line": 426
+        "line": 429
       },
       "notes": "via=direct, method_name=apiRequest"
     },
@@ -3452,21 +3641,28 @@
     "hook:skillmeat/web/hooks/use-groups.ts::useDeleteGroup->api_endpoint:POST /api/v1/groups/{groupId}/artifacts/reorder:calls_api": {
       "callsite": {
         "file": "skillmeat/web/hooks/use-groups.ts",
-        "line": 473
+        "line": 476
       },
       "notes": "via=direct, method_name=apiRequest"
     },
-    "hook:skillmeat/web/hooks/use-groups.ts::useDeleteGroup->api_endpoint:POST /api/v1/groups/{groupId}/artifacts/{artifactId}:calls_api": {
+    "hook:skillmeat/web/hooks/use-groups.ts::useDeleteGroup->api_endpoint:POST /api/v1/groups/{groupId}/artifacts:calls_api": {
       "callsite": {
         "file": "skillmeat/web/hooks/use-groups.ts",
-        "line": 383
+        "line": 386
+      },
+      "notes": "via=direct, method_name=apiRequest"
+    },
+    "hook:skillmeat/web/hooks/use-groups.ts::useDeleteGroup->api_endpoint:POST /api/v1/groups/{groupId}/copy:calls_api": {
+      "callsite": {
+        "file": "skillmeat/web/hooks/use-groups.ts",
+        "line": 600
       },
       "notes": "via=direct, method_name=apiRequest"
     },
     "hook:skillmeat/web/hooks/use-groups.ts::useDeleteGroup->api_endpoint:POST /api/v1/groups/{sourceGroupId}/artifacts/{artifactId}/move:calls_api": {
       "callsite": {
         "file": "skillmeat/web/hooks/use-groups.ts",
-        "line": 541
+        "line": 544
       },
       "notes": "via=direct, method_name=apiRequest"
     },
@@ -3508,7 +3704,7 @@
     "hook:skillmeat/web/hooks/use-groups.ts::useGroup->api_endpoint:DELETE /api/v1/groups/{groupId}/artifacts/{artifactId}:calls_api": {
       "callsite": {
         "file": "skillmeat/web/hooks/use-groups.ts",
-        "line": 426
+        "line": 429
       },
       "notes": "via=direct, method_name=apiRequest"
     },
@@ -3543,21 +3739,28 @@
     "hook:skillmeat/web/hooks/use-groups.ts::useGroup->api_endpoint:POST /api/v1/groups/{groupId}/artifacts/reorder:calls_api": {
       "callsite": {
         "file": "skillmeat/web/hooks/use-groups.ts",
-        "line": 473
+        "line": 476
       },
       "notes": "via=direct, method_name=apiRequest"
     },
-    "hook:skillmeat/web/hooks/use-groups.ts::useGroup->api_endpoint:POST /api/v1/groups/{groupId}/artifacts/{artifactId}:calls_api": {
+    "hook:skillmeat/web/hooks/use-groups.ts::useGroup->api_endpoint:POST /api/v1/groups/{groupId}/artifacts:calls_api": {
       "callsite": {
         "file": "skillmeat/web/hooks/use-groups.ts",
-        "line": 383
+        "line": 386
+      },
+      "notes": "via=direct, method_name=apiRequest"
+    },
+    "hook:skillmeat/web/hooks/use-groups.ts::useGroup->api_endpoint:POST /api/v1/groups/{groupId}/copy:calls_api": {
+      "callsite": {
+        "file": "skillmeat/web/hooks/use-groups.ts",
+        "line": 600
       },
       "notes": "via=direct, method_name=apiRequest"
     },
     "hook:skillmeat/web/hooks/use-groups.ts::useGroup->api_endpoint:POST /api/v1/groups/{sourceGroupId}/artifacts/{artifactId}/move:calls_api": {
       "callsite": {
         "file": "skillmeat/web/hooks/use-groups.ts",
-        "line": 541
+        "line": 544
       },
       "notes": "via=direct, method_name=apiRequest"
     },
@@ -3599,7 +3802,7 @@
     "hook:skillmeat/web/hooks/use-groups.ts::useGroupArtifacts->api_endpoint:DELETE /api/v1/groups/{groupId}/artifacts/{artifactId}:calls_api": {
       "callsite": {
         "file": "skillmeat/web/hooks/use-groups.ts",
-        "line": 426
+        "line": 429
       },
       "notes": "via=direct, method_name=apiRequest"
     },
@@ -3634,21 +3837,28 @@
     "hook:skillmeat/web/hooks/use-groups.ts::useGroupArtifacts->api_endpoint:POST /api/v1/groups/{groupId}/artifacts/reorder:calls_api": {
       "callsite": {
         "file": "skillmeat/web/hooks/use-groups.ts",
-        "line": 473
+        "line": 476
       },
       "notes": "via=direct, method_name=apiRequest"
     },
-    "hook:skillmeat/web/hooks/use-groups.ts::useGroupArtifacts->api_endpoint:POST /api/v1/groups/{groupId}/artifacts/{artifactId}:calls_api": {
+    "hook:skillmeat/web/hooks/use-groups.ts::useGroupArtifacts->api_endpoint:POST /api/v1/groups/{groupId}/artifacts:calls_api": {
       "callsite": {
         "file": "skillmeat/web/hooks/use-groups.ts",
-        "line": 383
+        "line": 386
+      },
+      "notes": "via=direct, method_name=apiRequest"
+    },
+    "hook:skillmeat/web/hooks/use-groups.ts::useGroupArtifacts->api_endpoint:POST /api/v1/groups/{groupId}/copy:calls_api": {
+      "callsite": {
+        "file": "skillmeat/web/hooks/use-groups.ts",
+        "line": 600
       },
       "notes": "via=direct, method_name=apiRequest"
     },
     "hook:skillmeat/web/hooks/use-groups.ts::useGroupArtifacts->api_endpoint:POST /api/v1/groups/{sourceGroupId}/artifacts/{artifactId}/move:calls_api": {
       "callsite": {
         "file": "skillmeat/web/hooks/use-groups.ts",
-        "line": 541
+        "line": 544
       },
       "notes": "via=direct, method_name=apiRequest"
     },
@@ -3690,7 +3900,7 @@
     "hook:skillmeat/web/hooks/use-groups.ts::useGroups->api_endpoint:DELETE /api/v1/groups/{groupId}/artifacts/{artifactId}:calls_api": {
       "callsite": {
         "file": "skillmeat/web/hooks/use-groups.ts",
-        "line": 426
+        "line": 429
       },
       "notes": "via=direct, method_name=apiRequest"
     },
@@ -3725,21 +3935,28 @@
     "hook:skillmeat/web/hooks/use-groups.ts::useGroups->api_endpoint:POST /api/v1/groups/{groupId}/artifacts/reorder:calls_api": {
       "callsite": {
         "file": "skillmeat/web/hooks/use-groups.ts",
-        "line": 473
+        "line": 476
       },
       "notes": "via=direct, method_name=apiRequest"
     },
-    "hook:skillmeat/web/hooks/use-groups.ts::useGroups->api_endpoint:POST /api/v1/groups/{groupId}/artifacts/{artifactId}:calls_api": {
+    "hook:skillmeat/web/hooks/use-groups.ts::useGroups->api_endpoint:POST /api/v1/groups/{groupId}/artifacts:calls_api": {
       "callsite": {
         "file": "skillmeat/web/hooks/use-groups.ts",
-        "line": 383
+        "line": 386
+      },
+      "notes": "via=direct, method_name=apiRequest"
+    },
+    "hook:skillmeat/web/hooks/use-groups.ts::useGroups->api_endpoint:POST /api/v1/groups/{groupId}/copy:calls_api": {
+      "callsite": {
+        "file": "skillmeat/web/hooks/use-groups.ts",
+        "line": 600
       },
       "notes": "via=direct, method_name=apiRequest"
     },
     "hook:skillmeat/web/hooks/use-groups.ts::useGroups->api_endpoint:POST /api/v1/groups/{sourceGroupId}/artifacts/{artifactId}/move:calls_api": {
       "callsite": {
         "file": "skillmeat/web/hooks/use-groups.ts",
-        "line": 541
+        "line": 544
       },
       "notes": "via=direct, method_name=apiRequest"
     },
@@ -3781,7 +3998,7 @@
     "hook:skillmeat/web/hooks/use-groups.ts::useMoveArtifactToGroup->api_endpoint:DELETE /api/v1/groups/{groupId}/artifacts/{artifactId}:calls_api": {
       "callsite": {
         "file": "skillmeat/web/hooks/use-groups.ts",
-        "line": 426
+        "line": 429
       },
       "notes": "via=direct, method_name=apiRequest"
     },
@@ -3816,21 +4033,28 @@
     "hook:skillmeat/web/hooks/use-groups.ts::useMoveArtifactToGroup->api_endpoint:POST /api/v1/groups/{groupId}/artifacts/reorder:calls_api": {
       "callsite": {
         "file": "skillmeat/web/hooks/use-groups.ts",
-        "line": 473
+        "line": 476
       },
       "notes": "via=direct, method_name=apiRequest"
     },
-    "hook:skillmeat/web/hooks/use-groups.ts::useMoveArtifactToGroup->api_endpoint:POST /api/v1/groups/{groupId}/artifacts/{artifactId}:calls_api": {
+    "hook:skillmeat/web/hooks/use-groups.ts::useMoveArtifactToGroup->api_endpoint:POST /api/v1/groups/{groupId}/artifacts:calls_api": {
       "callsite": {
         "file": "skillmeat/web/hooks/use-groups.ts",
-        "line": 383
+        "line": 386
+      },
+      "notes": "via=direct, method_name=apiRequest"
+    },
+    "hook:skillmeat/web/hooks/use-groups.ts::useMoveArtifactToGroup->api_endpoint:POST /api/v1/groups/{groupId}/copy:calls_api": {
+      "callsite": {
+        "file": "skillmeat/web/hooks/use-groups.ts",
+        "line": 600
       },
       "notes": "via=direct, method_name=apiRequest"
     },
     "hook:skillmeat/web/hooks/use-groups.ts::useMoveArtifactToGroup->api_endpoint:POST /api/v1/groups/{sourceGroupId}/artifacts/{artifactId}/move:calls_api": {
       "callsite": {
         "file": "skillmeat/web/hooks/use-groups.ts",
-        "line": 541
+        "line": 544
       },
       "notes": "via=direct, method_name=apiRequest"
     },
@@ -3872,7 +4096,7 @@
     "hook:skillmeat/web/hooks/use-groups.ts::useRemoveArtifactFromGroup->api_endpoint:DELETE /api/v1/groups/{groupId}/artifacts/{artifactId}:calls_api": {
       "callsite": {
         "file": "skillmeat/web/hooks/use-groups.ts",
-        "line": 426
+        "line": 429
       },
       "notes": "via=direct, method_name=apiRequest"
     },
@@ -3907,21 +4131,28 @@
     "hook:skillmeat/web/hooks/use-groups.ts::useRemoveArtifactFromGroup->api_endpoint:POST /api/v1/groups/{groupId}/artifacts/reorder:calls_api": {
       "callsite": {
         "file": "skillmeat/web/hooks/use-groups.ts",
-        "line": 473
+        "line": 476
       },
       "notes": "via=direct, method_name=apiRequest"
     },
-    "hook:skillmeat/web/hooks/use-groups.ts::useRemoveArtifactFromGroup->api_endpoint:POST /api/v1/groups/{groupId}/artifacts/{artifactId}:calls_api": {
+    "hook:skillmeat/web/hooks/use-groups.ts::useRemoveArtifactFromGroup->api_endpoint:POST /api/v1/groups/{groupId}/artifacts:calls_api": {
       "callsite": {
         "file": "skillmeat/web/hooks/use-groups.ts",
-        "line": 383
+        "line": 386
+      },
+      "notes": "via=direct, method_name=apiRequest"
+    },
+    "hook:skillmeat/web/hooks/use-groups.ts::useRemoveArtifactFromGroup->api_endpoint:POST /api/v1/groups/{groupId}/copy:calls_api": {
+      "callsite": {
+        "file": "skillmeat/web/hooks/use-groups.ts",
+        "line": 600
       },
       "notes": "via=direct, method_name=apiRequest"
     },
     "hook:skillmeat/web/hooks/use-groups.ts::useRemoveArtifactFromGroup->api_endpoint:POST /api/v1/groups/{sourceGroupId}/artifacts/{artifactId}/move:calls_api": {
       "callsite": {
         "file": "skillmeat/web/hooks/use-groups.ts",
-        "line": 541
+        "line": 544
       },
       "notes": "via=direct, method_name=apiRequest"
     },
@@ -3963,7 +4194,7 @@
     "hook:skillmeat/web/hooks/use-groups.ts::useReorderArtifactsInGroup->api_endpoint:DELETE /api/v1/groups/{groupId}/artifacts/{artifactId}:calls_api": {
       "callsite": {
         "file": "skillmeat/web/hooks/use-groups.ts",
-        "line": 426
+        "line": 429
       },
       "notes": "via=direct, method_name=apiRequest"
     },
@@ -3998,21 +4229,28 @@
     "hook:skillmeat/web/hooks/use-groups.ts::useReorderArtifactsInGroup->api_endpoint:POST /api/v1/groups/{groupId}/artifacts/reorder:calls_api": {
       "callsite": {
         "file": "skillmeat/web/hooks/use-groups.ts",
-        "line": 473
+        "line": 476
       },
       "notes": "via=direct, method_name=apiRequest"
     },
-    "hook:skillmeat/web/hooks/use-groups.ts::useReorderArtifactsInGroup->api_endpoint:POST /api/v1/groups/{groupId}/artifacts/{artifactId}:calls_api": {
+    "hook:skillmeat/web/hooks/use-groups.ts::useReorderArtifactsInGroup->api_endpoint:POST /api/v1/groups/{groupId}/artifacts:calls_api": {
       "callsite": {
         "file": "skillmeat/web/hooks/use-groups.ts",
-        "line": 383
+        "line": 386
+      },
+      "notes": "via=direct, method_name=apiRequest"
+    },
+    "hook:skillmeat/web/hooks/use-groups.ts::useReorderArtifactsInGroup->api_endpoint:POST /api/v1/groups/{groupId}/copy:calls_api": {
+      "callsite": {
+        "file": "skillmeat/web/hooks/use-groups.ts",
+        "line": 600
       },
       "notes": "via=direct, method_name=apiRequest"
     },
     "hook:skillmeat/web/hooks/use-groups.ts::useReorderArtifactsInGroup->api_endpoint:POST /api/v1/groups/{sourceGroupId}/artifacts/{artifactId}/move:calls_api": {
       "callsite": {
         "file": "skillmeat/web/hooks/use-groups.ts",
-        "line": 541
+        "line": 544
       },
       "notes": "via=direct, method_name=apiRequest"
     },
@@ -4054,7 +4292,7 @@
     "hook:skillmeat/web/hooks/use-groups.ts::useReorderGroups->api_endpoint:DELETE /api/v1/groups/{groupId}/artifacts/{artifactId}:calls_api": {
       "callsite": {
         "file": "skillmeat/web/hooks/use-groups.ts",
-        "line": 426
+        "line": 429
       },
       "notes": "via=direct, method_name=apiRequest"
     },
@@ -4089,21 +4327,28 @@
     "hook:skillmeat/web/hooks/use-groups.ts::useReorderGroups->api_endpoint:POST /api/v1/groups/{groupId}/artifacts/reorder:calls_api": {
       "callsite": {
         "file": "skillmeat/web/hooks/use-groups.ts",
-        "line": 473
+        "line": 476
       },
       "notes": "via=direct, method_name=apiRequest"
     },
-    "hook:skillmeat/web/hooks/use-groups.ts::useReorderGroups->api_endpoint:POST /api/v1/groups/{groupId}/artifacts/{artifactId}:calls_api": {
+    "hook:skillmeat/web/hooks/use-groups.ts::useReorderGroups->api_endpoint:POST /api/v1/groups/{groupId}/artifacts:calls_api": {
       "callsite": {
         "file": "skillmeat/web/hooks/use-groups.ts",
-        "line": 383
+        "line": 386
+      },
+      "notes": "via=direct, method_name=apiRequest"
+    },
+    "hook:skillmeat/web/hooks/use-groups.ts::useReorderGroups->api_endpoint:POST /api/v1/groups/{groupId}/copy:calls_api": {
+      "callsite": {
+        "file": "skillmeat/web/hooks/use-groups.ts",
+        "line": 600
       },
       "notes": "via=direct, method_name=apiRequest"
     },
     "hook:skillmeat/web/hooks/use-groups.ts::useReorderGroups->api_endpoint:POST /api/v1/groups/{sourceGroupId}/artifacts/{artifactId}/move:calls_api": {
       "callsite": {
         "file": "skillmeat/web/hooks/use-groups.ts",
-        "line": 541
+        "line": 544
       },
       "notes": "via=direct, method_name=apiRequest"
     },
@@ -4145,7 +4390,7 @@
     "hook:skillmeat/web/hooks/use-groups.ts::useUpdateGroup->api_endpoint:DELETE /api/v1/groups/{groupId}/artifacts/{artifactId}:calls_api": {
       "callsite": {
         "file": "skillmeat/web/hooks/use-groups.ts",
-        "line": 426
+        "line": 429
       },
       "notes": "via=direct, method_name=apiRequest"
     },
@@ -4180,21 +4425,28 @@
     "hook:skillmeat/web/hooks/use-groups.ts::useUpdateGroup->api_endpoint:POST /api/v1/groups/{groupId}/artifacts/reorder:calls_api": {
       "callsite": {
         "file": "skillmeat/web/hooks/use-groups.ts",
-        "line": 473
+        "line": 476
       },
       "notes": "via=direct, method_name=apiRequest"
     },
-    "hook:skillmeat/web/hooks/use-groups.ts::useUpdateGroup->api_endpoint:POST /api/v1/groups/{groupId}/artifacts/{artifactId}:calls_api": {
+    "hook:skillmeat/web/hooks/use-groups.ts::useUpdateGroup->api_endpoint:POST /api/v1/groups/{groupId}/artifacts:calls_api": {
       "callsite": {
         "file": "skillmeat/web/hooks/use-groups.ts",
-        "line": 383
+        "line": 386
+      },
+      "notes": "via=direct, method_name=apiRequest"
+    },
+    "hook:skillmeat/web/hooks/use-groups.ts::useUpdateGroup->api_endpoint:POST /api/v1/groups/{groupId}/copy:calls_api": {
+      "callsite": {
+        "file": "skillmeat/web/hooks/use-groups.ts",
+        "line": 600
       },
       "notes": "via=direct, method_name=apiRequest"
     },
     "hook:skillmeat/web/hooks/use-groups.ts::useUpdateGroup->api_endpoint:POST /api/v1/groups/{sourceGroupId}/artifacts/{artifactId}/move:calls_api": {
       "callsite": {
         "file": "skillmeat/web/hooks/use-groups.ts",
-        "line": 541
+        "line": 544
       },
       "notes": "via=direct, method_name=apiRequest"
     },
@@ -9106,7 +9358,7 @@
       "notes": "method_name=TagRepository"
     }
   },
-  "generated_at": "2026-01-15T21:28:29Z",
+  "generated_at": "2026-01-17T22:52:06Z",
   "nodes": {
     "api_client:skillmeat/web/hooks/use-toast.tsx::useToast": {
       "docstring": null,
@@ -9436,13 +9688,22 @@
       "signature": "export async function undeployArtifact("
     },
     "api_client:skillmeat/web/lib/api/groups.ts::addArtifactToGroup": {
-      "doc_summary": "Add artifact to group",
-      "docstring": "Add artifact to group\n@param groupId - Group ID\n@param artifactId - Artifact ID to add\n@param position - Optional position in the group (default: append)\n/",
+      "doc_summary": "Add artifact(s) to group",
+      "docstring": "Add artifact(s) to group\n@param groupId - Group ID\n@param artifactIds - Artifact ID(s) to add (single string or array)\n@param position - Optional position in the group (default: append)\n/",
       "imports": [
         "@/types/groups"
       ],
       "params": null,
       "signature": "export async function addArtifactToGroup("
+    },
+    "api_client:skillmeat/web/lib/api/groups.ts::copyGroup": {
+      "doc_summary": "Copy group to another collection",
+      "docstring": "Copy group to another collection\n@param groupId - Group ID to copy\n@param targetCollectionId - Target collection ID\n@returns The newly created group copy\n/",
+      "imports": [
+        "@/types/groups"
+      ],
+      "params": null,
+      "signature": "export async function copyGroup("
     },
     "api_client:skillmeat/web/lib/api/groups.ts::createGroup": {
       "doc_summary": "Create new group",
@@ -9609,6 +9870,38 @@
       ],
       "params": null,
       "signature": "export async function resolveConflict("
+    },
+    "api_client:skillmeat/web/lib/api/settings.ts::clearGitHubToken": {
+      "doc_summary": "Clear stored GitHub token",
+      "docstring": "Clear stored GitHub token\n\nRemoves the token, reverting to unauthenticated API access (60 req/hr).\n\n@throws Error if clearing fails\n/",
+      "imports": null,
+      "params": null,
+      "signature": "export async function clearGitHubToken(): Promise<void>"
+    },
+    "api_client:skillmeat/web/lib/api/settings.ts::getGitHubTokenStatus": {
+      "doc_summary": "Get GitHub token status",
+      "docstring": "Get GitHub token status\n\nReturns whether a token is set and basic info about the authenticated user.\n\n@returns Token status with masked token and username if set\n@throws Error if fetching status fails\n/",
+      "imports": null,
+      "params": null,
+      "signature": "export async function getGitHubTokenStatus(): Promise<GitHubTokenStatus>"
+    },
+    "api_client:skillmeat/web/lib/api/settings.ts::setGitHubToken": {
+      "doc_summary": "Set GitHub Personal Access Token",
+      "docstring": "Set GitHub Personal Access Token\n\nStores the token securely for authenticated GitHub API requests.\nIncreases rate limit from 60 req/hr to 5000 req/hr.\n\n@param token - GitHub PAT (must start with ghp_ or github_pat_)\n@throws Error if setting fails\n/",
+      "imports": null,
+      "params": [
+        "token: string"
+      ],
+      "signature": "export async function setGitHubToken(token: string): Promise<void>"
+    },
+    "api_client:skillmeat/web/lib/api/settings.ts::validateGitHubToken": {
+      "doc_summary": "Validate a GitHub token before saving",
+      "docstring": "Validate a GitHub token before saving\n\nChecks if the token is valid and returns details about permissions.\n\n@param token - GitHub PAT to validate\n@returns Validation result with user info and rate limits\n@throws Error if validation request fails\n/",
+      "imports": null,
+      "params": [
+        "token: string"
+      ],
+      "signature": "export async function validateGitHubToken(token: string): Promise<GitHubTokenValidation>"
     },
     "api_client:skillmeat/web/lib/api/snapshots.ts::analyzeRollbackSafety": {
       "doc_summary": "Analyze rollback safety for a snapshot",
@@ -10814,6 +11107,26 @@
       "params": null,
       "signature": "export function UpdateAvailableModal("
     },
+    "component:skillmeat/web/components/collection/add-to-group-dialog.tsx::AddToGroupDialog": {
+      "doc_summary": "Add to Group Dialog",
+      "docstring": "Add to Group Dialog\n\nAllows users to add an artifact to one or more groups within a collection.\nWhen collectionId is not provided, shows a collection picker step first.\n\nFeatures:\n- Collection picker when collectionId not provided\n- Checkbox list of available groups\n- Multi-select support for adding to multiple groups\n- Loading states during fetching and submission\n- Empty state with action to create a group\n- Error handling with toast notifications\n\n@example\n```tsx\n// With collection ID (direct to groups)\n<AddToGroupDialog\nopen={isOpen}\nonOpenChange={setIsOpen}\nartifact={artifact}\ncollectionId=\"default\"\nonSuccess={() => console.log('Added!')}\n/>\n\n// Without collection ID (shows collection picker first)\n<AddToGroupDialog\nopen={isOpen}\nonOpenChange={setIsOpen}\nartifact={artifact}\nonSuccess={() => console.log('Added!')}\n/>\n```\n/",
+      "imports": [
+        "@/components/ui/button",
+        "@/components/ui/checkbox",
+        "@/components/ui/dialog",
+        "@/components/ui/input",
+        "@/components/ui/label",
+        "@/components/ui/radio-group",
+        "@/components/ui/scroll-area",
+        "@/components/ui/skeleton",
+        "@/hooks",
+        "@/types/artifact",
+        "lucide-react",
+        "react"
+      ],
+      "params": null,
+      "signature": "export function AddToGroupDialog("
+    },
     "component:skillmeat/web/components/collection/artifact-detail.tsx::ArtifactDetail": {
       "docstring": null,
       "imports": [
@@ -10944,6 +11257,24 @@
       ],
       "signature": "export function ConflictResolver({ conflicts, onResolve, onCancel }: ConflictResolverProps)"
     },
+    "component:skillmeat/web/components/collection/copy-group-dialog.tsx::CopyGroupDialog": {
+      "doc_summary": "Copy Group Dialog",
+      "docstring": "Copy Group Dialog\n\nAllows users to copy a group (with all its artifacts) to another collection.\n\nFeatures:\n- Radio button selection for target collection\n- Source collection excluded from options\n- Loading states during fetching and submission\n- Empty state when no other collections available\n- Error handling with toast notifications\n\n@example\n```tsx\n<CopyGroupDialog\nopen={isOpen}\nonOpenChange={setIsOpen}\ngroup={selectedGroup}\nsourceCollectionId=\"current-collection-id\"\nonSuccess={() => console.log('Copied!')}\n/>\n```\n/",
+      "imports": [
+        "@/components/ui/button",
+        "@/components/ui/dialog",
+        "@/components/ui/label",
+        "@/components/ui/radio-group",
+        "@/components/ui/scroll-area",
+        "@/components/ui/skeleton",
+        "@/hooks",
+        "@/types/groups",
+        "lucide-react",
+        "react"
+      ],
+      "params": null,
+      "signature": "export function CopyGroupDialog("
+    },
     "component:skillmeat/web/components/collection/create-collection-dialog.tsx::CreateCollectionDialog": {
       "docstring": null,
       "imports": [
@@ -11044,6 +11375,7 @@
     "component:skillmeat/web/components/collection/manage-groups-dialog.tsx::ManageGroupsDialog": {
       "docstring": null,
       "imports": [
+        "@/components/collection/copy-group-dialog",
         "@/components/ui/alert-dialog",
         "@/components/ui/badge",
         "@/components/ui/button",
@@ -13097,6 +13429,23 @@
         "{ children }: { children: React.ReactNode }"
       ],
       "signature": "export function Providers({ children }: { children: React.ReactNode })"
+    },
+    "component:skillmeat/web/components/settings/github-settings.tsx::GitHubSettings": {
+      "doc_summary": "GitHubSettings - Manage GitHub Personal Access Token",
+      "docstring": "GitHubSettings - Manage GitHub Personal Access Token\n\nAllows users to set a GitHub PAT to increase API rate limits from 60 req/hr\nto 5000 req/hr. Validates token format and permissions before saving.\n\nStates:\n- Loading: Fetching initial status\n- Token Set: Shows masked token and username with clear button\n- Token Not Set: Shows input form with validation\n/",
+      "imports": [
+        "@/components/ui/button",
+        "@/components/ui/card",
+        "@/components/ui/input",
+        "@/components/ui/label",
+        "@/hooks",
+        "@/lib/api/settings",
+        "@/lib/utils",
+        "lucide-react",
+        "react"
+      ],
+      "params": null,
+      "signature": "export function GitHubSettings()"
     },
     "component:skillmeat/web/components/shared/unified-card.tsx::UnifiedCard": {
       "doc_summary": "UnifiedCard - Universal card component for Entity and Artifact types",
@@ -16484,6 +16833,28 @@
       "returns": "GroupWithArtifactsResponse",
       "signature": "add_artifacts_to_group(group_id: str, request: AddGroupArtifactsRequest) -> GroupWithArtifactsResponse"
     },
+    "handler:skillmeat/api/routers/groups.py::copy_group": {
+      "decorators": [
+        "router.post"
+      ],
+      "doc_summary": "Copy a group to another collection.",
+      "docstring": "Copy a group to another collection.\n\nArgs:\n    group_id: Source group ID to copy\n    request: Copy request with target_collection_id\n\nReturns:\n    The newly created group in the target collection\n\nRaises:\n    HTTPException 404: If source group or target collection not found\n    HTTPException 400: If group name already exists in target collection\n    HTTPException 500: If database operation fails",
+      "imports": [
+        "fastapi",
+        "logging",
+        "skillmeat.api.schemas.groups",
+        "skillmeat.cache.models",
+        "sqlalchemy.exc",
+        "typing",
+        "uuid"
+      ],
+      "params": [
+        "group_id",
+        "request"
+      ],
+      "returns": "GroupResponse",
+      "signature": "copy_group(group_id: str, request: CopyGroupRequest) -> GroupResponse"
+    },
     "handler:skillmeat/api/routers/groups.py::create_group": {
       "decorators": [
         "router.post"
@@ -18860,6 +19231,91 @@
       "returns": "UserRatingResponse",
       "signature": "submit_rating(artifact_id: str, request: UserRatingRequest) -> UserRatingResponse"
     },
+    "handler:skillmeat/api/routers/settings.py::delete_github_token": {
+      "decorators": [
+        "router.delete"
+      ],
+      "doc_summary": "Clear GitHub Personal Access Token.",
+      "docstring": "Clear GitHub Personal Access Token.\n\nArgs:\n    config: Configuration manager dependency",
+      "imports": [
+        "fastapi",
+        "logging",
+        "re",
+        "skillmeat.api.dependencies",
+        "skillmeat.api.schemas.settings",
+        "skillmeat.core.github_client",
+        "typing"
+      ],
+      "params": [
+        "config"
+      ],
+      "returns": "None",
+      "signature": "delete_github_token(config: ConfigManagerDep) -> None"
+    },
+    "handler:skillmeat/api/routers/settings.py::get_github_token_status": {
+      "decorators": [
+        "router.get"
+      ],
+      "doc_summary": "Check GitHub token configuration status.",
+      "docstring": "Check GitHub token configuration status.\n\nArgs:\n    config: Configuration manager dependency\n\nReturns:\n    Token status with masked token and username if configured",
+      "imports": [
+        "fastapi",
+        "logging",
+        "re",
+        "skillmeat.api.dependencies",
+        "skillmeat.api.schemas.settings",
+        "skillmeat.core.github_client",
+        "typing"
+      ],
+      "params": [
+        "config"
+      ],
+      "returns": "GitHubTokenStatusResponse",
+      "signature": "get_github_token_status(config: ConfigManagerDep) -> GitHubTokenStatusResponse"
+    },
+    "handler:skillmeat/api/routers/settings.py::set_github_token": {
+      "decorators": [
+        "router.post"
+      ],
+      "doc_summary": "Set GitHub Personal Access Token.",
+      "docstring": "Set GitHub Personal Access Token.\n\nArgs:\n    request: Token request containing the PAT\n    config: Configuration manager dependency\n\nReturns:\n    Success message\n\nRaises:\n    HTTPException 400: If token format is invalid\n    HTTPException 401: If token is not valid with GitHub\n    HTTPException 429: If rate limited by GitHub\n    HTTPException 502/504: If GitHub API is unreachable",
+      "imports": [
+        "fastapi",
+        "logging",
+        "re",
+        "skillmeat.api.dependencies",
+        "skillmeat.api.schemas.settings",
+        "skillmeat.core.github_client",
+        "typing"
+      ],
+      "params": [
+        "request",
+        "config"
+      ],
+      "returns": "MessageResponse",
+      "signature": "set_github_token(request: GitHubTokenRequest, config: ConfigManagerDep) -> MessageResponse"
+    },
+    "handler:skillmeat/api/routers/settings.py::validate_github_token": {
+      "decorators": [
+        "router.post"
+      ],
+      "doc_summary": "Validate GitHub token without storing.",
+      "docstring": "Validate GitHub token without storing.\n\nArgs:\n    request: Token request containing the PAT to validate\n\nReturns:\n    Validation results including rate limit info\n\nRaises:\n    HTTPException 400: If token format is invalid\n    HTTPException 429: If rate limited by GitHub\n    HTTPException 502/504: If GitHub API is unreachable",
+      "imports": [
+        "fastapi",
+        "logging",
+        "re",
+        "skillmeat.api.dependencies",
+        "skillmeat.api.schemas.settings",
+        "skillmeat.core.github_client",
+        "typing"
+      ],
+      "params": [
+        "request"
+      ],
+      "returns": "GitHubTokenValidationResponse",
+      "signature": "validate_github_token(request: GitHubTokenRequest) -> GitHubTokenValidationResponse"
+    },
     "handler:skillmeat/api/routers/tags.py::create_tag": {
       "decorators": [
         "router.post"
@@ -19021,6 +19477,7 @@
         "datetime",
         "fastapi",
         "logging",
+        "skillmeat.api.dependencies",
         "skillmeat.api.middleware.auth",
         "skillmeat.api.schemas.common",
         "skillmeat.api.schemas.user_collections",
@@ -19050,6 +19507,7 @@
         "datetime",
         "fastapi",
         "logging",
+        "skillmeat.api.dependencies",
         "skillmeat.api.middleware.auth",
         "skillmeat.api.schemas.common",
         "skillmeat.api.schemas.user_collections",
@@ -19079,6 +19537,7 @@
         "datetime",
         "fastapi",
         "logging",
+        "skillmeat.api.dependencies",
         "skillmeat.api.middleware.auth",
         "skillmeat.api.schemas.common",
         "skillmeat.api.schemas.user_collections",
@@ -19107,6 +19566,7 @@
         "datetime",
         "fastapi",
         "logging",
+        "skillmeat.api.dependencies",
         "skillmeat.api.middleware.auth",
         "skillmeat.api.schemas.common",
         "skillmeat.api.schemas.user_collections",
@@ -19135,6 +19595,7 @@
         "datetime",
         "fastapi",
         "logging",
+        "skillmeat.api.dependencies",
         "skillmeat.api.middleware.auth",
         "skillmeat.api.schemas.common",
         "skillmeat.api.schemas.user_collections",
@@ -19163,6 +19624,7 @@
         "datetime",
         "fastapi",
         "logging",
+        "skillmeat.api.dependencies",
         "skillmeat.api.middleware.auth",
         "skillmeat.api.schemas.common",
         "skillmeat.api.schemas.user_collections",
@@ -19194,6 +19656,7 @@
         "datetime",
         "fastapi",
         "logging",
+        "skillmeat.api.dependencies",
         "skillmeat.api.middleware.auth",
         "skillmeat.api.schemas.common",
         "skillmeat.api.schemas.user_collections",
@@ -19224,6 +19687,7 @@
         "datetime",
         "fastapi",
         "logging",
+        "skillmeat.api.dependencies",
         "skillmeat.api.middleware.auth",
         "skillmeat.api.schemas.common",
         "skillmeat.api.schemas.user_collections",
@@ -19244,6 +19708,36 @@
       "returns": "UserCollectionListResponse",
       "signature": "list_user_collections(session: DbSessionDep, token: TokenDep, limit: int, after: Optional[str], search: Optional[str], collection_type: Optional[str]) -> UserCollectionListResponse"
     },
+    "handler:skillmeat/api/routers/user_collections.py::migrate_to_default_collection": {
+      "decorators": [
+        "router.post"
+      ],
+      "doc_summary": "Migrate all artifacts to the default collection.",
+      "docstring": "Migrate all artifacts to the default collection.\n\nThis endpoint ensures all artifacts from file-system collections are\nregistered in the default database collection, enabling them to use\nGroups and other collection features.\n\nArgs:\n    session: Database session\n    artifact_mgr: Artifact manager for listing artifacts\n    collection_mgr: Collection manager for listing collections\n    token: Authentication token\n\nReturns:\n    Migration statistics with counts\n\nNote:\n    This operation is idempotent - running it multiple times will not\n    create duplicate entries.",
+      "imports": [
+        "base64",
+        "datetime",
+        "fastapi",
+        "logging",
+        "skillmeat.api.dependencies",
+        "skillmeat.api.middleware.auth",
+        "skillmeat.api.schemas.common",
+        "skillmeat.api.schemas.user_collections",
+        "skillmeat.api.services",
+        "skillmeat.cache.models",
+        "sqlalchemy.orm",
+        "typing",
+        "uuid"
+      ],
+      "params": [
+        "session",
+        "artifact_mgr",
+        "collection_mgr",
+        "token"
+      ],
+      "returns": "dict",
+      "signature": "migrate_to_default_collection(session: DbSessionDep, artifact_mgr: ArtifactManagerDep, collection_mgr: CollectionManagerDep, token: TokenDep) -> dict"
+    },
     "handler:skillmeat/api/routers/user_collections.py::remove_artifact_from_collection": {
       "decorators": [
         "router.delete"
@@ -19255,6 +19749,7 @@
         "datetime",
         "fastapi",
         "logging",
+        "skillmeat.api.dependencies",
         "skillmeat.api.middleware.auth",
         "skillmeat.api.schemas.common",
         "skillmeat.api.schemas.user_collections",
@@ -19284,6 +19779,7 @@
         "datetime",
         "fastapi",
         "logging",
+        "skillmeat.api.dependencies",
         "skillmeat.api.middleware.auth",
         "skillmeat.api.schemas.common",
         "skillmeat.api.schemas.user_collections",
@@ -19313,6 +19809,7 @@
         "datetime",
         "fastapi",
         "logging",
+        "skillmeat.api.dependencies",
         "skillmeat.api.middleware.auth",
         "skillmeat.api.schemas.common",
         "skillmeat.api.schemas.user_collections",
@@ -19567,6 +20064,8 @@
         "routers",
         "routers.health",
         "skillmeat",
+        "skillmeat.api.routers.user_collections",
+        "skillmeat.cache.models",
         "typing",
         "uvicorn"
       ],
@@ -19973,6 +20472,17 @@
       ],
       "params": null,
       "signature": "export function useAddArtifactToGroup(): UseMutationResult<void, Error, { groupId: string; artifactId: string; position?: number }>"
+    },
+    "hook:skillmeat/web/hooks/use-groups.ts::useCopyGroup": {
+      "doc_summary": "Copy group to another collection",
+      "docstring": "Copy group to another collection\n\nCreates a copy of the group (with all its artifacts) in the target collection\n\n@param groupId - Group ID to copy\n@param targetCollectionId - Target collection ID\n\n@example\n```tsx\nconst copyGroup = useCopyGroup();\n\nawait copyGroup.mutateAsync({\ngroupId,\ntargetCollectionId,\n});\n```\n/",
+      "imports": [
+        "@/lib/api",
+        "@/types/groups",
+        "@tanstack/react-query"
+      ],
+      "params": null,
+      "signature": "export function useCopyGroup(): UseMutationResult<Group, Error,"
     },
     "hook:skillmeat/web/hooks/use-groups.ts::useCreateGroup": {
       "doc_summary": "Create new group mutation",
@@ -22301,6 +22811,17 @@
       ],
       "signature": "ArtifactPositionUpdate(BaseModel)"
     },
+    "schema:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/api/schemas/groups.py::CopyGroupRequest": {
+      "decorators": null,
+      "doc_summary": "Request schema for copying a group to another collection.",
+      "docstring": "Request schema for copying a group to another collection.\n\nCreates a copy of the group (with name + \" (Copy)\") in the target collection,\nincluding all artifacts from the source group.",
+      "imports": [
+        "datetime",
+        "pydantic",
+        "typing"
+      ],
+      "signature": "CopyGroupRequest(BaseModel)"
+    },
     "schema:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/api/schemas/groups.py::GroupArtifactResponse": {
       "decorators": null,
       "doc_summary": "Response schema for an artifact in a group.",
@@ -23199,6 +23720,46 @@
         "typing"
       ],
       "signature": "UserRatingResponse(BaseModel)"
+    },
+    "schema:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/api/schemas/settings.py::GitHubTokenRequest": {
+      "decorators": null,
+      "doc_summary": "Request to set GitHub Personal Access Token.",
+      "docstring": "Request to set GitHub Personal Access Token.\n\nThe token must be a valid GitHub PAT starting with 'ghp_' (classic)\nor 'github_pat_' (fine-grained).",
+      "imports": [
+        "pydantic",
+        "typing"
+      ],
+      "signature": "GitHubTokenRequest(BaseModel)"
+    },
+    "schema:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/api/schemas/settings.py::GitHubTokenStatusResponse": {
+      "decorators": null,
+      "doc_summary": "Response for GitHub token status check.",
+      "docstring": "Response for GitHub token status check.\n\nReturns whether a token is configured and, if so, a masked version\nalong with the associated GitHub username.",
+      "imports": [
+        "pydantic",
+        "typing"
+      ],
+      "signature": "GitHubTokenStatusResponse(BaseModel)"
+    },
+    "schema:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/api/schemas/settings.py::GitHubTokenValidationResponse": {
+      "decorators": null,
+      "doc_summary": "Response for GitHub token validation.",
+      "docstring": "Response for GitHub token validation.\n\nReturns validation results including rate limit information\nand token scopes without storing the token.",
+      "imports": [
+        "pydantic",
+        "typing"
+      ],
+      "signature": "GitHubTokenValidationResponse(BaseModel)"
+    },
+    "schema:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/api/schemas/settings.py::MessageResponse": {
+      "decorators": null,
+      "doc_summary": "Generic message response for simple operations.",
+      "docstring": "Generic message response for simple operations.\n\nUsed for operations that don't return specific data,\nsuch as successful deletion or updates.",
+      "imports": [
+        "pydantic",
+        "typing"
+      ],
+      "signature": "MessageResponse(BaseModel)"
     },
     "schema:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/api/schemas/tags.py::TagCreateRequest": {
       "decorators": null,
@@ -25068,6 +25629,17 @@
       ],
       "signature": "ArtifactPositionUpdate(BaseModel)"
     },
+    "schema:skillmeat/api/schemas/groups.py::CopyGroupRequest": {
+      "decorators": null,
+      "doc_summary": "Request schema for copying a group to another collection.",
+      "docstring": "Request schema for copying a group to another collection.\n\nCreates a copy of the group (with name + \" (Copy)\") in the target collection,\nincluding all artifacts from the source group.",
+      "imports": [
+        "datetime",
+        "pydantic",
+        "typing"
+      ],
+      "signature": "CopyGroupRequest(BaseModel)"
+    },
     "schema:skillmeat/api/schemas/groups.py::GroupArtifactResponse": {
       "decorators": null,
       "doc_summary": "Response schema for an artifact in a group.",
@@ -26275,6 +26847,46 @@
       ],
       "signature": "UserRatingResponse(BaseModel)"
     },
+    "schema:skillmeat/api/schemas/settings.py::GitHubTokenRequest": {
+      "decorators": null,
+      "doc_summary": "Request to set GitHub Personal Access Token.",
+      "docstring": "Request to set GitHub Personal Access Token.\n\nThe token must be a valid GitHub PAT starting with 'ghp_' (classic)\nor 'github_pat_' (fine-grained).",
+      "imports": [
+        "pydantic",
+        "typing"
+      ],
+      "signature": "GitHubTokenRequest(BaseModel)"
+    },
+    "schema:skillmeat/api/schemas/settings.py::GitHubTokenStatusResponse": {
+      "decorators": null,
+      "doc_summary": "Response for GitHub token status check.",
+      "docstring": "Response for GitHub token status check.\n\nReturns whether a token is configured and, if so, a masked version\nalong with the associated GitHub username.",
+      "imports": [
+        "pydantic",
+        "typing"
+      ],
+      "signature": "GitHubTokenStatusResponse(BaseModel)"
+    },
+    "schema:skillmeat/api/schemas/settings.py::GitHubTokenValidationResponse": {
+      "decorators": null,
+      "doc_summary": "Response for GitHub token validation.",
+      "docstring": "Response for GitHub token validation.\n\nReturns validation results including rate limit information\nand token scopes without storing the token.",
+      "imports": [
+        "pydantic",
+        "typing"
+      ],
+      "signature": "GitHubTokenValidationResponse(BaseModel)"
+    },
+    "schema:skillmeat/api/schemas/settings.py::MessageResponse": {
+      "decorators": null,
+      "doc_summary": "Generic message response for simple operations.",
+      "docstring": "Generic message response for simple operations.\n\nUsed for operations that don't return specific data,\nsuch as successful deletion or updates.",
+      "imports": [
+        "pydantic",
+        "typing"
+      ],
+      "signature": "MessageResponse(BaseModel)"
+    },
     "schema:skillmeat/api/schemas/tags.py::ArtifactTagRequest": {
       "decorators": null,
       "doc_summary": "Request schema for adding a tag to an artifact.",
@@ -26771,17 +27383,15 @@
     "service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/github_metadata.py::GitHubMetadataExtractor": {
       "decorators": null,
       "doc_summary": "Extracts metadata from GitHub repositories with caching.",
-      "docstring": "Extracts metadata from GitHub repositories with caching.\n\nProvides GitHub API integration for fetching artifact metadata including\nYAML frontmatter from markdown files and repository-level metadata like\ntopics and license information.\n\nAttributes:\n    cache: MetadataCache instance for caching responses\n    token: Optional GitHub personal access token for higher rate limits\n    session: Requests session with authentication if token provided\n    base_url: GitHub API base URL",
+      "docstring": "Extracts metadata from GitHub repositories with caching.\n\nProvides GitHub API integration for fetching artifact metadata including\nYAML frontmatter from markdown files and repository-level metadata like\ntopics and license information.\n\nAttributes:\n    cache: MetadataCache instance for caching responses\n    _client: GitHubClient instance for GitHub API operations",
       "imports": [
-        "base64",
         "datetime",
         "logging",
-        "os",
         "pydantic",
         "re",
-        "requests",
         "skillmeat.core.cache",
         "skillmeat.core.discovery_metrics",
+        "skillmeat.core.github_client",
         "time",
         "typing",
         "urllib.parse",
@@ -26862,7 +27472,7 @@
     "service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/marketplace/github_scanner.py::GitHubScanner": {
       "decorators": null,
       "doc_summary": "Scans GitHub repositories for Claude Code artifacts.",
-      "docstring": "Scans GitHub repositories for Claude Code artifacts.\n\nUses GitHub's Contents API to fetch repository tree and applies\nheuristic detection to identify artifacts.\n\nExample:\n    >>> scanner = GitHubScanner(token=\"ghp_...\")\n    >>> result = scanner.scan_repository(\n    ...     owner=\"anthropics\",\n    ...     repo=\"anthropic-quickstarts\",\n    ...     ref=\"main\",\n    ... )\n    >>> print(f\"Found {result.artifacts_found} artifacts\")",
+      "docstring": "Scans GitHub repositories for Claude Code artifacts.\n\nUses the centralized GitHubClient to fetch repository tree and applies\nheuristic detection to identify artifacts.\n\nExample:\n    >>> scanner = GitHubScanner(token=\"ghp_...\")\n    >>> result = scanner.scan_repository(\n    ...     owner=\"anthropics\",\n    ...     repo=\"anthropic-quickstarts\",\n    ...     ref=\"main\",\n    ... )\n    >>> print(f\"Found {result.artifacts_found} artifacts\")",
       "imports": [
         "base64",
         "dataclasses",
@@ -26870,10 +27480,9 @@
         "hashlib",
         "json",
         "logging",
-        "os",
-        "requests",
         "skillmeat.api.schemas.marketplace",
         "skillmeat.cache.models",
+        "skillmeat.core.github_client",
         "skillmeat.core.marketplace.deduplication_engine",
         "skillmeat.core.marketplace.heuristic_detector",
         "skillmeat.core.marketplace.observability",
@@ -27698,5 +28307,5 @@
       "signature": "export function getEntityTypeConfig(type: EntityType): EntityTypeConfig"
     }
   },
-  "source_commit": "a52c5132483085514263d04f78b2ff878577cf9b"
+  "source_commit": "cfb2ffb8270ae96e482b5e198c75921185a7e99f"
 }

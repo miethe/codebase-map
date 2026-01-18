@@ -555,6 +555,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   const animationPausedRef = useRef(false);
   const pendingReheatRef = useRef(false);
   const zoomBaselineRef = useRef<number | null>(null);
+  const lastZoomLevelRef = useRef<number | null>(null);
   const frustumRef = useRef(new THREE.Frustum());
   const projScreenMatrixRef = useRef(new THREE.Matrix4());
   const tempVectorRef = useRef(new THREE.Vector3());
@@ -652,7 +653,11 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       }
       const baseline = zoomBaselineRef.current || 1;
       const zoom = baseline / Math.max(distance, 1);
-      onZoomChange(zoom);
+      const lastZoom = lastZoomLevelRef.current;
+      if (lastZoom === null || Math.abs(zoom - lastZoom) > 0.002) {
+        lastZoomLevelRef.current = zoom;
+        onZoomChange(zoom);
+      }
     }
     if (!enableMotionOptimizations) return;
     registerInteraction(speed);
@@ -836,7 +841,8 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
 
   useEffect(() => {
     zoomBaselineRef.current = null;
-  }, [data.nodes.length, data.edges.length, viewMode]);
+    lastZoomLevelRef.current = null;
+  }, [viewMode]);
 
   useEffect(() => {
     if (!cameraPresetRequest) return;
