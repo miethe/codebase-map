@@ -95,6 +95,23 @@ def _format_expr(node: ast.AST) -> str:
     return ""
 
 
+def _find_top_level_owner(
+    node: ast.AST, parent_map: Dict[ast.AST, ast.AST]
+) -> Optional[ast.AST]:
+    top_level_class = None
+    top_level_func = None
+    current = node
+    while current in parent_map:
+        current = parent_map[current]
+        if isinstance(current, ast.ClassDef):
+            if isinstance(parent_map.get(current), ast.Module):
+                top_level_class = current
+        elif isinstance(current, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            if isinstance(parent_map.get(current), ast.Module):
+                top_level_func = current
+    return top_level_class or top_level_func
+
+
 def repo_node_id(module: str, name: str) -> str:
     repo_path = module_to_path(module)
     if repo_path:
@@ -121,10 +138,13 @@ def extract_backend_services(api_root: Path) -> Graph:
         side_effects = infer_side_effects(import_modules)
         parent_map = _build_parent_map(tree)
         dependencies_by_service: Dict[str, Set[str]] = {}
+        service_ids: Dict[str, str] = {}
 
         for node in tree.body:
             if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
                 name = node.name
+                node_id = service_node_id(service_file, name)
+                service_ids[name] = node_id
                 docstring = ast.get_docstring(node)
                 span = span_from_ast(node)
                 signature = (
@@ -139,7 +159,7 @@ def extract_backend_services(api_root: Path) -> Graph:
                     node, (ast.FunctionDef, ast.AsyncFunctionDef)
                 ) else None
                 graph.add_node(
-                    service_node_id(service_file, name),
+                    node_id,
                     "service",
                     label=name,
                     file=service_file.as_posix(),
@@ -157,51 +177,53 @@ def extract_backend_services(api_root: Path) -> Graph:
                 )
 
         for node in ast.walk(tree):
-            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
-                service_name = node.name
-                for child in ast.walk(node):
-                    if isinstance(child, ast.Call):
-                        target_name = None
-                        method_name = None
-                        if isinstance(child.func, ast.Name):
-                            target_name = child.func.id
-                            method_name = child.func.id
-                        elif isinstance(child.func, ast.Attribute) and isinstance(
-                            child.func.value, ast.Name
-                        ):
-                            target_name = child.func.value.id
-                            method_name = child.func.attr
-                        if not target_name:
-                            continue
-                        module = repo_imports.get(target_name)
-                        if not module and target_name.endswith("Repository"):
-                            module = REPO_MODULES[0]
-                        if not module:
-                            continue
-                        dependencies_by_service.setdefault(service_name, set()).add(target_name)
-                        graph.add_node(
-                            repo_node_id(module, target_name),
-                            "repository",
-                            label=target_name,
-                            file=(module_to_path(module) or service_file).as_posix(),
-                            side_effects=["db"],
-                            **build_common_metadata(
-                                module_to_path(module) or service_file,
-                                symbol=target_name,
-                            ),
-                        )
-                        graph.add_edge(
-                            service_node_id(service_file, service_name),
-                            repo_node_id(module, target_name),
-                            "service_calls_repository",
-                            callsite_file=service_file.as_posix(),
-                            callsite_line=child.lineno,
-                            awaited=isinstance(parent_map.get(child), ast.Await),
-                            method_name=method_name,
-                        )
+            if isinstance(node, ast.Call):
+                target_name = None
+                method_name = None
+                if isinstance(node.func, ast.Name):
+                    target_name = node.func.id
+                    method_name = node.func.id
+                elif isinstance(node.func, ast.Attribute) and isinstance(
+                    node.func.value, ast.Name
+                ):
+                    target_name = node.func.value.id
+                    method_name = node.func.attr
+                if not target_name:
+                    continue
+                module = repo_imports.get(target_name)
+                if not module and target_name.endswith("Repository"):
+                    module = REPO_MODULES[0]
+                if not module:
+                    continue
+                owner = _find_top_level_owner(node, parent_map)
+                if not owner:
+                    continue
+                owner_id = service_ids.get(owner.name)
+                if not owner_id:
+                    continue
+                dependencies_by_service.setdefault(owner_id, set()).add(target_name)
+                graph.add_node(
+                    repo_node_id(module, target_name),
+                    "repository",
+                    label=target_name,
+                    file=(module_to_path(module) or service_file).as_posix(),
+                    side_effects=["db"],
+                    **build_common_metadata(
+                        module_to_path(module) or service_file,
+                        symbol=target_name,
+                    ),
+                )
+                graph.add_edge(
+                    owner_id,
+                    repo_node_id(module, target_name),
+                    "service_calls_repository",
+                    callsite_file=service_file.as_posix(),
+                    callsite_line=node.lineno,
+                    awaited=isinstance(parent_map.get(node), ast.Await),
+                    method_name=method_name,
+                )
 
-        for service_name, deps in dependencies_by_service.items():
-            node_id = service_node_id(service_file, service_name)
+        for node_id, deps in dependencies_by_service.items():
             node = graph.nodes.get(node_id)
             if node and deps:
                 node["dependencies"] = sorted(deps)
