@@ -1284,7 +1284,7 @@
     "handler:skillmeat/api/routers/marketplace_sources.py::get_artifact_file_content->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/marketplace/github_scanner.py::GitHubScanner:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/marketplace_sources.py",
-        "line": 3133
+        "line": 3282
       },
       "notes": "method_name=GitHubScanner"
     },
@@ -1294,7 +1294,7 @@
     "handler:skillmeat/api/routers/marketplace_sources.py::get_artifact_file_tree->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/marketplace/github_scanner.py::GitHubScanner:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/marketplace_sources.py",
-        "line": 2936
+        "line": 3085
       },
       "notes": "method_name=GitHubScanner"
     },
@@ -1313,14 +1313,14 @@
     "handler:skillmeat/api/routers/marketplace_sources.py::import_artifacts->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/marketplace/import_coordinator.py::ConflictStrategy:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/marketplace_sources.py",
-        "line": 2084
+        "line": 2230
       },
       "notes": "method_name=ConflictStrategy"
     },
     "handler:skillmeat/api/routers/marketplace_sources.py::import_artifacts->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/marketplace/import_coordinator.py::ImportCoordinator:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/marketplace_sources.py",
-        "line": 2083
+        "line": 2229
       },
       "notes": "method_name=ImportCoordinator"
     },
@@ -1335,6 +1335,13 @@
     },
     "handler:skillmeat/api/routers/marketplace_sources.py::list_sources->schema:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/api/schemas/marketplace.py::SourceListResponse:handler_uses_schema": {
       "notes": "role=response"
+    },
+    "handler:skillmeat/api/routers/marketplace_sources.py::list_sources->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/marketplace/source_manager.py::SourceManager:handler_calls_service": {
+      "callsite": {
+        "file": "skillmeat/api/routers/marketplace_sources.py",
+        "line": 894
+      },
+      "notes": "method_name=SourceManager"
     },
     "handler:skillmeat/api/routers/marketplace_sources.py::rescan_source->schema:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/api/schemas/marketplace.py::ScanRequest:handler_uses_schema": {
       "notes": "role=request"
@@ -1354,7 +1361,7 @@
     "handler:skillmeat/api/routers/marketplace_sources.py::sync_imported_artifacts->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/artifact.py::ArtifactType:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/marketplace_sources.py",
-        "line": 1452
+        "line": 1598
       },
       "notes": "method_name=ArtifactType"
     },
@@ -1367,7 +1374,7 @@
     "handler:skillmeat/api/routers/marketplace_sources.py::update_catalog_entry_name->service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/validation.py::validate_artifact_name:handler_calls_service": {
       "callsite": {
         "file": "skillmeat/api/routers/marketplace_sources.py",
-        "line": 1915
+        "line": 2061
       },
       "notes": "method_name=validate_artifact_name"
     },
@@ -9349,16 +9356,9 @@
         "line": 73
       },
       "notes": "method_name=TagRepository"
-    },
-    "service:skillmeat/core/services/tag_service.py::__init__->repository:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/cache/repositories.py::TagRepository:service_calls_repository": {
-      "callsite": {
-        "file": "skillmeat/core/services/tag_service.py",
-        "line": 73
-      },
-      "notes": "method_name=TagRepository"
     }
   },
-  "generated_at": "2026-01-17T22:52:06Z",
+  "generated_at": "2026-01-18T20:57:18Z",
   "nodes": {
     "api_client:skillmeat/web/hooks/use-toast.tsx::useToast": {
       "docstring": null,
@@ -17457,6 +17457,7 @@
         "skillmeat.core.artifact",
         "skillmeat.core.marketplace.github_scanner",
         "skillmeat.core.marketplace.import_coordinator",
+        "skillmeat.core.marketplace.source_manager",
         "skillmeat.core.path_tags",
         "skillmeat.core.validation",
         "typing",
@@ -17493,6 +17494,7 @@
         "skillmeat.core.artifact",
         "skillmeat.core.marketplace.github_scanner",
         "skillmeat.core.marketplace.import_coordinator",
+        "skillmeat.core.marketplace.source_manager",
         "skillmeat.core.path_tags",
         "skillmeat.core.validation",
         "typing",
@@ -17529,6 +17531,7 @@
         "skillmeat.core.artifact",
         "skillmeat.core.marketplace.github_scanner",
         "skillmeat.core.marketplace.import_coordinator",
+        "skillmeat.core.marketplace.source_manager",
         "skillmeat.core.path_tags",
         "skillmeat.core.validation",
         "typing",
@@ -17568,6 +17571,7 @@
         "skillmeat.core.artifact",
         "skillmeat.core.marketplace.github_scanner",
         "skillmeat.core.marketplace.import_coordinator",
+        "skillmeat.core.marketplace.source_manager",
         "skillmeat.core.path_tags",
         "skillmeat.core.validation",
         "typing",
@@ -17606,6 +17610,7 @@
         "skillmeat.core.artifact",
         "skillmeat.core.marketplace.github_scanner",
         "skillmeat.core.marketplace.import_coordinator",
+        "skillmeat.core.marketplace.source_manager",
         "skillmeat.core.path_tags",
         "skillmeat.core.validation",
         "typing",
@@ -17643,6 +17648,7 @@
         "skillmeat.core.artifact",
         "skillmeat.core.marketplace.github_scanner",
         "skillmeat.core.marketplace.import_coordinator",
+        "skillmeat.core.marketplace.source_manager",
         "skillmeat.core.path_tags",
         "skillmeat.core.validation",
         "typing",
@@ -17680,6 +17686,7 @@
         "skillmeat.core.artifact",
         "skillmeat.core.marketplace.github_scanner",
         "skillmeat.core.marketplace.import_coordinator",
+        "skillmeat.core.marketplace.source_manager",
         "skillmeat.core.path_tags",
         "skillmeat.core.validation",
         "typing",
@@ -17716,6 +17723,7 @@
         "skillmeat.core.artifact",
         "skillmeat.core.marketplace.github_scanner",
         "skillmeat.core.marketplace.import_coordinator",
+        "skillmeat.core.marketplace.source_manager",
         "skillmeat.core.path_tags",
         "skillmeat.core.validation",
         "typing",
@@ -17754,6 +17762,7 @@
         "skillmeat.core.artifact",
         "skillmeat.core.marketplace.github_scanner",
         "skillmeat.core.marketplace.import_coordinator",
+        "skillmeat.core.marketplace.source_manager",
         "skillmeat.core.path_tags",
         "skillmeat.core.validation",
         "typing",
@@ -17790,6 +17799,7 @@
         "skillmeat.core.artifact",
         "skillmeat.core.marketplace.github_scanner",
         "skillmeat.core.marketplace.import_coordinator",
+        "skillmeat.core.marketplace.source_manager",
         "skillmeat.core.path_tags",
         "skillmeat.core.validation",
         "typing",
@@ -17816,8 +17826,8 @@
       "decorators": [
         "router.get"
       ],
-      "doc_summary": "List all marketplace sources with pagination.",
-      "docstring": "List all marketplace sources with pagination.\n\nArgs:\n    limit: Maximum number of items per page (1-100)\n    cursor: Cursor for pagination (from previous response)\n\nReturns:\n    Paginated list of sources with page info\n\nRaises:\n    HTTPException 500: If database operation fails",
+      "doc_summary": "List all marketplace sources with pagination and filtering.",
+      "docstring": "List all marketplace sources with pagination and filtering.\n\nArgs:\n    limit: Maximum number of items per page (1-100)\n    cursor: Cursor for pagination (from previous response)\n    artifact_type: Filter by artifact type (skill, command, agent, hook, mcp-server)\n    tags: Filter by tags (AND logic - must match all provided tags)\n    trust_level: Filter by trust level (untrusted, basic, verified, official)\n    search: Search in repo name, description, tags\n\nReturns:\n    Paginated list of sources with page info including total_count\n\nRaises:\n    HTTPException 500: If database operation fails",
       "imports": [
         "dataclasses",
         "datetime",
@@ -17837,6 +17847,7 @@
         "skillmeat.core.artifact",
         "skillmeat.core.marketplace.github_scanner",
         "skillmeat.core.marketplace.import_coordinator",
+        "skillmeat.core.marketplace.source_manager",
         "skillmeat.core.path_tags",
         "skillmeat.core.validation",
         "typing",
@@ -17844,10 +17855,14 @@
       ],
       "params": [
         "limit",
-        "cursor"
+        "cursor",
+        "artifact_type",
+        "tags",
+        "trust_level",
+        "search"
       ],
       "returns": "SourceListResponse",
-      "signature": "list_sources(limit: int, cursor: Optional[str]) -> SourceListResponse"
+      "signature": "list_sources(limit: int, cursor: Optional[str], artifact_type: Optional[str], tags: Optional[List[str]], trust_level: Optional[str], search: Optional[str]) -> SourceListResponse"
     },
     "handler:skillmeat/api/routers/marketplace_sources.py::rescan_source": {
       "decorators": [
@@ -17874,6 +17889,7 @@
         "skillmeat.core.artifact",
         "skillmeat.core.marketplace.github_scanner",
         "skillmeat.core.marketplace.import_coordinator",
+        "skillmeat.core.marketplace.source_manager",
         "skillmeat.core.path_tags",
         "skillmeat.core.validation",
         "typing",
@@ -17911,6 +17927,7 @@
         "skillmeat.core.artifact",
         "skillmeat.core.marketplace.github_scanner",
         "skillmeat.core.marketplace.import_coordinator",
+        "skillmeat.core.marketplace.source_manager",
         "skillmeat.core.path_tags",
         "skillmeat.core.validation",
         "typing",
@@ -17949,6 +17966,7 @@
         "skillmeat.core.artifact",
         "skillmeat.core.marketplace.github_scanner",
         "skillmeat.core.marketplace.import_coordinator",
+        "skillmeat.core.marketplace.source_manager",
         "skillmeat.core.path_tags",
         "skillmeat.core.validation",
         "typing",
@@ -17988,6 +18006,7 @@
         "skillmeat.core.artifact",
         "skillmeat.core.marketplace.github_scanner",
         "skillmeat.core.marketplace.import_coordinator",
+        "skillmeat.core.marketplace.source_manager",
         "skillmeat.core.path_tags",
         "skillmeat.core.validation",
         "typing",
@@ -18027,6 +18046,7 @@
         "skillmeat.core.artifact",
         "skillmeat.core.marketplace.github_scanner",
         "skillmeat.core.marketplace.import_coordinator",
+        "skillmeat.core.marketplace.source_manager",
         "skillmeat.core.path_tags",
         "skillmeat.core.validation",
         "typing",
@@ -18065,6 +18085,7 @@
         "skillmeat.core.artifact",
         "skillmeat.core.marketplace.github_scanner",
         "skillmeat.core.marketplace.import_coordinator",
+        "skillmeat.core.marketplace.source_manager",
         "skillmeat.core.path_tags",
         "skillmeat.core.validation",
         "typing",
@@ -21856,7 +21877,7 @@
     "repository:skillmeat/cache/repositories.py::MarketplaceSourceRepository": {
       "decorators": null,
       "doc_summary": "Repository for GitHub repository source management.",
-      "docstring": "Repository for GitHub repository source management.\n\nProvides CRUD operations for MarketplaceSource entities, which represent\nGitHub repositories that can be scanned for Claude Code artifacts.\n\nMethods:\n    - get_by_id: Retrieve source by ID\n    - get_by_repo_url: Retrieve source by repository URL (unique)\n    - list_all: List all sources\n    - create: Create new source\n    - update: Update existing source\n    - delete: Delete source (cascade deletes catalog entries)\n\nExample:\n    >>> repo = MarketplaceSourceRepository()\n    >>>\n    >>> # Create a new source\n    >>> source = MarketplaceSource(\n    ...     id=str(uuid.uuid4()),\n    ...     repo_url=\"https://github.com/anthropics/anthropic-quickstarts\",\n    ...     owner=\"anthropics\",\n    ...     repo_name=\"anthropic-quickstarts\",\n    ...     ref=\"main\",\n    ...     trust_level=\"official\",\n    ... )\n    >>> created = repo.create(source)\n    >>>\n    >>> # Find by URL\n    >>> found = repo.get_by_repo_url(\"https://github.com/anthropics/anthropic-quickstarts\")\n    >>>\n    >>> # Update scan status\n    >>> found.scan_status = \"success\"\n    >>> found.last_sync_at = datetime.utcnow()\n    >>> updated = repo.update(found)",
+      "docstring": "Repository for GitHub repository source management.\n\n    Provides CRUD operations for MarketplaceSource entities, which represent\n    GitHub repositories that can be scanned for Claude Code artifacts.\n\n    Supported Fields:\n        Core fields (required):\n            - id, repo_url, owner, repo_name, ref\n\n        User-provided metadata:\n            - description: User-provided description (max 500 chars)\n            - notes: Internal notes/documentation (max 2000 chars)\n\n        GitHub-fetched metadata:\n            - repo_description: Description from GitHub API (max 2000 chars)\n            - repo_readme: README content from GitHub (up to 50KB)\n            - tags: List of tags for categorization (JSON-serialized)\n\n        Scan results:\n            - scan_status: Current scan status\n            - artifact_count: Total count of discovered artifacts\n            - counts_by_type: Dict mapping artifact type to count (JSON-serialized)\n            - last_sync_at, last_error\n\n    Methods:\n        - get_by_id: Retrieve source by ID\n        - get_by_repo_url: Retrieve source by repository URL (unique)\n        - list_all: List all sources\n        - create: Create new source (with optional tags/counts_by_type kwargs)\n        - update: Update existing source (with optional tags/counts_by_type kwargs)\n        - update_fields: Partial update by source_id (convenience method)\n        - delete: Delete source (cascade deletes catalog entries)\n\n    Example:\n        >>> repo = MarketplaceSourceRepository()\n        >>>\n        >>> # Create a new source with GitHub metadata\n        >>> source = MarketplaceSource(\n        ...     id=str(uuid.uuid4()),\n        ...     repo_url=\"https://github.com/anthropics/anthropic-quickstarts\",\n        ...     owner=\"anthropics\",\n        ...     repo_name=\"anthropic-quickstarts\",\n        ...     ref=\"main\",\n        ...     trust_level=\"official\",\n        ...     repo_description=\"Official Anthropic quickstart examples\",\n        ...     repo_readme=\"# Anthropic Quickstarts\n\n...\",\n        ... )\n        >>> created = repo.create(\n        ...     source,\n        ...     tags=[\"official\", \"anthropic\"],\n        ...     counts_by_type={\"skill\": 5},\n        ... )\n        >>>\n        >>> # Find by URL\n        >>> found = repo.get_by_repo_url(\"https://github.com/anthropics/anthropic-quickstarts\")\n        >>>\n        >>> # Partial update with update_fields\n        >>> updated = repo.update_fields(\n        ...     found.id,\n        ...     scan_status=\"success\",\n        ...     artifact_count=10,\n        ...     counts_by_type={\"skill\": 7, \"command\": 3},\n        ... )\n    ",
       "imports": [
         "__future__",
         "contextlib",
@@ -27474,6 +27495,7 @@
       "doc_summary": "Scans GitHub repositories for Claude Code artifacts.",
       "docstring": "Scans GitHub repositories for Claude Code artifacts.\n\nUses the centralized GitHubClient to fetch repository tree and applies\nheuristic detection to identify artifacts.\n\nExample:\n    >>> scanner = GitHubScanner(token=\"ghp_...\")\n    >>> result = scanner.scan_repository(\n    ...     owner=\"anthropics\",\n    ...     repo=\"anthropic-quickstarts\",\n    ...     ref=\"main\",\n    ... )\n    >>> print(f\"Found {result.artifacts_found} artifacts\")",
       "imports": [
+        "asyncio",
         "base64",
         "dataclasses",
         "datetime",
@@ -27542,6 +27564,21 @@
         "uuid"
       ],
       "signature": "ImportCoordinator"
+    },
+    "service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/marketplace/source_manager.py::SourceManager": {
+      "decorators": null,
+      "doc_summary": "Service for marketplace source tag management.",
+      "docstring": "Service for marketplace source tag management.\n\nThis service provides a clean interface for tag operations on marketplace\nsources, handling validation, error handling, and persistence. It delegates\ndata access to MarketplaceSourceRepository while implementing business rules.\n\nAttributes:\n    repo: MarketplaceSourceRepository instance for data access\n    logger: Logger instance for structured logging",
+      "imports": [
+        "__future__",
+        "collections",
+        "logging",
+        "re",
+        "skillmeat.cache.models",
+        "skillmeat.cache.repositories",
+        "typing"
+      ],
+      "signature": "SourceManager"
     },
     "service:/Users/miethe/dev/homelab/development/skillmeat/skillmeat/core/mcp/deployment.py::MCPDeploymentManager": {
       "decorators": null,
@@ -28307,5 +28344,5 @@
       "signature": "export function getEntityTypeConfig(type: EntityType): EntityTypeConfig"
     }
   },
-  "source_commit": "cfb2ffb8270ae96e482b5e198c75921185a7e99f"
+  "source_commit": "f7d66ec8786579387e5aa31828436ae79bd56ac2"
 }

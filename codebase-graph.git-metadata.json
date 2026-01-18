@@ -7,7 +7,7 @@
   },
   ".claude/.skillmeat-deployed.toml": {
     "change_count": 13,
-    "change_count_30d": 10,
+    "change_count_30d": 9,
     "last_modified": 1768336700000,
     "unique_authors": 1
   },
@@ -1921,31 +1921,31 @@
   },
   ".claude/progress/tags-refactor-v1/README.md": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766171915000,
     "unique_authors": 1
   },
   ".claude/progress/tags-refactor-v1/phase-0-progress.md": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766171915000,
     "unique_authors": 1
   },
   ".claude/progress/tags-refactor-v1/phase-1-4-progress.md": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766171915000,
     "unique_authors": 1
   },
   ".claude/progress/tags-refactor-v1/phase-5-6-progress.md": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766171915000,
     "unique_authors": 1
   },
   ".claude/progress/tags-refactor-v1/phase-7-8-progress.md": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766171915000,
     "unique_authors": 1
   },
@@ -2911,121 +2911,121 @@
   },
   ".claude/skills/notebooklm-skill/AUTHENTICATION.md": {
     "change_count": 2,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766171891000,
     "unique_authors": 1
   },
   ".claude/skills/notebooklm-skill/CHANGELOG.md": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766171891000,
     "unique_authors": 1
   },
   ".claude/skills/notebooklm-skill/LICENSE": {
     "change_count": 2,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766171891000,
     "unique_authors": 1
   },
   ".claude/skills/notebooklm-skill/README.md": {
     "change_count": 2,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766171891000,
     "unique_authors": 1
   },
   ".claude/skills/notebooklm-skill/SKILL.md": {
     "change_count": 5,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766171891000,
     "unique_authors": 1
   },
   ".claude/skills/notebooklm-skill/images/example_notebookchat.png": {
     "change_count": 2,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766171891000,
     "unique_authors": 1
   },
   ".claude/skills/notebooklm-skill/references/api_reference.md": {
     "change_count": 2,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766171891000,
     "unique_authors": 1
   },
   ".claude/skills/notebooklm-skill/references/troubleshooting.md": {
     "change_count": 2,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766171891000,
     "unique_authors": 1
   },
   ".claude/skills/notebooklm-skill/references/usage_patterns.md": {
     "change_count": 2,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766171891000,
     "unique_authors": 1
   },
   ".claude/skills/notebooklm-skill/requirements.txt": {
     "change_count": 2,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766171891000,
     "unique_authors": 1
   },
   ".claude/skills/notebooklm-skill/scripts/__init__.py": {
     "change_count": 2,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766171891000,
     "unique_authors": 1
   },
   ".claude/skills/notebooklm-skill/scripts/ask_question.py": {
     "change_count": 2,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766171891000,
     "unique_authors": 1
   },
   ".claude/skills/notebooklm-skill/scripts/auth_manager.py": {
     "change_count": 2,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766171891000,
     "unique_authors": 1
   },
   ".claude/skills/notebooklm-skill/scripts/browser_session.py": {
     "change_count": 2,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766171891000,
     "unique_authors": 1
   },
   ".claude/skills/notebooklm-skill/scripts/browser_utils.py": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766171891000,
     "unique_authors": 1
   },
   ".claude/skills/notebooklm-skill/scripts/cleanup_manager.py": {
     "change_count": 2,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766171891000,
     "unique_authors": 1
   },
   ".claude/skills/notebooklm-skill/scripts/config.py": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766171891000,
     "unique_authors": 1
   },
   ".claude/skills/notebooklm-skill/scripts/notebook_manager.py": {
     "change_count": 2,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766171891000,
     "unique_authors": 1
   },
   ".claude/skills/notebooklm-skill/scripts/run.py": {
     "change_count": 2,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766171891000,
     "unique_authors": 1
   },
   ".claude/skills/notebooklm-skill/scripts/setup_environment.py": {
     "change_count": 2,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766171891000,
     "unique_authors": 1
   },
@@ -3211,7 +3211,7 @@
   },
   ".claude/skills/skillmeat-cli/SKILL.md": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766171937000,
     "unique_authors": 1
   },
@@ -3223,13 +3223,13 @@
   },
   ".claude/skills/skillmeat-cli/references/claudectl-setup.md": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766171937000,
     "unique_authors": 1
   },
   ".claude/skills/skillmeat-cli/references/command-quick-reference.md": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766171937000,
     "unique_authors": 1
   },
@@ -3241,7 +3241,7 @@
   },
   ".claude/skills/skillmeat-cli/scripts/analyze-project.js": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766171937000,
     "unique_authors": 1
   },
@@ -3283,7 +3283,7 @@
   },
   ".claude/skills/skillmeat-cli/workflows/agent-self-enhancement.md": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766171937000,
     "unique_authors": 1
   },
@@ -3697,7 +3697,7 @@
   },
   ".claude/worknotes/bug-fixes-2025-12.md": {
     "change_count": 54,
-    "change_count_30d": 27,
+    "change_count_30d": 21,
     "last_modified": 1767216821000,
     "unique_authors": 1
   },
@@ -3805,7 +3805,7 @@
   },
   ".claude/worknotes/feature-requests/confidence-scoring-system.md": {
     "change_count": 2,
-    "change_count_30d": 2,
+    "change_count_30d": 1,
     "last_modified": 1766433997000,
     "unique_authors": 1
   },
@@ -4351,7 +4351,7 @@
   },
   ".claude/worknotes/tags-investigation-2025-12-19.md": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766161459000,
     "unique_authors": 1
   },
@@ -4525,7 +4525,7 @@
   },
   ".mcp.json": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766171906000,
     "unique_authors": 1
   },
@@ -5497,7 +5497,7 @@
   },
   "docs/project_plans/ideas/collections-remediate-12-18.md": {
     "change_count": 3,
-    "change_count_30d": 3,
+    "change_count_30d": 2,
     "last_modified": 1766426818000,
     "unique_authors": 1
   },
@@ -5683,7 +5683,7 @@
   },
   "docs/project_plans/implementation_plans/enhancements/tags-refactor-v1.md": {
     "change_count": 2,
-    "change_count_30d": 2,
+    "change_count_30d": 1,
     "last_modified": 1766345211000,
     "unique_authors": 1
   },
@@ -6397,13 +6397,13 @@
   },
   "package-lock.json": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766171906000,
     "unique_authors": 1
   },
   "package.json": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766171906000,
     "unique_authors": 1
   },
@@ -6511,7 +6511,7 @@
   },
   "skillmeat/api/openapi.json": {
     "change_count": 10,
-    "change_count_30d": 5,
+    "change_count_30d": 4,
     "last_modified": 1768586608000,
     "unique_authors": 3
   },
@@ -6529,7 +6529,7 @@
   },
   "skillmeat/api/routers/__init__.py": {
     "change_count": 12,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766099084000,
     "unique_authors": 2
   },
@@ -6541,7 +6541,7 @@
   },
   "skillmeat/api/routers/artifacts.py": {
     "change_count": 43,
-    "change_count_30d": 14,
+    "change_count_30d": 10,
     "last_modified": 1768666684000,
     "unique_authors": 3
   },
@@ -6649,7 +6649,7 @@
   },
   "skillmeat/api/routers/tags.py": {
     "change_count": 2,
-    "change_count_30d": 2,
+    "change_count_30d": 0,
     "last_modified": 1766109114000,
     "unique_authors": 1
   },
@@ -6667,7 +6667,7 @@
   },
   "skillmeat/api/schemas/__init__.py": {
     "change_count": 11,
-    "change_count_30d": 2,
+    "change_count_30d": 1,
     "last_modified": 1766525368000,
     "unique_authors": 2
   },
@@ -6679,7 +6679,7 @@
   },
   "skillmeat/api/schemas/artifacts.py": {
     "change_count": 15,
-    "change_count_30d": 2,
+    "change_count_30d": 1,
     "last_modified": 1768155202000,
     "unique_authors": 2
   },
@@ -6799,7 +6799,7 @@
   },
   "skillmeat/api/schemas/tags.py": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766098606000,
     "unique_authors": 1
   },
@@ -6817,7 +6817,7 @@
   },
   "skillmeat/api/server.py": {
     "change_count": 26,
-    "change_count_30d": 7,
+    "change_count_30d": 6,
     "last_modified": 1768679034000,
     "unique_authors": 2
   },
@@ -7266,9 +7266,9 @@
     "unique_authors": 1
   },
   "skillmeat/core/github_client.py": {
-    "change_count": 1,
-    "change_count_30d": 1,
-    "last_modified": 1768689814000,
+    "change_count": 2,
+    "change_count_30d": 2,
+    "last_modified": 1768690373000,
     "unique_authors": 1
   },
   "skillmeat/core/github_metadata.py": {
@@ -7308,9 +7308,9 @@
     "unique_authors": 1
   },
   "skillmeat/core/marketplace/github_scanner.py": {
-    "change_count": 17,
-    "change_count_30d": 15,
-    "last_modified": 1768689814000,
+    "change_count": 18,
+    "change_count_30d": 16,
+    "last_modified": 1768690373000,
     "unique_authors": 2
   },
   "skillmeat/core/marketplace/heuristic_detector.py": {
@@ -7531,7 +7531,7 @@
   },
   "skillmeat/core/services/__init__.py": {
     "change_count": 4,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766098606000,
     "unique_authors": 1
   },
@@ -7549,7 +7549,7 @@
   },
   "skillmeat/core/services/tag_service.py": {
     "change_count": 3,
-    "change_count_30d": 3,
+    "change_count_30d": 1,
     "last_modified": 1767797563000,
     "unique_authors": 1
   },
@@ -8527,7 +8527,7 @@
   },
   "skillmeat/web/__tests__/components/tag-input.test.tsx": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766100615000,
     "unique_authors": 1
   },
@@ -8694,9 +8694,9 @@
     "unique_authors": 1
   },
   "skillmeat/web/app/collection/page.tsx": {
-    "change_count": 26,
-    "change_count_30d": 17,
-    "last_modified": 1768586163000,
+    "change_count": 27,
+    "change_count_30d": 16,
+    "last_modified": 1768763077000,
     "unique_authors": 2
   },
   "skillmeat/web/app/context-entities/page.tsx": {
@@ -8875,7 +8875,7 @@
   },
   "skillmeat/web/app/projects/[id]/page.tsx": {
     "change_count": 17,
-    "change_count_30d": 5,
+    "change_count_30d": 4,
     "last_modified": 1768249031000,
     "unique_authors": 2
   },
@@ -8958,9 +8958,9 @@
     "unique_authors": 1
   },
   "skillmeat/web/components/CatalogEntryModal.tsx": {
-    "change_count": 18,
-    "change_count_30d": 18,
-    "last_modified": 1768677824000,
+    "change_count": 19,
+    "change_count_30d": 19,
+    "last_modified": 1768690674000,
     "unique_authors": 1
   },
   "skillmeat/web/components/ConfidenceFilter.example.tsx": {
@@ -9121,13 +9121,13 @@
   },
   "skillmeat/web/components/collection/artifact-detail.tsx": {
     "change_count": 6,
-    "change_count_30d": 2,
+    "change_count_30d": 1,
     "last_modified": 1768233991000,
     "unique_authors": 2
   },
   "skillmeat/web/components/collection/artifact-grid.tsx": {
     "change_count": 12,
-    "change_count_30d": 4,
+    "change_count_30d": 3,
     "last_modified": 1768584623000,
     "unique_authors": 2
   },
@@ -9157,7 +9157,7 @@
   },
   "skillmeat/web/components/collection/collection-toolbar.tsx": {
     "change_count": 4,
-    "change_count_30d": 2,
+    "change_count_30d": 1,
     "last_modified": 1766539801000,
     "unique_authors": 1
   },
@@ -9283,7 +9283,7 @@
   },
   "skillmeat/web/components/dashboard/analytics-grid.tsx": {
     "change_count": 4,
-    "change_count_30d": 2,
+    "change_count_30d": 1,
     "last_modified": 1768233991000,
     "unique_authors": 2
   },
@@ -9295,7 +9295,7 @@
   },
   "skillmeat/web/components/dashboard/tag-metrics-widget.tsx": {
     "change_count": 2,
-    "change_count_30d": 2,
+    "change_count_30d": 1,
     "last_modified": 1768233991000,
     "unique_authors": 1
   },
@@ -9397,7 +9397,7 @@
   },
   "skillmeat/web/components/discovery/ParameterEditorModal.tsx": {
     "change_count": 6,
-    "change_count_30d": 3,
+    "change_count_30d": 1,
     "last_modified": 1768233934000,
     "unique_authors": 1
   },
@@ -9511,7 +9511,7 @@
   },
   "skillmeat/web/components/entity/entity-form.tsx": {
     "change_count": 7,
-    "change_count_30d": 2,
+    "change_count_30d": 1,
     "last_modified": 1768233991000,
     "unique_authors": 2
   },
@@ -10045,7 +10045,7 @@
   },
   "skillmeat/web/components/ui/badge.tsx": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766099539000,
     "unique_authors": 2
   },
@@ -10171,19 +10171,19 @@
   },
   "skillmeat/web/components/ui/tag-filter-popover.tsx": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766099884000,
     "unique_authors": 1
   },
   "skillmeat/web/components/ui/tag-input.example.tsx": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766099539000,
     "unique_authors": 1
   },
   "skillmeat/web/components/ui/tag-input.tsx": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766099539000,
     "unique_authors": 1
   },
@@ -10321,7 +10321,7 @@
   },
   "skillmeat/web/hooks/use-tags.ts": {
     "change_count": 2,
-    "change_count_30d": 2,
+    "change_count_30d": 0,
     "last_modified": 1766109114000,
     "unique_authors": 1
   },
@@ -10357,7 +10357,7 @@
   },
   "skillmeat/web/hooks/useArtifacts.ts": {
     "change_count": 11,
-    "change_count_30d": 3,
+    "change_count_30d": 2,
     "last_modified": 1768333600000,
     "unique_authors": 2
   },
@@ -10393,13 +10393,13 @@
   },
   "skillmeat/web/hooks/useDiscovery.ts": {
     "change_count": 4,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766161673000,
     "unique_authors": 1
   },
   "skillmeat/web/hooks/useEntityLifecycle.tsx": {
     "change_count": 8,
-    "change_count_30d": 2,
+    "change_count_30d": 1,
     "last_modified": 1768182892000,
     "unique_authors": 3
   },
@@ -10549,7 +10549,7 @@
   },
   "skillmeat/web/lib/api/index.ts": {
     "change_count": 12,
-    "change_count_30d": 5,
+    "change_count_30d": 4,
     "last_modified": 1768679034000,
     "unique_authors": 1
   },
@@ -10579,7 +10579,7 @@
   },
   "skillmeat/web/lib/api/tags.ts": {
     "change_count": 2,
-    "change_count_30d": 2,
+    "change_count_30d": 0,
     "last_modified": 1766109114000,
     "unique_authors": 1
   },
@@ -10705,151 +10705,151 @@
   },
   "skillmeat/web/sdk/SkillMeatClient.ts": {
     "change_count": 6,
-    "change_count_30d": 2,
+    "change_count_30d": 1,
     "last_modified": 1768487114000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/core/ApiError.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/core/ApiRequestOptions.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/core/ApiResult.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/core/BaseHttpRequest.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/core/CancelablePromise.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/core/FetchHttpRequest.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/core/OpenAPI.ts": {
     "change_count": 8,
-    "change_count_30d": 2,
+    "change_count_30d": 1,
     "last_modified": 1768487114000,
     "unique_authors": 3
   },
   "skillmeat/web/sdk/core/request.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/index.ts": {
     "change_count": 4,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/AddArtifactsRequest.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/AddGroupArtifactsRequest.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/AllServersHealthResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/AnalyticsSummaryResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/ArtifactCreateRequest.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/ArtifactCreateResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/ArtifactDeployRequest.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/ArtifactDeployResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/ArtifactDiffResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/ArtifactListResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/ArtifactMetadataResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/ArtifactParameters.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/ArtifactPopularity.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/ArtifactPositionUpdate.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/ArtifactResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
@@ -10861,1321 +10861,1321 @@
   },
   "skillmeat/web/sdk/models/ArtifactSyncRequest.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/ArtifactSyncResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/ArtifactUpdateMetadataRequest.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/ArtifactUpdateRequest.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/ArtifactUpstreamDiffResponse.ts": {
     "change_count": 2,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/ArtifactUpstreamInfo.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/ArtifactUpstreamResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/ArtifactVersionInfo.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/Body_import_bundle_api_v1_bundles_import_post.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/Body_preview_bundle_api_v1_bundles_preview_post.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/Body_undeploy_artifact_api_v1_artifacts__artifact_id__undeploy_post.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/Body_validate_bundle_api_v1_bundles_validate_post.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/BrokerInfo.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/BrokerListResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/BulkImportArtifact.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/BulkImportRequest.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/BulkImportResult.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/BundleAnalyticsResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/BundleArtifactSummary.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/BundleDeleteResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/BundleDetailResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/BundleExportMetadata.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/BundleExportOptions.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/BundleExportRequest.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/BundleExportResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/BundleImportResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/BundleListItem.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/BundleListResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/BundleMetadataResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/BundlePreviewCategorization.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/BundlePreviewResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/BundleValidationResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/CacheInfo.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/CacheInvalidateRequest.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/CacheInvalidateResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/CacheRefreshRequest.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/CacheRefreshResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/CacheStatusResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/CachedArtifactResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/CachedArtifactsListResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/CachedProjectResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/CachedProjectsListResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/CatalogEntryResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/CatalogListResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/CollectionListResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/CollectionResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/ConflictInfo.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/ConflictMetadataResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/ConflictResolveRequest.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/ConflictResolveResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/ContextEntityCreateRequest.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/ContextEntityInfo.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/ContextEntityListResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/ContextEntityResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/ContextEntityType.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/ContextEntityUpdateRequest.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/ContextMapResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/CreateSourceRequest.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/DeployRequest.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/DeployTemplateRequest.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/DeployTemplateResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/DeployedArtifact.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/DeploymentInfo.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/DeploymentListResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/DeploymentModificationStatus.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/DeploymentRequest.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/DeploymentStatistics.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/DeploymentStatusResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/DetailedHealthStatus.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/DiscoveredArtifact.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/DiscoveryRequest.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/DiscoveryResult.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/DriftDetectionResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/DriftSummaryResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/ErrorResponse.ts": {
     "change_count": 4,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/FileContentResponse.ts": {
     "change_count": 2,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/FileDiff.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/FileListResponse.ts": {
     "change_count": 2,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/FileNode.ts": {
     "change_count": 2,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/FileUpdateRequest.ts": {
     "change_count": 2,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/GitHubMetadata.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/GroupArtifactResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/GroupCreateRequest.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/GroupListResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/GroupPositionUpdate.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/GroupReorderRequest.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/GroupResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/GroupSummary.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/GroupUpdateRequest.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/GroupWithArtifactsResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/HTTPValidationError.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/HealthCheckResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/HealthStatus.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/ImportRequest.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/ImportResult.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/ImportResultDTO.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/ImportStatus.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/ImportedArtifactResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/InstallRequest.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/InstallResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/ListingDetailResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/ListingResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/ListingsPageResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/MCPServerCreateRequest.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/MCPServerListResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/MCPServerResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/MCPServerUpdateRequest.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/MarketplaceEntryResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/MarketplaceListResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/MergeAnalyzeRequest.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/MergeExecuteRequest.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/MergeExecuteResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/MergePreviewRequest.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/MergePreviewResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/MergeSafetyResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/MetadataFetchResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/ModificationCheckResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/ModifiedArtifactInfo.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/ModifiedArtifactsResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/PageInfo.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/ParameterUpdateRequest.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/ParameterUpdateResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/PreviewArtifact.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/ProjectCreateRequest.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/ProjectCreateResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/ProjectDeleteResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/ProjectDeploymentInfo.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/ProjectDetail.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/ProjectListResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/ProjectSummary.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/ProjectTemplateCreateRequest.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/ProjectTemplateListResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/ProjectTemplateResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/ProjectTemplateUpdateRequest.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/ProjectUpdateRequest.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/PublishRequest.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/PublishResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/RefreshJobStatus.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/ReorderArtifactsRequest.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/RollbackRequest.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/RollbackResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/RollbackSafetyAnalysisResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/ScanRequest.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/ScanResultDTO.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/SearchResult.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/SearchResultsResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/ShareLinkDeleteResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/ShareLinkResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/ShareLinkUpdateRequest.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/SkipClearResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/SkipPreferenceAddRequest.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/SkipPreferenceListResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/SkipPreferenceResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/SnapshotCreateRequest.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/SnapshotCreateResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/SnapshotListResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/SnapshotResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/SourceListResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/SourceResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/StaleArtifactResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/StaleArtifactsListResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/SyncConflictResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/SyncPullRequest.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/SyncPushRequest.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/SyncResolveRequest.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/SyncResultResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/SyncStatusResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/TagCreateRequest.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/TagListResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/TagResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/TagUpdateRequest.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/TemplateEntitySchema.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/TemplateVariableValue.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/TopArtifactItem.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/TopArtifactsResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/TrendDataPoint.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/TrendsResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/UndeployRequest.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/UndeployResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/UpdateSourceRequest.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/UserCollectionCreateRequest.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/UserCollectionListResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/UserCollectionResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/UserCollectionUpdateRequest.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/UserCollectionWithGroupsResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/ValidationError.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/ValidationErrorDetail.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/ValidationIssueResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/VersionDiffRequest.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/VersionDiffResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/VersionGraphNodeResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/VersionGraphResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/skillmeat__api__schemas__collections__ArtifactSummary.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/skillmeat__api__schemas__collections__CollectionArtifactsResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/skillmeat__api__schemas__deployments__DeploymentResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/skillmeat__api__schemas__mcp__DeploymentResponse.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/models/skillmeat__api__schemas__user_collections__ArtifactSummary.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/models/skillmeat__api__schemas__user_collections__CollectionArtifactsResponse.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/services/AnalyticsService.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/services/ArtifactsService.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/services/BundlesService.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/services/CacheService.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/services/CollectionsService.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/services/ContextEntitiesService.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/services/ContextSyncService.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/services/DeploymentsService.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/services/DiscoveryService.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/services/GroupsService.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/services/HealthService.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/services/MarketplaceService.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/services/MarketplaceSourcesService.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/services/McpService.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/services/MergeService.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/services/MetricsService.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/services/ProjectTemplatesService.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/services/ProjectsService.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/services/RootService.ts": {
     "change_count": 3,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 2
   },
   "skillmeat/web/sdk/services/TagsService.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/services/UserCollectionsService.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
   "skillmeat/web/sdk/services/VersionsService.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766174308000,
     "unique_authors": 1
   },
@@ -12325,7 +12325,7 @@
   },
   "skillmeat/web/tests/e2e/tags.spec.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766100615000,
     "unique_authors": 1
   },
@@ -12523,7 +12523,7 @@
   },
   "tests/TEST_SUMMARY_TAGS.md": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766100615000,
     "unique_authors": 1
   },
@@ -12679,7 +12679,7 @@
   },
   "tests/api/test_tags.py": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766100615000,
     "unique_authors": 1
   },
@@ -14155,7 +14155,7 @@
   },
   "tests/unit/core/services/test_tag_service.py": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766100615000,
     "unique_authors": 1
   },

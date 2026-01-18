@@ -54,7 +54,7 @@
       "from": "module:skillmeat/api",
       "to": "module:skillmeat/core",
       "type": "handler_calls_service",
-      "weight": 87
+      "weight": 88
     },
     {
       "confidence": "static",
@@ -71,7 +71,7 @@
       "weight": 84
     }
   ],
-  "generated_at": "2026-01-17T22:52:06Z",
+  "generated_at": "2026-01-18T20:57:18Z",
   "nodes": [
     {
       "cluster_id": "package:virtual/route",
@@ -132,7 +132,7 @@
       "label_short": "api",
       "layer": "api",
       "member_count": 796,
-      "size": 1198011,
+      "size": 1210262,
       "type": "module"
     },
     {
@@ -177,8 +177,8 @@
       "label": "skillmeat/core",
       "label_short": "core",
       "layer": "domain",
-      "member_count": 51,
-      "size": 33721,
+      "member_count": 52,
+      "size": 34625,
       "type": "module"
     },
     {
@@ -193,12 +193,12 @@
       "label": "skillmeat/cache",
       "label_short": "cache",
       "layer": "data",
-      "member_count": 43,
-      "size": 59506,
+      "member_count": 44,
+      "size": 61934,
       "type": "module"
     }
   ],
   "schema_version": "v1",
   "source": "lod1",
-  "source_commit": "cfb2ffb8270ae96e482b5e198c75921185a7e99f"
+  "source_commit": "f7d66ec8786579387e5aa31828436ae79bd56ac2"
 }

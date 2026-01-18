@@ -7899,6 +7899,13 @@
     {
       "confidence": "static",
       "from": "file:skillmeat/api/routers/marketplace_sources.py",
+      "to": "file:skillmeat/core/marketplace/source_manager.py",
+      "type": "handler_calls_service",
+      "weight": 1
+    },
+    {
+      "confidence": "static",
+      "from": "file:skillmeat/api/routers/marketplace_sources.py",
       "to": "file:skillmeat/core/artifact.py",
       "type": "handler_calls_service",
       "weight": 1
@@ -8261,7 +8268,7 @@
       "weight": 2
     }
   ],
-  "generated_at": "2026-01-17T22:52:06Z",
+  "generated_at": "2026-01-18T20:57:18Z",
   "nodes": [
     {
       "cluster_id": "package:virtual/route",
@@ -9043,7 +9050,7 @@
       "label_short": "marketplace_sources.py",
       "layer": "api",
       "member_count": 34,
-      "size": 108426,
+      "size": 113492,
       "type": "file"
     },
     {
@@ -14349,7 +14356,7 @@
       "label_short": "openapi.json",
       "layer": "api",
       "member_count": 2,
-      "size": 62040,
+      "size": 62454,
       "type": "file"
     },
     {
@@ -14689,7 +14696,7 @@
       "label_short": "marketplace.py",
       "layer": "api",
       "member_count": 61,
-      "size": 141642,
+      "size": 148413,
       "type": "file"
     },
     {
@@ -15113,6 +15120,24 @@
       "type": "file"
     },
     {
+      "cluster_id": "file:skillmeat/core/marketplace/source_manager.py",
+      "cluster_path": [
+        "repo:skillmeat",
+        "package:skillmeat.core",
+        "module:skillmeat/core",
+        "folder:skillmeat/core/marketplace",
+        "file:skillmeat/core/marketplace/source_manager.py"
+      ],
+      "id": "file:skillmeat/core/marketplace/source_manager.py",
+      "kind": "cluster",
+      "label": "skillmeat/core/marketplace/source_manager.py",
+      "label_short": "source_manager.py",
+      "layer": "domain",
+      "member_count": 1,
+      "size": 666,
+      "type": "file"
+    },
+    {
       "cluster_id": "file:skillmeat/core/marketplace/import_coordinator.py",
       "cluster_path": [
         "repo:skillmeat",
@@ -15145,7 +15170,7 @@
       "label_short": "github_scanner.py",
       "layer": "domain",
       "member_count": 1,
-      "size": 881,
+      "size": 1119,
       "type": "file"
     },
     {
@@ -15251,7 +15276,7 @@
       "label_short": "repositories.py",
       "layer": "data",
       "member_count": 4,
-      "size": 10908,
+      "size": 11604,
       "type": "file"
     },
     {
@@ -15358,7 +15383,7 @@
       "label_short": "models.py",
       "layer": "domain",
       "member_count": 21,
-      "size": 46137,
+      "size": 47754,
       "type": "file"
     },
     {
@@ -15485,6 +15510,24 @@
       "layer": "data",
       "member_count": 1,
       "size": 71,
+      "type": "file"
+    },
+    {
+      "cluster_id": "file:skillmeat/cache/migrations/versions/20260118_1000_add_marketplace_source_metadata_fields.py",
+      "cluster_path": [
+        "repo:skillmeat",
+        "package:skillmeat.cache",
+        "module:skillmeat/cache",
+        "folder:skillmeat/cache/migrations/versions",
+        "file:skillmeat/cache/migrations/versions/20260118_1000_add_marketplace_source_metadata_fields.py"
+      ],
+      "id": "file:skillmeat/cache/migrations/versions/20260118_1000_add_marketplace_source_metadata_fields.py",
+      "kind": "cluster",
+      "label": "skillmeat/cache/migrations/versions/20260118_1000_add_marketplace_source_metadata_fields.py",
+      "label_short": "20260118_1000_add_marketplace_source_metadata_fields.py",
+      "layer": "data",
+      "member_count": 1,
+      "size": 115,
       "type": "file"
     },
     {
@@ -15688,5 +15731,5 @@
   ],
   "schema_version": "v1",
   "source": "lod2",
-  "source_commit": "cfb2ffb8270ae96e482b5e198c75921185a7e99f"
+  "source_commit": "f7d66ec8786579387e5aa31828436ae79bd56ac2"
 }

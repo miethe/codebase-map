@@ -40,7 +40,7 @@
       "from": "package:skillmeat.api",
       "to": "package:skillmeat.core",
       "type": "handler_calls_service",
-      "weight": 87
+      "weight": 88
     },
     {
       "confidence": "static",
@@ -57,7 +57,7 @@
       "weight": 142
     }
   ],
-  "generated_at": "2026-01-17T22:52:06Z",
+  "generated_at": "2026-01-18T20:57:18Z",
   "nodes": [
     {
       "cluster_id": "package:virtual/route",
@@ -86,7 +86,7 @@
       "label_short": "skillmeat.web",
       "layer": "ui",
       "member_count": 978,
-      "size": 263332,
+      "size": 263630,
       "type": "package"
     },
     {
@@ -131,7 +131,7 @@
       "label_short": "skillmeat.api",
       "layer": "api",
       "member_count": 774,
-      "size": 1136087,
+      "size": 1148040,
       "type": "package"
     },
     {
@@ -145,8 +145,8 @@
       "label": "skillmeat.core",
       "label_short": "skillmeat.core",
       "layer": "domain",
-      "member_count": 51,
-      "size": 33721,
+      "member_count": 52,
+      "size": 34625,
       "type": "package"
     },
     {
@@ -160,12 +160,12 @@
       "label": "skillmeat.cache",
       "label_short": "skillmeat.cache",
       "layer": "data",
-      "member_count": 43,
-      "size": 59506,
+      "member_count": 44,
+      "size": 61934,
       "type": "package"
     }
   ],
   "schema_version": "v1",
   "source": "lod0",
-  "source_commit": "cfb2ffb8270ae96e482b5e198c75921185a7e99f"
+  "source_commit": "f7d66ec8786579387e5aa31828436ae79bd56ac2"
 }
