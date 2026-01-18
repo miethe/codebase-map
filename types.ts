@@ -4,6 +4,7 @@ export type NodeLayer = 'ui' | 'api' | 'domain' | 'data' | 'infra' | 'tests' | '
 export type NodeExternality = 'internal' | 'vendor' | 'third_party';
 export type EdgeDistanceClass = 'local' | 'cross-folder' | 'cross-module' | 'cross-package' | 'cross-service';
 export type EdgeConfidence = 'static' | 'heuristic' | 'dynamic';
+export type FocusMode = 'off' | 'flow' | 'upstream' | 'downstream' | 'k-hop';
 
 export interface Node {
   id: string;
@@ -185,8 +186,10 @@ export interface GraphContextType {
   setOnlyCrossBoundaryEdges: (enabled: boolean) => void;
   hoveredNode: Node | null;
   setHoveredNode: (node: Node | null) => void;
-  focusMode: boolean;
-  setFocusMode: (focus: boolean) => void;
+  focusMode: FocusMode;
+  setFocusMode: (mode: FocusMode) => void;
+  focusHopCount: number;
+  setFocusHopCount: (count: number) => void;
   focusClusterId: string | null;
   setFocusClusterId: (clusterId: string | null) => void;
   viewMode: ViewMode;
@@ -214,6 +217,8 @@ export interface GraphContextType {
   setRotateSpeed: (value: number) => void;
   zoomLevel: number;
   setZoomLevel: (value: number) => void;
+  backboneEdgeDensity: number;
+  setBackboneEdgeDensity: (value: number) => void;
   exportRequest: ExportRequest | null;
   setExportRequest: (request: ExportRequest | null) => void;
   exportStatus: ExportStatus;
@@ -296,7 +301,8 @@ export const EDGE_STYLES: Record<string, { stroke: string; width: number; dash?:
 
 export interface GraphRendererViewState {
   viewMode: ViewMode;
-  focusMode: boolean;
+  focusMode: FocusMode;
+  focusHopCount: number;
   focusClusterId: string | null;
   selectedNode: Node | null;
   activeColorMode: string;

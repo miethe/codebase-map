@@ -56,7 +56,7 @@ const filterEdgesToNodes = (graph: GraphData): GraphData => {
   return { ...graph, edges: filteredEdges };
 };
 
-const bundleClusterEdges = (nodes: Node[], edges: Edge[]): Edge[] => {
+const aggregateClusterEdges = (nodes: Node[], edges: Edge[]): Edge[] => {
   const nodeIndex = new Map(nodes.map(node => [node.id, node]));
   const bundledEdges = new Map<string, Edge>();
   const passthroughEdges: Edge[] = [];
@@ -64,23 +64,74 @@ const bundleClusterEdges = (nodes: Node[], edges: Edge[]): Edge[] => {
   edges.forEach(edge => {
     const source = nodeIndex.get(edge.from);
     const target = nodeIndex.get(edge.to);
-    const sourceIsCluster = source?.kind === 'cluster';
-    const targetIsCluster = target?.kind === 'cluster';
-    if (!sourceIsCluster || !targetIsCluster) {
+    const sourceClusterId = source?.cluster_id || source?.id;
+    const targetClusterId = target?.cluster_id || target?.id;
+    if (!sourceClusterId || !targetClusterId) {
       passthroughEdges.push(edge);
       return;
     }
+    const sameCluster = sourceClusterId === targetClusterId;
+    const sourceClusterNode = nodeIndex.get(sourceClusterId);
+    const targetClusterNode = nodeIndex.get(targetClusterId);
+
+    if (sameCluster && (source?.kind !== 'cluster' || target?.kind !== 'cluster')) {
+      passthroughEdges.push(edge);
+      return;
+    }
+
+    if (!sourceClusterNode || !targetClusterNode) {
+      passthroughEdges.push(edge);
+      return;
+    }
+
+    if (sameCluster) return;
+
     const edgeType = edge.type || 'default';
-    const key = `${edge.from}::${edge.to}::${edgeType}`;
+    const key = `${sourceClusterId}::${targetClusterId}::${edgeType}`;
     const existing = bundledEdges.get(key);
     if (!existing) {
-      bundledEdges.set(key, { ...edge, weight: edge.weight || 1 });
+      bundledEdges.set(key, {
+        ...edge,
+        from: sourceClusterId,
+        to: targetClusterId,
+        weight: edge.weight || 1
+      });
       return;
     }
     existing.weight = (existing.weight || 0) + (edge.weight || 1);
   });
 
   return [...passthroughEdges, ...bundledEdges.values()];
+};
+
+const applyBackboneEdgeDensity = (nodes: Node[], edges: Edge[], density = 1) => {
+  const clampedDensity = Math.max(0, Math.min(1, density));
+  if (clampedDensity >= 0.98) return edges;
+  if (edges.length === 0) return edges;
+  const nodeIndex = new Map(nodes.map(node => [node.id, node]));
+  const backboneEdges: Edge[] = [];
+  const passthroughEdges: Edge[] = [];
+
+  edges.forEach(edge => {
+    const source = nodeIndex.get(edge.from);
+    const target = nodeIndex.get(edge.to);
+    const isClusterEdge = (source?.kind === 'cluster' || source?.cluster_id)
+      && (target?.kind === 'cluster' || target?.cluster_id);
+    if (isClusterEdge) {
+      backboneEdges.push(edge);
+    } else {
+      passthroughEdges.push(edge);
+    }
+  });
+
+  if (!backboneEdges.length) return edges;
+  if (clampedDensity <= 0) return passthroughEdges;
+
+  const sorted = backboneEdges
+    .slice()
+    .sort((a, b) => (b.weight || 1) - (a.weight || 1));
+  const keepCount = Math.max(1, Math.round(sorted.length * clampedDensity));
+  return [...passthroughEdges, ...sorted.slice(0, keepCount)];
 };
 
 const applyClusterExpansions = (
@@ -130,6 +181,7 @@ interface UseGraphLODOptions {
   zoomLevel: number;
   allowLod: boolean;
   focusClusterId?: string | null;
+  backboneEdgeDensity?: number;
 }
 
 export const useGraphLOD = ({
@@ -137,7 +189,8 @@ export const useGraphLOD = ({
   lodData,
   zoomLevel,
   allowLod,
-  focusClusterId
+  focusClusterId,
+  backboneEdgeDensity = 1
 }: UseGraphLODOptions) => {
   const [lodLevel, setLodLevel] = useState<LodLevel>(2);
   const [expandedClusters, setExpandedClusters] = useState<Set<string>>(new Set());
@@ -197,12 +250,16 @@ export const useGraphLOD = ({
     if (lodLevel <= 1) {
       nextGraph = {
         ...nextGraph,
-        edges: bundleClusterEdges(nextGraph.nodes, nextGraph.edges)
+        edges: aggregateClusterEdges(nextGraph.nodes, nextGraph.edges)
+      };
+      nextGraph = {
+        ...nextGraph,
+        edges: applyBackboneEdgeDensity(nextGraph.nodes, nextGraph.edges, backboneEdgeDensity)
       };
     }
 
     return attachTotalDegree(filterEdgesToNodes(nextGraph));
-  }, [allowLod, baseData, expandedClusters, focusClusterId, lodData, lodLevel]);
+  }, [allowLod, baseData, expandedClusters, focusClusterId, lodData, lodLevel, backboneEdgeDensity]);
 
   return {
     graphData,

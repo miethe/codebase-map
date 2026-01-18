@@ -2,7 +2,8 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { GraphRenderer } from './components/GraphRenderer';
 import { Sidebar } from './components/Sidebar';
-import { GraphData, GraphLODData, Node, GraphContextType, ViewMode, GraphViewMode, EDGE_STYLES, DetailsData, GitMetadata, DependencyGraph, ExportRequest, ExportStatus, CameraPresetRequest } from './types';
+import { Breadcrumbs } from './components/Breadcrumbs';
+import { GraphData, GraphLODData, Node, GraphContextType, ViewMode, GraphViewMode, EDGE_STYLES, DetailsData, GitMetadata, DependencyGraph, ExportRequest, ExportStatus, CameraPresetRequest, FocusMode } from './types';
 import { Layout, Loader2, AlertCircle, ChevronDown, ChevronUp, GitBranch, MoreVertical } from 'lucide-react';
 
 import { deriveModulePath, getDisplayModule, buildNodePathMap } from './utils/moduleGrouping';
@@ -34,8 +35,10 @@ export const GraphContext = React.createContext<GraphContextType>({
   setOnlyCrossBoundaryEdges: () => { },
   hoveredNode: null,
   setHoveredNode: () => { },
-  focusMode: false,
+  focusMode: 'off',
   setFocusMode: () => { },
+  focusHopCount: 2,
+  setFocusHopCount: () => { },
   focusClusterId: null,
   setFocusClusterId: () => { },
   viewMode: 'force',
@@ -61,6 +64,8 @@ export const GraphContext = React.createContext<GraphContextType>({
   setRotateSpeed: () => { },
   zoomLevel: 1,
   setZoomLevel: () => { },
+  backboneEdgeDensity: 0.6,
+  setBackboneEdgeDensity: () => { },
   exportRequest: null,
   setExportRequest: () => { },
   exportStatus: { state: 'idle' },
@@ -88,7 +93,8 @@ const App: React.FC = () => {
 
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const [hoveredNode, setHoveredNode] = useState<Node | null>(null);
-  const [focusMode, setFocusMode] = useState(false);
+  const [focusMode, setFocusMode] = useState<FocusMode>('off');
+  const [focusHopCount, setFocusHopCount] = useState(2);
   const [focusClusterId, setFocusClusterId] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>('force');
   const [graphView, setGraphView] = useState<GraphViewMode>('unified');
@@ -101,6 +107,7 @@ const App: React.FC = () => {
   const [panSpeed, setPanSpeed] = useState(0.6);
   const [rotateSpeed, setRotateSpeed] = useState(0.8);
   const [zoomLevel, setZoomLevel] = useState(1);
+  const [backboneEdgeDensity, setBackboneEdgeDensity] = useState(0.6);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const settingsRef = useRef<HTMLDivElement>(null);
   const [exportRequest, setExportRequest] = useState<ExportRequest | null>(null);
@@ -112,6 +119,12 @@ const App: React.FC = () => {
       setFocusClusterId(null);
     }
   }, [graphView, activeModule]);
+
+  useEffect(() => {
+    if (!selectedNode && focusMode !== 'off') {
+      setFocusMode('off');
+    }
+  }, [selectedNode, focusMode]);
 
 
   // Fetch data on mount
@@ -502,6 +515,8 @@ const App: React.FC = () => {
     setHoveredNode,
     focusMode,
     setFocusMode,
+    focusHopCount,
+    setFocusHopCount,
     focusClusterId,
     setFocusClusterId,
     viewMode,
@@ -527,6 +542,8 @@ const App: React.FC = () => {
     setRotateSpeed,
     zoomLevel,
     setZoomLevel,
+    backboneEdgeDensity,
+    setBackboneEdgeDensity,
     exportRequest,
     setExportRequest,
     exportStatus,
@@ -599,6 +616,7 @@ const App: React.FC = () => {
                   </span>
                 )}
               </div>
+              <Breadcrumbs />
 
               {/* Expandable Node Legend Toggle */}
               <button

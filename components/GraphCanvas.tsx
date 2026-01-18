@@ -3,6 +3,8 @@ import * as d3 from 'd3';
 import { Node, Edge, NODE_SIZE_CONFIG, EDGE_STYLES, GraphRendererProps } from '../types';
 import { getNodeColor } from '../utils/colorMapping';
 import { computeClusterLayout } from '../utils/clusterLayout';
+import { getFocusNodeIds } from '../utils/focusModes';
+import { getLabelBucketForZoom, getNextLabelBucket, getLabelBudgetForBucket, getLabelRank, compareLabelRank, shouldForceLabel } from '../utils/labeling';
 
 const GROUP_MAPPING: Record<string, number> = {
     'route': 0,
@@ -117,72 +119,20 @@ const getCleanLabel = (node: Node) => {
     return text;
 };
 
-// Traversal for Flow Highlighting
-const getFlowNodes = (startNodeId: string, edges: any[]) => {
-    const connectedNodeIds = new Set<string>();
-    connectedNodeIds.add(startNodeId);
-
-    const outMap = new Map<string, string[]>();
-    const inMap = new Map<string, string[]>();
-
-    edges.forEach(e => {
-        const u = e.from || (typeof e.source === 'string' ? e.source : e.source?.id);
-        const v = e.to || (typeof e.target === 'string' ? e.target : e.target?.id);
-
-        if (!u || !v) return;
-
-        if (!outMap.has(u)) outMap.set(u, []);
-        outMap.get(u)!.push(v);
-
-        if (!inMap.has(v)) inMap.set(v, []);
-        inMap.get(v)!.push(u);
-    });
-
-    // Traverse Downstream
-    const queueDown = [startNodeId];
-    const visitedDown = new Set([startNodeId]);
-    while (queueDown.length > 0) {
-        const curr = queueDown.shift()!;
-        const neighbors = outMap.get(curr) || [];
-        for (const next of neighbors) {
-            if (!visitedDown.has(next)) {
-                visitedDown.add(next);
-                connectedNodeIds.add(next);
-                queueDown.push(next);
-            }
-        }
-    }
-
-    // Traverse Upstream
-    const queueUp = [startNodeId];
-    const visitedUp = new Set([startNodeId]);
-    while (queueUp.length > 0) {
-        const curr = queueUp.shift()!;
-        const neighbors = inMap.get(curr) || [];
-        for (const prev of neighbors) {
-            if (!visitedUp.has(prev)) {
-                visitedUp.add(prev);
-                connectedNodeIds.add(prev);
-                queueUp.push(prev);
-            }
-        }
-    }
-
-    return connectedNodeIds;
-};
-
 export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, handlers }) => {
     const svgRef = useRef<SVGSVGElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const {
         selectedNode,
         focusMode,
+        focusHopCount,
         viewMode,
         groupingData,
         activeColorMode,
         gitMetadata,
         enableMotionOptimizations,
         zoomSpeed,
+        zoomLevel,
         exportRequest
     } = viewState;
     const {
@@ -202,6 +152,8 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
     // Track dragging state to prevent click events (which trigger view resets via re-render)
     const isDragging = useRef<boolean>(false);
     const [reduceDetail, setReduceDetail] = useState(false);
+    const [labelBucket, setLabelBucket] = useState(() => getLabelBucketForZoom(zoomLevel));
+    const labelBucketRef = useRef(labelBucket);
     const interactionTimeoutRef = useRef<number | null>(null);
     const lastZoomRef = useRef<{ x: number; y: number; k: number; time: number } | null>(null);
 
@@ -214,6 +166,14 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
         });
         onExportRequestHandled?.(exportRequest.id);
     }, [exportRequest?.id, onExportRequestHandled, onExportStatus]);
+
+    useEffect(() => {
+        const next = getNextLabelBucket(zoomLevel, labelBucketRef.current);
+        if (next !== labelBucketRef.current) {
+            labelBucketRef.current = next;
+            setLabelBucket(next);
+        }
+    }, [zoomLevel]);
 
     const updateReduceDetail = useCallback((speed: number) => {
         if (!enableMotionOptimizations) return;
@@ -282,10 +242,12 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
         }
     }, [enableMotionOptimizations]);
 
-    const flowNodeIds = useMemo(() => {
+    const highlightMode = focusMode === 'off' ? 'flow' : focusMode;
+    const highlightNodeIds = useMemo(() => {
         if (!selectedNode) return null;
-        return getFlowNodes(selectedNode.id, data.edges);
-    }, [selectedNode, data.edges]);
+        return getFocusNodeIds(highlightMode, selectedNode.id, data.edges, focusHopCount);
+    }, [selectedNode?.id, data.edges, highlightMode, focusHopCount]);
+    const focusActive = Boolean(selectedNode && focusMode !== 'off' && highlightNodeIds);
 
     // Stable data derivation with position persistence & Degree Calculation
     const { visibleNodes, visibleEdges } = useMemo(() => {
@@ -316,14 +278,34 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
         });
 
         // Apply Focus Mode Filtering
-        if (focusMode && selectedNode && flowNodeIds) {
-            const nodeSet = new Set(nodes.filter(n => flowNodeIds.has(n.id)).map(n => n.id));
+        if (focusActive && highlightNodeIds) {
+            const nodeSet = new Set(nodes.filter(n => highlightNodeIds.has(n.id)).map(n => n.id));
             nodes = nodes.filter(n => nodeSet.has(n.id));
             edges = edges.filter(e => nodeSet.has(e.from) && nodeSet.has(e.to));
         }
 
         return { visibleNodes: nodes, visibleEdges: edges };
-    }, [data, focusMode, viewMode, focusMode ? selectedNode?.id : 'static']);
+    }, [data, focusMode, focusActive, viewMode, selectedNode?.id, highlightNodeIds]);
+
+    const labelVisibleIds = useMemo(() => {
+        if (!visibleNodes.length) return new Set<string>();
+        const bucket = labelBucket;
+        const budget = getLabelBudgetForBucket(bucket, visibleNodes.length);
+        const ranked = visibleNodes
+            .map(node => ({
+                node,
+                rank: getLabelRank(node, selectedNode?.id, highlightNodeIds || undefined, bucket)
+            }))
+            .sort((a, b) => compareLabelRank(a.rank, b.rank));
+        const ids = new Set<string>();
+        ranked.forEach(entry => {
+            const force = shouldForceLabel(entry.node, selectedNode?.id, bucket);
+            if (force || ids.size < budget) {
+                ids.add(entry.node.id);
+            }
+        });
+        return ids;
+    }, [visibleNodes, labelBucket, selectedNode?.id, highlightNodeIds]);
 
     // Pre-calculate Cluster Layout if in Hierarchical Mode
     const clusterPositions = useMemo(() => {
@@ -648,7 +630,8 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
             .text(d => `Type: ${d.type}\nID: ${d.id}\nVisible Connections: ${d.degree || 0}\nTotal Connections: ${d.totalDegree || 0}`);
 
         node.select(".node-label")
-            .text((d) => getCleanLabel(d));
+            .text((d) => labelVisibleIds.has(d.id) ? getCleanLabel(d) : '')
+            .style("display", (d) => labelVisibleIds.has(d.id) ? null : "none");
 
         // Event Listeners (Re-attach to ensure closure freshness if needed, though D3 usually handles this well. 
         // Safer to re-attach or use stable functions. Here we re-attach.)
@@ -775,7 +758,7 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
             registerInteraction(0.2);
         }
 
-    }, [visibleNodes, visibleEdges, viewMode, clusterPositions, activeColorMode, groupingData, gitMetadata, zoomSpeed, handleZoomInteraction, registerInteraction]);
+    }, [visibleNodes, visibleEdges, labelVisibleIds, viewMode, clusterPositions, activeColorMode, groupingData, gitMetadata, zoomSpeed, handleZoomInteraction, registerInteraction]);
     // ^ Added dependencies so colors update when mode changes
 
     // EFFECT: Reduced Detail Mode while Interacting
@@ -784,8 +767,11 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
         if (svg.empty()) return;
         const shouldReduce = enableMotionOptimizations && reduceDetail;
         svg.selectAll<SVGTextElement, Node>(".node-label")
-            .style("display", shouldReduce ? "none" : null);
-    }, [enableMotionOptimizations, reduceDetail]);
+            .style("display", (d) => {
+                if (shouldReduce) return "none";
+                return labelVisibleIds.has(d.id) ? null : "none";
+            });
+    }, [enableMotionOptimizations, reduceDetail, labelVisibleIds]);
 
     // EFFECT: Styling Updates (Selection / Dimming)
     // Runs on selection changes WITHOUT re-running simulation
@@ -798,8 +784,8 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
             .transition().duration(200)
             .attr("opacity", (d) => {
                 if (!selectedNode) return 1;
-                if (focusMode) return 1;
-                return flowNodeIds && flowNodeIds.has(d.id) ? 1 : 0.1;
+                if (focusMode !== 'off') return 1;
+                return highlightNodeIds && highlightNodeIds.has(d.id) ? 1 : 0.1;
             });
 
         // Update Label Visibility
@@ -807,8 +793,8 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
             .transition().duration(200)
             .style("opacity", (d) => {
                 if (!selectedNode) return 1;
-                if (focusMode) return 1;
-                return flowNodeIds && flowNodeIds.has(d.id) ? 1 : 0;
+                if (focusMode !== 'off') return 1;
+                return highlightNodeIds && highlightNodeIds.has(d.id) ? 1 : 0;
             })
             .style("fill", (d) => d.id === selectedNode?.id ? "#fff" : "#cbd5e1");
 
@@ -826,22 +812,22 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
             .transition().duration(200)
             .attr("stroke-opacity", (d) => {
                 if (!selectedNode) return 0.6;
-                if (focusMode) return 0.9;
+                if (focusMode !== 'off') return 0.9;
                 const srcId = d.source.id || d.source;
                 const tgtId = d.target.id || d.target;
-                return (flowNodeIds?.has(srcId) && flowNodeIds?.has(tgtId)) ? 0.9 : 0.05;
+                return (highlightNodeIds?.has(srcId) && highlightNodeIds?.has(tgtId)) ? 0.9 : 0.05;
             });
 
         // Update Group Box Dimming
         svg.selectAll(".group-boxes rect")
             .transition().duration(200)
-            .attr("opacity", selectedNode && !focusMode ? 0.1 : 0.5);
+            .attr("opacity", selectedNode && focusMode === 'off' ? 0.1 : 0.5);
 
         svg.selectAll(".group-boxes text")
             .transition().duration(200)
-            .attr("opacity", selectedNode && !focusMode ? 0.2 : 0.8);
+            .attr("opacity", selectedNode && focusMode === 'off' ? 0.2 : 0.8);
 
-    }, [selectedNode, flowNodeIds, focusMode]);
+    }, [selectedNode, highlightNodeIds, focusMode]);
 
     // EFFECT: Global Key Helpers (ESC to clear)
     useEffect(() => {

@@ -1,7 +1,7 @@
 
 import React, { useContext, useMemo, useState } from 'react';
 import { GraphContext } from '../App';
-import { NODE_COLORS, EDGE_STYLES, Node, Edge, ExportPass, CameraPresetId } from '../types';
+import { NODE_COLORS, EDGE_STYLES, Node, Edge, ExportPass, CameraPresetId, FocusMode } from '../types';
 import {
     Search, Filter, Layers, Zap, Database, Globe, Box, Info,
     GitGraph, Grid, Server, Terminal, FileCode, GitBranch,
@@ -136,6 +136,8 @@ export const Sidebar: React.FC = () => {
         setOnlyCrossBoundaryEdges,
         focusMode,
         setFocusMode,
+        focusHopCount,
+        setFocusHopCount,
         viewMode,
         setViewMode,
         graphView,
@@ -148,6 +150,8 @@ export const Sidebar: React.FC = () => {
         activeColorMode,
         setActiveColorMode,
         gitMetadata,
+        backboneEdgeDensity,
+        setBackboneEdgeDensity,
         exportStatus,
         setExportRequest,
         setCameraPresetRequest
@@ -365,6 +369,14 @@ export const Sidebar: React.FC = () => {
         { id: 'hotspots', label: 'Hotspots', description: 'Activity-forward view.' },
         { id: 'risk', label: 'Risk', description: 'Recency-biased angle.' },
         { id: 'top', label: 'Top-Down', description: 'Orthographic-style top view.' }
+    ];
+
+    const focusModeOptions: Array<{ id: FocusMode; label: string; description: string }> = [
+        { id: 'off', label: 'Off', description: 'Show the full graph.' },
+        { id: 'flow', label: 'Full Flow', description: 'Upstream + downstream context.' },
+        { id: 'upstream', label: 'Upstream', description: 'Only dependencies feeding in.' },
+        { id: 'downstream', label: 'Downstream', description: 'Only dependents flowing out.' },
+        { id: 'k-hop', label: 'K-Hop', description: 'Neighborhood around selection.' }
     ];
 
     const exportPassOptions: Array<{ id: ExportPass; label: string }> = [
@@ -635,16 +647,39 @@ export const Sidebar: React.FC = () => {
                                     )}
                                 </div>
 
-                                <div className="pt-2">
-                                    <button
-                                        onClick={() => setFocusMode(!focusMode)}
-                                        className={`w-full text-xs py-2 rounded flex items-center justify-center gap-2 transition-all ${focusMode
-                                            ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30'
-                                            : 'bg-slate-800 text-slate-400 border border-slate-700 hover:bg-slate-700 hover:text-slate-200'}`}
-                                    >
-                                        <Activity size={14} />
-                                        {focusMode ? 'Disable Focus Mode' : 'Focus Downstream Flow'}
-                                    </button>
+                                <div className="pt-2 space-y-2">
+                                    <div className="text-[10px] uppercase font-semibold text-slate-500 tracking-wider">Focus Mode</div>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        {focusModeOptions.map(option => (
+                                            <button
+                                                key={option.id}
+                                                onClick={() => setFocusMode(option.id)}
+                                                title={option.description}
+                                                className={`text-[11px] py-1.5 rounded border transition-all ${focusMode === option.id
+                                                    ? 'bg-indigo-600/20 text-indigo-300 border-indigo-500/40'
+                                                    : 'bg-slate-800 text-slate-400 border-slate-700 hover:bg-slate-700 hover:text-slate-200'}`}
+                                            >
+                                                {option.label}
+                                            </button>
+                                        ))}
+                                    </div>
+                                    {focusMode === 'k-hop' && (
+                                        <div>
+                                            <div className="flex items-center justify-between text-[11px] text-slate-300">
+                                                <span>Hop depth</span>
+                                                <span className="text-[10px] text-slate-500">{focusHopCount}</span>
+                                            </div>
+                                            <input
+                                                type="range"
+                                                min="1"
+                                                max="4"
+                                                step="1"
+                                                value={focusHopCount}
+                                                onChange={(event) => setFocusHopCount(Number(event.target.value))}
+                                                className="mt-1 w-full accent-indigo-500"
+                                            />
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </CollapsibleSection>
@@ -1106,6 +1141,22 @@ export const Sidebar: React.FC = () => {
 
                 <CollapsibleSection title="Edge Filters" icon={<GitBranch size={14} />} defaultOpen={false}>
                     <div className="space-y-3">
+                        <div className="p-2 rounded bg-slate-800/40 border border-slate-700/50 space-y-1.5">
+                            <div className="flex items-center justify-between text-xs text-slate-300">
+                                <span>Backbone Density</span>
+                                <span className="text-[10px] text-slate-500">{Math.round(backboneEdgeDensity * 100)}%</span>
+                            </div>
+                            <input
+                                type="range"
+                                min="0.2"
+                                max="1"
+                                step="0.05"
+                                value={backboneEdgeDensity}
+                                onChange={(event) => setBackboneEdgeDensity(Number(event.target.value))}
+                                className="w-full accent-indigo-500"
+                            />
+                            <div className="text-[10px] text-slate-500">Controls aggregated edges at LOD0/1.</div>
+                        </div>
                         <label className="flex items-center justify-between p-2 rounded bg-slate-800/40 border border-slate-700/50">
                             <div className="flex flex-col">
                                 <span className="text-xs font-medium text-slate-300">Only Cross-Boundary Edges</span>

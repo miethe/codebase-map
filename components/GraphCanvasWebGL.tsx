@@ -5,6 +5,8 @@ import { forceCollide, forceZ } from 'd3-force-3d';
 import { Node, Edge, GraphRendererProps, NODE_SIZE_CONFIG, EDGE_STYLES, ExportPass, CameraPresetId, ExportRequest } from '../types';
 import { getNodeColor } from '../utils/colorMapping';
 import { computeClusterLayout } from '../utils/clusterLayout';
+import { getFocusNodeIds } from '../utils/focusModes';
+import { getLabelBucketForZoom, getNextLabelBucket, getLabelBudgetForBucket, getLabelRank, compareLabelRank, shouldForceLabel } from '../utils/labeling';
 
 const GROUP_MAPPING: Record<string, number> = {
   route: 0,
@@ -94,58 +96,6 @@ const getCleanLabel = (node: Node) => {
   }
 
   return text;
-};
-
-// Traversal for Flow Highlighting
-const getFlowNodes = (startNodeId: string, edges: Edge[]) => {
-  const connectedNodeIds = new Set<string>();
-  connectedNodeIds.add(startNodeId);
-
-  const outMap = new Map<string, string[]>();
-  const inMap = new Map<string, string[]>();
-
-  edges.forEach(e => {
-    const u = e.from || (typeof e.source === 'string' ? e.source : e.source?.id);
-    const v = e.to || (typeof e.target === 'string' ? e.target : e.target?.id);
-
-    if (!u || !v) return;
-
-    if (!outMap.has(u)) outMap.set(u, []);
-    outMap.get(u)!.push(v);
-
-    if (!inMap.has(v)) inMap.set(v, []);
-    inMap.get(v)!.push(u);
-  });
-
-  const queueDown = [startNodeId];
-  const visitedDown = new Set([startNodeId]);
-  while (queueDown.length > 0) {
-    const curr = queueDown.shift()!;
-    const neighbors = outMap.get(curr) || [];
-    for (const next of neighbors) {
-      if (!visitedDown.has(next)) {
-        visitedDown.add(next);
-        connectedNodeIds.add(next);
-        queueDown.push(next);
-      }
-    }
-  }
-
-  const queueUp = [startNodeId];
-  const visitedUp = new Set([startNodeId]);
-  while (queueUp.length > 0) {
-    const curr = queueUp.shift()!;
-    const neighbors = inMap.get(curr) || [];
-    for (const prev of neighbors) {
-      if (!visitedUp.has(prev)) {
-        visitedUp.add(prev);
-        connectedNodeIds.add(prev);
-        queueUp.push(prev);
-      }
-    }
-  }
-
-  return connectedNodeIds;
 };
 
 const toRgba = (color: string, alpha: number) => {
@@ -364,34 +314,6 @@ const createClusterLabelSprite = (text: string, focused: boolean) => createTextS
   scale: 0.14
 });
 
-const getLabelBudget = (zoomLevel: number, nodeCount: number) => {
-  const base = zoomLevel < 0.45 ? 70
-    : zoomLevel < 0.9 ? 130
-      : zoomLevel < 1.8 ? 240
-        : 420;
-  const scaled = Math.max(40, Math.floor(nodeCount * 0.18));
-  const budget = Math.max(30, Math.min(base, scaled));
-  return Math.min(nodeCount, budget);
-};
-
-const getLabelPriority = (node: Node, selectedId?: string | null, flowNodeIds?: Set<string> | null, zoomLevel?: number) => {
-  let score = node.totalDegree || node.degree || 0;
-  if (node.kind === 'cluster') score += 40;
-  if (node.entrypoint) score += 60;
-  if (node.size) score += Math.min(60, Math.log1p(node.size) * 6);
-  if (node.hotness) score += Math.min(80, node.hotness);
-  if (flowNodeIds?.has(node.id)) score += 120;
-  if (selectedId && node.id === selectedId) score += 2000;
-  if (zoomLevel && zoomLevel < 0.6 && node.kind === 'cluster') score += 120;
-  return score;
-};
-
-const shouldForceLabel = (node: Node, selectedId?: string | null, zoomLevel?: number) => {
-  if (selectedId && node.id === selectedId) return true;
-  if (zoomLevel !== undefined && zoomLevel < 0.45 && node.kind === 'cluster') return true;
-  return false;
-};
-
 const getGlyphIntensity = (node: Node) => {
   if (node.hotness !== undefined) {
     return Math.max(0.2, Math.min(1, node.hotness / 100));
@@ -515,6 +437,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   const {
     selectedNode,
     focusMode,
+    focusHopCount,
     focusClusterId,
     viewMode,
     activeColorMode,
@@ -581,6 +504,8 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   const exportRenderStateRef = useRef<ExportRenderState | null>(null);
   const exportInProgressRef = useRef(false);
   const exportOrthographicRef = useRef(false);
+  const [labelBucket, setLabelBucket] = useState(() => getLabelBucketForZoom(zoomLevel));
+  const labelBucketRef = useRef(labelBucket);
 
   const updateReduceDetail = useCallback((speed: number) => {
     if (!enableMotionOptimizations) return;
@@ -597,6 +522,14 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   useEffect(() => {
     exportRenderStateRef.current = exportRenderState;
   }, [exportRenderState]);
+
+  useEffect(() => {
+    const next = getNextLabelBucket(zoomLevel, labelBucketRef.current);
+    if (next !== labelBucketRef.current) {
+      labelBucketRef.current = next;
+      setLabelBucket(next);
+    }
+  }, [zoomLevel]);
 
   const resumeAnimation = useCallback(() => {
     const graph = graphRef.current;
@@ -875,10 +808,12 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     };
   }, [cameraPresetRequest?.runId, applyCameraPreset, dimensions.height, dimensions.width]);
 
-  const flowNodeIds = useMemo(() => {
+  const highlightMode = focusMode === 'off' ? 'flow' : focusMode;
+  const highlightNodeIds = useMemo(() => {
     if (!selectedNode) return null;
-    return getFlowNodes(selectedNode.id, data.edges);
-  }, [selectedNode?.id, data.edges]);
+    return getFocusNodeIds(highlightMode, selectedNode.id, data.edges, focusHopCount);
+  }, [selectedNode?.id, data.edges, highlightMode, focusHopCount]);
+  const focusActive = Boolean(selectedNode && focusMode !== 'off' && highlightNodeIds);
 
   const updateLabelVisibility = useCallback(() => {
     const graph = graphRef.current;
@@ -890,7 +825,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     const dataSnapshot = graphDataRef.current;
     if (!dataSnapshot) return;
     const shouldShow = exportState ? exportState.showLabels : (!enableMotionOptimizations || !reduceDetail);
-    const restrictToFlow = Boolean(selectedNode && !focusMode && flowNodeIds);
+    const restrictToHighlight = Boolean(selectedNode && focusMode === 'off' && highlightNodeIds);
     if (!shouldShow && labelVisibilityModeRef.current === 'hidden') return;
     camera.updateMatrixWorld();
     const projScreenMatrix = projScreenMatrixRef.current;
@@ -920,7 +855,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     dataSnapshot.nodes.forEach(node => {
       const sprite = labelCache.current.get(node.id);
       if (!sprite) return;
-      const allowLabel = shouldShow && (!restrictToFlow || flowNodeIds?.has(node.id));
+      const allowLabel = shouldShow && (!restrictToHighlight || highlightNodeIds?.has(node.id));
       if (!allowLabel) {
         if (sprite.visible) {
           sprite.visible = false;
@@ -946,15 +881,17 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       candidates.push(node);
     });
 
+    const activeLabelBucket = labelBucketRef.current;
+    const labelBudgetBase = getLabelBudgetForBucket(activeLabelBucket, dataSnapshot.nodes.length);
     const labelBudget = exportLabels
-      ? Math.min(dataSnapshot.nodes.length, Math.max(140, getLabelBudget(zoomLevel, dataSnapshot.nodes.length) * 2))
-      : getLabelBudget(zoomLevel, dataSnapshot.nodes.length);
+      ? Math.min(dataSnapshot.nodes.length, Math.max(140, labelBudgetBase * 2))
+      : labelBudgetBase;
     const ranked = candidates
       .map(node => ({
         node,
-        score: getLabelPriority(node, selectedNode?.id, flowNodeIds || undefined, zoomLevel)
+        rank: getLabelRank(node, selectedNode?.id, highlightNodeIds || undefined, activeLabelBucket)
       }))
-      .sort((a, b) => b.score - a.score);
+      .sort((a, b) => compareLabelRank(a.rank, b.rank));
 
     const placed: Array<{ x1: number; y1: number; x2: number; y2: number }> = [];
     let shown = 0;
@@ -977,7 +914,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       const node = entry.node;
       const sprite = labelCache.current.get(node.id);
       if (!sprite) return;
-      const force = shouldForceLabel(node, selectedNode?.id, zoomLevel);
+      const force = shouldForceLabel(node, selectedNode?.id, activeLabelBucket);
       if (!force && shown >= labelBudget) {
         if (sprite.visible) {
           sprite.visible = false;
@@ -1026,7 +963,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     if (didChange) {
       graph.refresh();
     }
-  }, [enableMotionOptimizations, enablePerformanceMode, reduceDetail, selectedNode, focusMode, flowNodeIds, zoomLevel, dimensions.width, dimensions.height]);
+  }, [enableMotionOptimizations, enablePerformanceMode, reduceDetail, selectedNode, focusMode, highlightNodeIds, zoomLevel, dimensions.width, dimensions.height, labelBucket]);
 
   const scheduleLabelVisibilityUpdate = useCallback(() => {
     const exportLabels = exportRenderStateRef.current?.showLabels;
@@ -1342,7 +1279,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       });
     });
 
-    const dimmed = Boolean(selectedNode && !focusMode);
+    const dimmed = Boolean(selectedNode && focusMode === 'off');
     const focusActive = Boolean(focusClusterId);
 
     clusterOverlayCache.current.forEach((entry, key) => {
@@ -1369,7 +1306,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
         maxY = Math.max(maxY, node.y);
       });
 
-      const memberCount = clusterNode?.member_count ?? members.length || 1;
+      const memberCount = (clusterNode?.member_count ?? members.length) || 1;
       const pad = 24 + Math.min(120, Math.log1p(memberCount) * 14);
 
       if (minX === Infinity || minY === Infinity || maxX === -Infinity || maxY === -Infinity) {
@@ -1479,7 +1416,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       boundsMap.set(key, entry);
     });
 
-    const dimmed = Boolean(selectedNode && !focusMode);
+    const dimmed = Boolean(selectedNode && focusMode === 'off');
     const boxOpacity = dimmed ? 0.1 : 0.5;
     const labelOpacity = dimmed ? 0.2 : 0.8;
 
@@ -1705,7 +1642,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
 
   useEffect(() => {
     scheduleLabelVisibilityUpdate();
-  }, [selectedNode?.id, focusMode, flowNodeIds, scheduleLabelVisibilityUpdate]);
+  }, [selectedNode?.id, focusMode, highlightNodeIds, labelBucket, scheduleLabelVisibilityUpdate]);
 
   useEffect(() => {
     updateStructuredHeaders();
@@ -1747,14 +1684,14 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       n.degree = visibleDegreeMap.get(n.id) || 0;
     });
 
-    if (focusMode && selectedNode && flowNodeIds) {
-      const nodeSet = new Set(nodes.filter(n => flowNodeIds.has(n.id)).map(n => n.id));
+    if (focusActive && highlightNodeIds) {
+      const nodeSet = new Set(nodes.filter(n => highlightNodeIds.has(n.id)).map(n => n.id));
       nodes = nodes.filter(n => nodeSet.has(n.id));
       edges = edges.filter(e => nodeSet.has(e.from) && nodeSet.has(e.to));
     }
 
     return { nodes, edges };
-  }, [data, focusMode, selectedNode?.id, flowNodeIds]);
+  }, [data, focusMode, focusActive, selectedNode?.id, highlightNodeIds]);
 
   const moduleCenters = useMemo(() => {
     if (viewMode !== 'hierarchical') return null;
@@ -2017,10 +1954,10 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   const nodeColor = useCallback((node: Node) => {
     const colorMode = exportRenderState?.colorMode || activeColorMode;
     const base = getNodeColor(node, colorMode, groupingData, gitMetadata);
-    if (!selectedNode || focusMode) return base;
-    if (!flowNodeIds) return base;
-    return flowNodeIds.has(node.id) ? base : toRgba(base, 0.12);
-  }, [activeColorMode, groupingData, gitMetadata, selectedNode, focusMode, flowNodeIds, exportRenderState]);
+    if (!selectedNode || focusMode !== 'off') return base;
+    if (!highlightNodeIds) return base;
+    return highlightNodeIds.has(node.id) ? base : toRgba(base, 0.12);
+  }, [activeColorMode, groupingData, gitMetadata, selectedNode, focusMode, highlightNodeIds, exportRenderState]);
 
   const linkColor = useCallback((link: Edge) => {
     const base = EDGE_STYLES[link.type]?.stroke || EDGE_STYLES.default.stroke;
@@ -2028,14 +1965,14 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       return toRgba(base, 0.75);
     }
     if (!selectedNode) return toRgba(base, 0.4);
-    if (focusMode) return toRgba(base, 0.85);
+    if (focusMode !== 'off') return toRgba(base, 0.85);
     const srcId = getLinkEndpointId(link.source);
     const tgtId = getLinkEndpointId(link.target);
-    if (flowNodeIds?.has(srcId || '') && flowNodeIds?.has(tgtId || '')) {
+    if (highlightNodeIds?.has(srcId || '') && highlightNodeIds?.has(tgtId || '')) {
       return toRgba(base, 0.85);
     }
     return toRgba(base, 0.05);
-  }, [selectedNode, focusMode, flowNodeIds, exportRenderState]);
+  }, [selectedNode, focusMode, highlightNodeIds, exportRenderState]);
 
   const nodeThreeObject = useCallback((node: Node) => {
     const cached = nodeObjectCache.current.get(node.id);
@@ -2072,21 +2009,21 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   const linkOpacity = exportRenderState ? exportRenderState.linkOpacity : 1;
   const nodeVisibility = useCallback((node: Node) => {
     if (!exportRenderState) return true;
-    if (exportRenderState.highlightOnly && flowNodeIds) {
-      return flowNodeIds.has(node.id);
+    if (exportRenderState.highlightOnly && highlightNodeIds) {
+      return highlightNodeIds.has(node.id);
     }
     return true;
-  }, [exportRenderState, flowNodeIds]);
+  }, [exportRenderState, highlightNodeIds]);
   const linkVisibility = useCallback((link: Edge) => {
     if (!exportRenderState) return true;
     if (!exportRenderState.showLinks) return false;
-    if (exportRenderState.highlightOnly && flowNodeIds) {
+    if (exportRenderState.highlightOnly && highlightNodeIds) {
       const srcId = getLinkEndpointId(link.source);
       const tgtId = getLinkEndpointId(link.target);
-      return flowNodeIds.has(srcId || '') && flowNodeIds.has(tgtId || '');
+      return highlightNodeIds.has(srcId || '') && highlightNodeIds.has(tgtId || '');
     }
     return true;
-  }, [exportRenderState, flowNodeIds]);
+  }, [exportRenderState, highlightNodeIds]);
   const linkWidth = useCallback((link: Edge) => {
     const base = EDGE_STYLES[link.type]?.width || EDGE_STYLES.default.width;
     const dashScale = isDashedLink(link) ? 0.6 : 1;

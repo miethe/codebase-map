@@ -12,6 +12,7 @@ export const GraphRenderer: React.FC = () => {
     setSelectedNode,
     setHoveredNode,
     focusMode,
+    focusHopCount,
     focusClusterId,
     setFocusClusterId,
     viewMode,
@@ -28,6 +29,7 @@ export const GraphRenderer: React.FC = () => {
     lodData,
     zoomLevel,
     setZoomLevel,
+    backboneEdgeDensity,
     exportRequest,
     setExportRequest,
     setExportStatus,
@@ -43,7 +45,8 @@ export const GraphRenderer: React.FC = () => {
     lodData,
     zoomLevel,
     allowLod,
-    focusClusterId
+    focusClusterId,
+    backboneEdgeDensity
   });
 
   const rendererProps = useMemo<GraphRendererProps>(() => ({
@@ -51,6 +54,7 @@ export const GraphRenderer: React.FC = () => {
     viewState: {
       viewMode,
       focusMode,
+      focusHopCount,
       focusClusterId,
       selectedNode,
       activeColorMode,
@@ -94,6 +98,7 @@ export const GraphRenderer: React.FC = () => {
     graphData,
     viewMode,
     focusMode,
+    focusHopCount,
     focusClusterId,
     selectedNode,
     activeColorMode,
