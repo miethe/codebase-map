@@ -182,13 +182,16 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
         activeColorMode,
         gitMetadata,
         enableMotionOptimizations,
-        zoomSpeed
+        zoomSpeed,
+        exportRequest
     } = viewState;
     const {
         onNodeSelect,
         onNodeHover,
         onBackgroundClick,
-        onZoomChange
+        onZoomChange,
+        onExportStatus,
+        onExportRequestHandled
     } = handlers;
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -201,6 +204,16 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
     const [reduceDetail, setReduceDetail] = useState(false);
     const interactionTimeoutRef = useRef<number | null>(null);
     const lastZoomRef = useRef<{ x: number; y: number; k: number; time: number } | null>(null);
+
+    useEffect(() => {
+        if (!exportRequest) return;
+        onExportStatus?.({
+            state: 'error',
+            requestId: exportRequest.id,
+            message: 'Image export is available only in WebGL mode.'
+        });
+        onExportRequestHandled?.(exportRequest.id);
+    }, [exportRequest?.id, onExportRequestHandled, onExportStatus]);
 
     const updateReduceDetail = useCallback((speed: number) => {
         if (!enableMotionOptimizations) return;

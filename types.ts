@@ -80,6 +80,36 @@ export interface GraphLODData {
   lod3?: GraphData;
 }
 
+export type CameraPresetId = 'default' | 'architecture' | 'backbone' | 'hotspots' | 'risk' | 'isometric' | 'top';
+export type ExportPass = 'nodes' | 'edges' | 'labels' | 'highlights' | 'heatmap';
+
+export interface ExportOptions {
+  width: number;
+  height: number;
+  preset: CameraPresetId;
+  orthographic: boolean;
+  transparentBackground: boolean;
+  useSeededLayout: boolean;
+  passes: ExportPass[];
+  seed: string;
+}
+
+export interface ExportRequest {
+  id: string;
+  options: ExportOptions;
+}
+
+export interface ExportStatus {
+  state: 'idle' | 'running' | 'error' | 'done';
+  message?: string;
+  requestId?: string;
+}
+
+export interface CameraPresetRequest {
+  id: CameraPresetId;
+  runId: number;
+}
+
 export interface GroupSet {
   id: string;
   label: string;
@@ -180,6 +210,12 @@ export interface GraphContextType {
   setRotateSpeed: (value: number) => void;
   zoomLevel: number;
   setZoomLevel: (value: number) => void;
+  exportRequest: ExportRequest | null;
+  setExportRequest: (request: ExportRequest | null) => void;
+  exportStatus: ExportStatus;
+  setExportStatus: (status: ExportStatus) => void;
+  cameraPresetRequest: CameraPresetRequest | null;
+  setCameraPresetRequest: (request: CameraPresetRequest | null) => void;
   // Metadata Support
   gitMetadata: GitMetadata | null;
   dependencyData: DependencyGraph | null;
@@ -267,6 +303,8 @@ export interface GraphRendererViewState {
   panSpeed: number;
   rotateSpeed: number;
   zoomLevel: number;
+  exportRequest: ExportRequest | null;
+  cameraPresetRequest: CameraPresetRequest | null;
 }
 
 export interface GraphRendererHandlers {
@@ -274,6 +312,8 @@ export interface GraphRendererHandlers {
   onNodeHover: (node: Node | null) => void;
   onBackgroundClick?: () => void;
   onZoomChange?: (zoomLevel: number) => void;
+  onExportStatus?: (status: ExportStatus) => void;
+  onExportRequestHandled?: (requestId: string) => void;
 }
 
 export interface GraphRendererProps {

@@ -2,7 +2,7 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { GraphRenderer } from './components/GraphRenderer';
 import { Sidebar } from './components/Sidebar';
-import { GraphData, GraphLODData, Node, GraphContextType, ViewMode, GraphViewMode, EDGE_STYLES, DetailsData, GitMetadata, DependencyGraph } from './types';
+import { GraphData, GraphLODData, Node, GraphContextType, ViewMode, GraphViewMode, EDGE_STYLES, DetailsData, GitMetadata, DependencyGraph, ExportRequest, ExportStatus, CameraPresetRequest } from './types';
 import { Layout, Loader2, AlertCircle, ChevronDown, ChevronUp, GitBranch, MoreVertical } from 'lucide-react';
 
 import { deriveModulePath, getDisplayModule, buildNodePathMap } from './utils/moduleGrouping';
@@ -57,6 +57,12 @@ export const GraphContext = React.createContext<GraphContextType>({
   setRotateSpeed: () => { },
   zoomLevel: 1,
   setZoomLevel: () => { },
+  exportRequest: null,
+  setExportRequest: () => { },
+  exportStatus: { state: 'idle' },
+  setExportStatus: () => { },
+  cameraPresetRequest: null,
+  setCameraPresetRequest: () => { },
 });
 
 const App: React.FC = () => {
@@ -90,6 +96,9 @@ const App: React.FC = () => {
   const [zoomLevel, setZoomLevel] = useState(1);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const settingsRef = useRef<HTMLDivElement>(null);
+  const [exportRequest, setExportRequest] = useState<ExportRequest | null>(null);
+  const [exportStatus, setExportStatus] = useState<ExportStatus>({ state: 'idle' });
+  const [cameraPresetRequest, setCameraPresetRequest] = useState<CameraPresetRequest | null>(null);
 
 
   // Fetch data on mount
@@ -503,6 +512,12 @@ const App: React.FC = () => {
     setRotateSpeed,
     zoomLevel,
     setZoomLevel,
+    exportRequest,
+    setExportRequest,
+    exportStatus,
+    setExportStatus,
+    cameraPresetRequest,
+    setCameraPresetRequest,
     gitMetadata,
     dependencyData
   };

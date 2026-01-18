@@ -25,7 +25,11 @@ export const GraphRenderer: React.FC = () => {
     rotateSpeed,
     lodData,
     zoomLevel,
-    setZoomLevel
+    setZoomLevel,
+    exportRequest,
+    setExportRequest,
+    setExportStatus,
+    cameraPresetRequest
   } = useContext(GraphContext);
 
   const rendererMode = (import.meta.env.VITE_GRAPH_RENDERER || 'svg').toLowerCase();
@@ -53,7 +57,9 @@ export const GraphRenderer: React.FC = () => {
       zoomSpeed,
       panSpeed,
       rotateSpeed,
-      zoomLevel
+      zoomLevel,
+      exportRequest,
+      cameraPresetRequest
     },
     handlers: {
       onNodeSelect: (node) => {
@@ -66,7 +72,9 @@ export const GraphRenderer: React.FC = () => {
       },
       onNodeHover: setHoveredNode,
       onBackgroundClick: () => setSelectedNode(null),
-      onZoomChange: setZoomLevel
+      onZoomChange: setZoomLevel,
+      onExportStatus: setExportStatus,
+      onExportRequestHandled: () => setExportRequest(null)
     }
   }), [
     graphData,
@@ -84,9 +92,13 @@ export const GraphRenderer: React.FC = () => {
     panSpeed,
     rotateSpeed,
     zoomLevel,
+    exportRequest,
+    cameraPresetRequest,
     setSelectedNode,
     setHoveredNode,
-    setZoomLevel
+    setZoomLevel,
+    setExportRequest,
+    setExportStatus
   ]);
 
   return useWebglRenderer ? (

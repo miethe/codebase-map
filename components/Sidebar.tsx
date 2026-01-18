@@ -1,11 +1,11 @@
 
 import React, { useContext, useMemo, useState } from 'react';
 import { GraphContext } from '../App';
-import { NODE_COLORS, EDGE_STYLES, Node, Edge } from '../types';
+import { NODE_COLORS, EDGE_STYLES, Node, Edge, ExportPass, CameraPresetId } from '../types';
 import {
     Search, Filter, Layers, Zap, Database, Globe, Box, Info,
     GitGraph, Grid, Server, Terminal, FileCode, GitBranch,
-    ChevronDown, ChevronRight, ArrowRight, Activity, Laptop, LayoutGrid, Focus, Check, Minus, Workflow, ChevronLeft, Home, Download, Flame, AlertTriangle
+    ChevronDown, ChevronRight, ArrowRight, Activity, Laptop, LayoutGrid, Focus, Check, Minus, Workflow, ChevronLeft, Home, Download, Flame, AlertTriangle, Camera
 } from 'lucide-react';
 import { computeClusterMetrics } from '../utils/graphAnalytics';
 import { generateCursorRules } from '../utils/rulesGenerator';
@@ -147,10 +147,22 @@ export const Sidebar: React.FC = () => {
         setActiveGroupingMode,
         activeColorMode,
         setActiveColorMode,
-        gitMetadata
+        gitMetadata,
+        exportStatus,
+        setExportRequest,
+        setCameraPresetRequest
     } = useContext(GraphContext);
     const [searchTerm, setSearchTerm] = useState("");
     const [activePreset, setActivePreset] = useState<string>('');
+    const [activeCameraPreset, setActiveCameraPreset] = useState<CameraPresetId>('default');
+    const [exportPreset, setExportPreset] = useState<CameraPresetId>('default');
+    const [exportWidth, setExportWidth] = useState(1920);
+    const [exportHeight, setExportHeight] = useState(1080);
+    const [exportOrthographic, setExportOrthographic] = useState(false);
+    const [exportTransparent, setExportTransparent] = useState(true);
+    const [exportSeededLayout, setExportSeededLayout] = useState(true);
+    const [exportSeed, setExportSeed] = useState('v1');
+    const [exportPasses, setExportPasses] = useState<ExportPass[]>(['nodes', 'edges', 'labels', 'highlights', 'heatmap']);
 
     const toggleFilter = (type: string) => {
         setFilters({ ...filters, [type]: !filters[type] });
@@ -195,6 +207,11 @@ export const Sidebar: React.FC = () => {
         setFocusMode(false);
         setGraphView('unified');
         setActiveModule(null);
+
+        const cameraPresetId = presetId as CameraPresetId;
+        setActiveCameraPreset(cameraPresetId);
+        setExportPreset(cameraPresetId);
+        setCameraPresetRequest({ id: cameraPresetId, runId: Date.now() });
 
         const resetNodeFilters = () => {
             const nextFilters: Record<string, boolean> = {};
@@ -261,6 +278,34 @@ export const Sidebar: React.FC = () => {
         }
     };
 
+    const applyCameraPreset = (presetId: CameraPresetId) => {
+        setActiveCameraPreset(presetId);
+        setCameraPresetRequest({ id: presetId, runId: Date.now() });
+    };
+
+    const toggleExportPass = (pass: ExportPass) => {
+        setExportPasses(prev => prev.includes(pass)
+            ? prev.filter(entry => entry !== pass)
+            : [...prev, pass]);
+    };
+
+    const handleExport = () => {
+        if (exportPasses.length === 0) return;
+        setExportRequest({
+            id: `export-${Date.now()}`,
+            options: {
+                width: exportWidth,
+                height: exportHeight,
+                preset: exportPreset,
+                orthographic: exportOrthographic,
+                transparentBackground: exportTransparent,
+                useSeededLayout: exportSeededLayout,
+                passes: exportPasses,
+                seed: exportSeed || 'v1'
+            }
+        });
+    };
+
     const immediateEdges = useMemo(() => {
         if (!selectedNode) return [];
         return data.edges.filter(e => e.from === selectedNode.id).map(e => {
@@ -312,6 +357,23 @@ export const Sidebar: React.FC = () => {
 
         return basicProps;
     }, [selectedNode, details]);
+
+    const cameraPresetOptions: Array<{ id: CameraPresetId; label: string; description: string }> = [
+        { id: 'default', label: 'Default', description: 'Balanced isometric framing.' },
+        { id: 'architecture', label: 'Architecture', description: 'Layered systems tilt.' },
+        { id: 'backbone', label: 'Backbone', description: 'Dependency-focused angle.' },
+        { id: 'hotspots', label: 'Hotspots', description: 'Activity-forward view.' },
+        { id: 'risk', label: 'Risk', description: 'Recency-biased angle.' },
+        { id: 'top', label: 'Top-Down', description: 'Orthographic-style top view.' }
+    ];
+
+    const exportPassOptions: Array<{ id: ExportPass; label: string }> = [
+        { id: 'nodes', label: 'Nodes' },
+        { id: 'edges', label: 'Edges' },
+        { id: 'labels', label: 'Labels' },
+        { id: 'highlights', label: 'Highlights' },
+        { id: 'heatmap', label: 'Heatmap' }
+    ];
 
     return (
         <div className="flex flex-col h-full overflow-hidden text-sm select-none">
@@ -750,6 +812,144 @@ export const Sidebar: React.FC = () => {
                             </div>
                             <div className="text-[10px] text-slate-500 mt-1">Recency + cross-boundary edges.</div>
                         </button>
+                    </div>
+                </CollapsibleSection>
+
+                <CollapsibleSection title="Camera Presets" icon={<Camera size={14} />} defaultOpen={false}>
+                    <div className="grid grid-cols-2 gap-2">
+                        {cameraPresetOptions.map(option => (
+                            <button
+                                key={option.id}
+                                onClick={() => applyCameraPreset(option.id)}
+                                className={`rounded border px-3 py-2 text-left text-xs transition-colors ${activeCameraPreset === option.id
+                                    ? 'bg-indigo-500/20 border-indigo-500/40 text-indigo-200'
+                                    : 'bg-slate-800/40 border-slate-700/60 text-slate-300 hover:bg-slate-800'
+                                    }`}
+                            >
+                                <div className="flex items-center gap-2 font-medium">
+                                    <Camera size={12} />
+                                    {option.label}
+                                </div>
+                                <div className="text-[10px] text-slate-500 mt-1">{option.description}</div>
+                            </button>
+                        ))}
+                    </div>
+                </CollapsibleSection>
+
+                <CollapsibleSection title="Export Layers" icon={<Download size={14} />} defaultOpen={false}>
+                    <div className="space-y-3">
+                        <div className="grid grid-cols-2 gap-2">
+                            <div className="space-y-1">
+                                <label className="text-[10px] uppercase font-bold text-slate-500">Width</label>
+                                <input
+                                    type="number"
+                                    min={200}
+                                    value={exportWidth}
+                                    onChange={(e) => setExportWidth(Number(e.target.value))}
+                                    className="w-full bg-slate-800 text-slate-200 text-xs rounded border border-slate-700 px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                                />
+                            </div>
+                            <div className="space-y-1">
+                                <label className="text-[10px] uppercase font-bold text-slate-500">Height</label>
+                                <input
+                                    type="number"
+                                    min={200}
+                                    value={exportHeight}
+                                    onChange={(e) => setExportHeight(Number(e.target.value))}
+                                    className="w-full bg-slate-800 text-slate-200 text-xs rounded border border-slate-700 px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-1.5">
+                            <label className="text-[10px] uppercase font-bold text-slate-500">Camera Preset</label>
+                            <div className="relative">
+                                <select
+                                    value={exportPreset}
+                                    onChange={(e) => setExportPreset(e.target.value as CameraPresetId)}
+                                    className="w-full bg-slate-800 text-slate-300 text-xs rounded border border-slate-700 py-1.5 pl-2 pr-8 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50 appearance-none transition-colors cursor-pointer hover:bg-slate-700"
+                                >
+                                    {cameraPresetOptions.map(option => (
+                                        <option key={`export-${option.id}`} value={option.id}>{option.label}</option>
+                                    ))}
+                                </select>
+                                <ChevronDown size={12} className="absolute right-2.5 top-2.5 text-slate-500 pointer-events-none" />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2">
+                            <label className="flex items-center justify-between p-2 rounded bg-slate-800/40 border border-slate-700/50">
+                                <span className="text-xs text-slate-300">Orthographic</span>
+                                <input
+                                    type="checkbox"
+                                    checked={exportOrthographic}
+                                    onChange={() => setExportOrthographic(!exportOrthographic)}
+                                    className="rounded border-slate-600 bg-slate-700 text-indigo-500 focus:ring-offset-slate-900 accent-indigo-500"
+                                />
+                            </label>
+                            <label className="flex items-center justify-between p-2 rounded bg-slate-800/40 border border-slate-700/50">
+                                <span className="text-xs text-slate-300">Transparent</span>
+                                <input
+                                    type="checkbox"
+                                    checked={exportTransparent}
+                                    onChange={() => setExportTransparent(!exportTransparent)}
+                                    className="rounded border-slate-600 bg-slate-700 text-indigo-500 focus:ring-offset-slate-900 accent-indigo-500"
+                                />
+                            </label>
+                        </div>
+
+                        <label className="flex items-center justify-between p-2 rounded bg-slate-800/40 border border-slate-700/50">
+                            <span className="text-xs text-slate-300">Seeded Layout</span>
+                            <input
+                                type="checkbox"
+                                checked={exportSeededLayout}
+                                onChange={() => setExportSeededLayout(!exportSeededLayout)}
+                                className="rounded border-slate-600 bg-slate-700 text-indigo-500 focus:ring-offset-slate-900 accent-indigo-500"
+                            />
+                        </label>
+
+                        <div className="space-y-1">
+                            <label className="text-[10px] uppercase font-bold text-slate-500">Seed</label>
+                            <input
+                                type="text"
+                                value={exportSeed}
+                                onChange={(e) => setExportSeed(e.target.value)}
+                                className="w-full bg-slate-800 text-slate-200 text-xs rounded border border-slate-700 px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                            />
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2">
+                            {exportPassOptions.map(option => (
+                                <button
+                                    key={option.id}
+                                    onClick={() => toggleExportPass(option.id)}
+                                    className={`rounded border px-2 py-1.5 text-left text-xs transition-colors ${exportPasses.includes(option.id)
+                                        ? 'bg-indigo-500/20 border-indigo-500/40 text-indigo-200'
+                                        : 'bg-slate-800/40 border-slate-700/60 text-slate-400 hover:bg-slate-800'
+                                        }`}
+                                >
+                                    {option.label}
+                                </button>
+                            ))}
+                        </div>
+
+                        <button
+                            onClick={handleExport}
+                            disabled={exportStatus.state === 'running' || exportPasses.length === 0}
+                            className={`w-full flex items-center justify-center gap-2 text-xs font-semibold rounded border px-3 py-2 transition-colors ${exportStatus.state === 'running' || exportPasses.length === 0
+                                ? 'bg-slate-800 border-slate-700 text-slate-500 cursor-not-allowed'
+                                : 'bg-indigo-500/20 border-indigo-500/40 text-indigo-200 hover:bg-indigo-500/30'
+                                }`}
+                        >
+                            <Download size={14} />
+                            {exportStatus.state === 'running' ? 'Exporting...' : 'Export Selected Passes'}
+                        </button>
+
+                        {exportStatus.message && (
+                            <div className={`text-[10px] ${exportStatus.state === 'error' ? 'text-rose-400' : 'text-slate-400'}`}>
+                                {exportStatus.message}
+                            </div>
+                        )}
                     </div>
                 </CollapsibleSection>
 

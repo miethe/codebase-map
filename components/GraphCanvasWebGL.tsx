@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three';
 import ForceGraph3D, { ForceGraphMethods } from 'react-force-graph-3d';
 import { forceCollide, forceZ } from 'd3-force-3d';
-import { Node, Edge, GraphRendererProps, NODE_SIZE_CONFIG, EDGE_STYLES } from '../types';
+import { Node, Edge, GraphRendererProps, NODE_SIZE_CONFIG, EDGE_STYLES, ExportPass, CameraPresetId, ExportRequest } from '../types';
 import { getNodeColor } from '../utils/colorMapping';
 import { computeClusterLayout } from '../utils/clusterLayout';
 
@@ -461,6 +461,46 @@ const applyStructuredLayout = (nodes: Node[], width: number, height: number) => 
 
 const STRUCTURED_HEADERS = ['Routes', 'Pages', 'Components', 'Hooks', 'API', 'Services', 'Data'];
 
+type ExportRenderState = {
+  pass: ExportPass;
+  showNodes: boolean;
+  showLinks: boolean;
+  showLabels: boolean;
+  highlightOnly: boolean;
+  nodeOpacity: number;
+  linkOpacity: number;
+  colorMode?: string | null;
+  transparentBackground: boolean;
+};
+
+type LayoutSnapshot = {
+  x?: number;
+  y?: number;
+  z?: number;
+  fx?: number | null;
+  fy?: number | null;
+  fz?: number | null;
+  vx?: number;
+  vy?: number;
+  vz?: number;
+};
+
+type CameraPresetConfig = {
+  direction: [number, number, number];
+  up?: [number, number, number];
+  distanceMultiplier?: number;
+};
+
+const CAMERA_PRESETS: Record<CameraPresetId, CameraPresetConfig> = {
+  default: { direction: [1, 1, 1], up: [0, 1, 0], distanceMultiplier: 1.2 },
+  architecture: { direction: [0.4, 0.9, 0.7], up: [0, 1, 0], distanceMultiplier: 1.25 },
+  backbone: { direction: [1, 0.6, 0.8], up: [0, 1, 0], distanceMultiplier: 1.2 },
+  hotspots: { direction: [-0.6, 1, 0.8], up: [0, 1, 0], distanceMultiplier: 1.25 },
+  risk: { direction: [0.8, 0.4, 1], up: [0, 1, 0], distanceMultiplier: 1.2 },
+  isometric: { direction: [1, 1, 1], up: [0, 1, 0], distanceMultiplier: 1.2 },
+  top: { direction: [0, 1, 0.01], up: [0, 0, -1], distanceMultiplier: 1.1 }
+};
+
 export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState, handlers }) => {
   const {
     selectedNode,
@@ -474,13 +514,17 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     zoomSpeed,
     panSpeed,
     rotateSpeed,
-    zoomLevel
+    zoomLevel,
+    exportRequest,
+    cameraPresetRequest
   } = viewState;
   const {
     onNodeSelect,
     onNodeHover,
     onBackgroundClick,
-    onZoomChange
+    onZoomChange,
+    onExportStatus,
+    onExportRequestHandled
   } = handlers;
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -518,6 +562,10 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   const cameraUpRef = useRef(new THREE.Vector3());
   const tempVectorBRef = useRef(new THREE.Vector3());
   const tempVectorCRef = useRef(new THREE.Vector3());
+  const [exportRenderState, setExportRenderState] = useState<ExportRenderState | null>(null);
+  const exportRenderStateRef = useRef<ExportRenderState | null>(null);
+  const exportInProgressRef = useRef(false);
+  const exportOrthographicRef = useRef(false);
 
   const updateReduceDetail = useCallback((speed: number) => {
     if (!enableMotionOptimizations) return;
@@ -530,6 +578,10 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       return next === prev ? prev : next;
     });
   }, [enableMotionOptimizations]);
+
+  useEffect(() => {
+    exportRenderStateRef.current = exportRenderState;
+  }, [exportRenderState]);
 
   const resumeAnimation = useCallback(() => {
     const graph = graphRef.current;
@@ -606,9 +658,202 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     registerInteraction(speed);
   }, [enableMotionOptimizations, onZoomChange, registerInteraction]);
 
+  const getHeatmapColorMode = useCallback(() => {
+    if (gitMetadata) return 'churn';
+    return 'type';
+  }, [gitMetadata]);
+
+  const getGraphBounds = useCallback(() => {
+    const graph = graphRef.current;
+    if (!graph) return null;
+    const bbox = graph.getGraphBbox();
+    if (!bbox) return null;
+    const min = new THREE.Vector3(bbox.x[0], bbox.y[0], bbox.z[0]);
+    const max = new THREE.Vector3(bbox.x[1], bbox.y[1], bbox.z[1]);
+    const size = new THREE.Vector3(max.x - min.x, max.y - min.y, max.z - min.z);
+    const center = new THREE.Vector3(
+      (min.x + max.x) / 2,
+      (min.y + max.y) / 2,
+      (min.z + max.z) / 2
+    );
+    const radius = Math.max(1, Math.max(size.x, size.y, size.z) * 0.6);
+    return { min, max, size, center, radius };
+  }, []);
+
+  const computeCameraPose = useCallback((presetId: CameraPresetId, aspectRatio: number) => {
+    const bounds = getGraphBounds();
+    if (!bounds) return null;
+    const preset = CAMERA_PRESETS[presetId] || CAMERA_PRESETS.default;
+    const direction = new THREE.Vector3(...preset.direction).normalize();
+    const camera = graphRef.current?.camera() as THREE.PerspectiveCamera | undefined;
+    const fov = camera?.fov ? THREE.MathUtils.degToRad(camera.fov) : THREE.MathUtils.degToRad(60);
+    const baseDistance = bounds.radius / Math.tan(fov / 2);
+    const distance = Math.max(120, baseDistance * (preset.distanceMultiplier || 1.2));
+    const position = bounds.center.clone().add(direction.multiplyScalar(distance));
+    const up = preset.up ? new THREE.Vector3(...preset.up) : new THREE.Vector3(0, 1, 0);
+    return {
+      position,
+      target: bounds.center,
+      up,
+      radius: bounds.radius,
+      aspectRatio
+    };
+  }, [getGraphBounds]);
+
+  const applyCameraPreset = useCallback((presetId: CameraPresetId, transitionMs = 0) => {
+    const graph = graphRef.current;
+    if (!graph) return;
+    const aspectRatio = Math.max(1, dimensions.width) / Math.max(1, dimensions.height);
+    const pose = computeCameraPose(presetId, aspectRatio);
+    if (!pose) return;
+    const camera = graph.camera() as THREE.PerspectiveCamera;
+    camera.up.copy(pose.up);
+    graph.cameraPosition({
+      x: pose.position.x,
+      y: pose.position.y,
+      z: pose.position.z
+    }, {
+      x: pose.target.x,
+      y: pose.target.y,
+      z: pose.target.z
+    }, transitionMs);
+    const controls = graph.controls() as any;
+    if (controls?.target) {
+      controls.target.copy(pose.target);
+      if (controls.update) controls.update();
+    }
+  }, [computeCameraPose, dimensions.height, dimensions.width]);
+
+  const createOrthographicCamera = useCallback((presetId: CameraPresetId, width: number, height: number) => {
+    const aspectRatio = width / Math.max(1, height);
+    const pose = computeCameraPose(presetId, aspectRatio);
+    if (!pose) return null;
+    const halfHeight = Math.max(1, pose.radius * 1.1);
+    const halfWidth = halfHeight * aspectRatio;
+    const camera = new THREE.OrthographicCamera(
+      -halfWidth,
+      halfWidth,
+      halfHeight,
+      -halfHeight,
+      -10000,
+      10000
+    );
+    camera.up.copy(pose.up);
+    camera.position.copy(pose.position);
+    camera.lookAt(pose.target);
+    camera.updateProjectionMatrix();
+    camera.updateMatrixWorld();
+    return { camera, pose };
+  }, [computeCameraPose]);
+
+  const applySeededLayout = useCallback((seed: string) => {
+    const dataSnapshot = graphDataRef.current;
+    if (!dataSnapshot) return null;
+    const bounds = getGraphBounds();
+    const baseRadius = Math.max(160, bounds?.radius ? bounds.radius * 1.1 : 240);
+    const snapshot = new Map<string, LayoutSnapshot>();
+    dataSnapshot.nodes.forEach(node => {
+      snapshot.set(node.id, {
+        x: node.x,
+        y: node.y,
+        z: node.z,
+        fx: node.fx,
+        fy: node.fy,
+        fz: node.fz,
+        vx: node.vx,
+        vy: node.vy,
+        vz: node.vz
+      });
+      const dir = getStableDirection(`${seed}|${node.id}`);
+      const scalar = 0.55 + (hashString(`${node.id}|${seed}`) / MAX_UINT32) * 0.45;
+      const radius = baseRadius * scalar;
+      node.x = dir.x * radius;
+      node.y = dir.y * radius;
+      node.z = viewMode === 'hierarchical' ? 0 : dir.z * radius;
+      node.fx = node.x;
+      node.fy = node.y;
+      node.fz = node.z;
+      node.vx = 0;
+      node.vy = 0;
+      node.vz = 0;
+    });
+    dataSnapshot.nodes.forEach(node => {
+      if (node.x === undefined || node.y === undefined) return;
+      nodePositions.current.set(node.id, {
+        x: node.x,
+        y: node.y,
+        z: node.z ?? 0,
+        vx: node.vx,
+        vy: node.vy,
+        vz: node.vz
+      });
+    });
+    return snapshot;
+  }, [getGraphBounds, viewMode]);
+
+  const restoreSeededLayout = useCallback((snapshot: Map<string, LayoutSnapshot> | null) => {
+    if (!snapshot) return;
+    const dataSnapshot = graphDataRef.current;
+    if (!dataSnapshot) return;
+    dataSnapshot.nodes.forEach(node => {
+      const prev = snapshot.get(node.id);
+      if (!prev) return;
+      node.x = prev.x;
+      node.y = prev.y;
+      node.z = prev.z;
+      node.fx = prev.fx ?? null;
+      node.fy = prev.fy ?? null;
+      node.fz = prev.fz ?? null;
+      node.vx = prev.vx;
+      node.vy = prev.vy;
+      node.vz = prev.vz;
+    });
+    dataSnapshot.nodes.forEach(node => {
+      if (node.x === undefined || node.y === undefined) return;
+      nodePositions.current.set(node.id, {
+        x: node.x,
+        y: node.y,
+        z: node.z ?? 0,
+        vx: node.vx,
+        vy: node.vy,
+        vz: node.vz
+      });
+    });
+  }, []);
+
+  const waitForFrames = useCallback((frames = 2) => new Promise<void>((resolve) => {
+    let count = 0;
+    const step = () => {
+      count += 1;
+      if (count >= frames) {
+        resolve();
+      } else {
+        requestAnimationFrame(step);
+      }
+    };
+    requestAnimationFrame(step);
+  }), []);
+
   useEffect(() => {
     zoomBaselineRef.current = null;
   }, [data.nodes.length, data.edges.length, viewMode]);
+
+  useEffect(() => {
+    if (!cameraPresetRequest) return;
+    let cancelled = false;
+    const attemptApply = () => {
+      if (cancelled) return;
+      if (!graphRef.current || !dimensions.width || !dimensions.height) {
+        requestAnimationFrame(attemptApply);
+        return;
+      }
+      applyCameraPreset(cameraPresetRequest.id, 650);
+    };
+    attemptApply();
+    return () => {
+      cancelled = true;
+    };
+  }, [cameraPresetRequest?.runId, applyCameraPreset, dimensions.height, dimensions.width]);
 
   const flowNodeIds = useMemo(() => {
     if (!selectedNode) return null;
@@ -619,10 +864,12 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     const graph = graphRef.current;
     const camera = graph?.camera() as THREE.Camera | undefined;
     if (!graph || !camera) return;
-    if (enablePerformanceMode) return;
+    const exportState = exportRenderStateRef.current;
+    const exportLabels = Boolean(exportState?.showLabels);
+    if (enablePerformanceMode && !exportLabels) return;
     const dataSnapshot = graphDataRef.current;
     if (!dataSnapshot) return;
-    const shouldShow = !enableMotionOptimizations || !reduceDetail;
+    const shouldShow = exportState ? exportState.showLabels : (!enableMotionOptimizations || !reduceDetail);
     const restrictToFlow = Boolean(selectedNode && !focusMode && flowNodeIds);
     if (!shouldShow && labelVisibilityModeRef.current === 'hidden') return;
     camera.updateMatrixWorld();
@@ -659,23 +906,29 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
           sprite.visible = false;
           didChange = true;
         }
-        setGlyphVisibility(node.id, false);
+        const showGlyph = exportState ? exportState.showNodes : false;
+        setGlyphVisibility(node.id, showGlyph);
         return;
       }
       tempVector.set(node.x ?? 0, node.y ?? 0, node.z ?? 0);
-      const inView = frustum.containsPoint(tempVector);
+      const inView = exportLabels && exportOrthographicRef.current
+        ? true
+        : frustum.containsPoint(tempVector);
       if (!inView) {
         if (sprite.visible) {
           sprite.visible = false;
           didChange = true;
         }
-        setGlyphVisibility(node.id, false);
+        const showGlyph = exportState ? exportState.showNodes : false;
+        setGlyphVisibility(node.id, showGlyph);
         return;
       }
       candidates.push(node);
     });
 
-    const labelBudget = getLabelBudget(zoomLevel, dataSnapshot.nodes.length);
+    const labelBudget = exportLabels
+      ? Math.min(dataSnapshot.nodes.length, Math.max(140, getLabelBudget(zoomLevel, dataSnapshot.nodes.length) * 2))
+      : getLabelBudget(zoomLevel, dataSnapshot.nodes.length);
     const ranked = candidates
       .map(node => ({
         node,
@@ -743,7 +996,8 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
         sprite.visible = true;
         didChange = true;
       }
-      setGlyphVisibility(node.id, true);
+      const showGlyph = exportState ? exportState.showNodes : true;
+      setGlyphVisibility(node.id, showGlyph);
       placed.push(bounds);
       shown += 1;
     });
@@ -755,7 +1009,12 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   }, [enableMotionOptimizations, enablePerformanceMode, reduceDetail, selectedNode, focusMode, flowNodeIds, zoomLevel, dimensions.width, dimensions.height]);
 
   const scheduleLabelVisibilityUpdate = useCallback(() => {
-    if (enablePerformanceMode) return;
+    const exportLabels = exportRenderStateRef.current?.showLabels;
+    if (enablePerformanceMode && !exportLabels) return;
+    if (exportLabels) {
+      updateLabelVisibility();
+      return;
+    }
     const now = performance.now();
     const elapsed = now - lastLabelUpdateRef.current;
     const interval = labelUpdateIntervalRef.current;
@@ -774,6 +1033,202 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       updateLabelVisibility();
     });
   }, [enablePerformanceMode, updateLabelVisibility]);
+
+  const runExportPipeline = useCallback(async (request: ExportRequest) => {
+    if (exportInProgressRef.current) {
+      onExportStatus?.({ state: 'error', requestId: request.id, message: 'Export already in progress.' });
+      onExportRequestHandled?.(request.id);
+      return;
+    }
+    const graph = graphRef.current;
+    if (!graph) {
+      onExportStatus?.({ state: 'error', requestId: request.id, message: 'Graph is not ready yet.' });
+      onExportRequestHandled?.(request.id);
+      return;
+    }
+    exportInProgressRef.current = true;
+    onExportStatus?.({ state: 'running', requestId: request.id, message: 'Preparing export...' });
+
+    const renderer = graph.renderer();
+    const scene = graph.scene();
+    const controls = graph.controls() as any;
+    const camera = graph.camera() as THREE.PerspectiveCamera;
+    const prevSize = renderer.getSize(new THREE.Vector2());
+    const prevPixelRatio = renderer.getPixelRatio();
+    const prevClearColor = renderer.getClearColor(new THREE.Color());
+    const prevClearAlpha = renderer.getClearAlpha();
+    const prevCameraPosition = camera.position.clone();
+    const prevTarget = controls?.target ? controls.target.clone() : new THREE.Vector3(0, 0, 0);
+    const prevAspect = camera.aspect;
+    const overlayGroup = overlayGroupRef.current;
+    const overlayWasVisible = overlayGroup?.visible ?? true;
+
+    const wasPaused = animationPausedRef.current;
+    pauseAnimation();
+
+    if (overlayGroup) overlayGroup.visible = false;
+
+    const options = request.options;
+    const exportWidth = Math.max(1, Math.floor(options.width));
+    const exportHeight = Math.max(1, Math.floor(options.height));
+    exportOrthographicRef.current = options.orthographic;
+
+    let layoutSnapshot: Map<string, LayoutSnapshot> | null = null;
+    if (options.useSeededLayout && viewMode === 'force') {
+      layoutSnapshot = applySeededLayout(options.seed);
+      graph.refresh();
+    }
+
+    renderer.setPixelRatio(1);
+    renderer.setSize(exportWidth, exportHeight, false);
+    camera.aspect = exportWidth / exportHeight;
+    camera.updateProjectionMatrix();
+
+    if (options.transparentBackground) {
+      renderer.setClearColor(0x000000, 0);
+    }
+
+    let exportCamera: THREE.Camera = camera;
+    let exportPoseTarget = prevTarget;
+    const exportPose = computeCameraPose(options.preset, exportWidth / exportHeight);
+    if (exportPose) {
+      camera.up.copy(exportPose.up);
+      graph.cameraPosition({
+        x: exportPose.position.x,
+        y: exportPose.position.y,
+        z: exportPose.position.z
+      }, {
+        x: exportPose.target.x,
+        y: exportPose.target.y,
+        z: exportPose.target.z
+      }, 0);
+      exportPoseTarget = exportPose.target;
+    }
+
+    if (options.orthographic) {
+      const ortho = createOrthographicCamera(options.preset, exportWidth, exportHeight);
+      if (ortho?.camera) {
+        exportCamera = ortho.camera;
+        exportPoseTarget = ortho.pose.target;
+      }
+    }
+
+    if (controls?.target) {
+      controls.target.copy(exportPoseTarget);
+      if (controls.update) controls.update();
+    }
+
+    const baseName = `codebase-${options.preset}-${options.orthographic ? 'ortho' : 'persp'}-${exportWidth}x${exportHeight}`;
+    const passOrder: ExportPass[] = ['nodes', 'edges', 'labels', 'highlights', 'heatmap'];
+    const selectedPasses = passOrder.filter(pass => options.passes.includes(pass));
+    const skipped: string[] = [];
+
+    const passes = selectedPasses.filter(pass => {
+      if (pass === 'highlights' && !selectedNode) {
+        skipped.push('highlights');
+        return false;
+      }
+      return true;
+    });
+
+    const downloadDataUrl = (dataUrl: string, filename: string) => {
+      const link = document.createElement('a');
+      link.href = dataUrl;
+      link.download = filename;
+      link.click();
+    };
+
+    try {
+      for (const pass of passes) {
+        const colorMode = pass === 'heatmap' ? getHeatmapColorMode() : null;
+        const nextState: ExportRenderState = {
+          pass,
+          showNodes: pass !== 'edges' && pass !== 'labels',
+          showLinks: pass === 'edges' || pass === 'highlights',
+          showLabels: pass === 'labels',
+          highlightOnly: pass === 'highlights',
+          nodeOpacity: pass === 'edges' || pass === 'labels' ? 0 : 1,
+          linkOpacity: pass === 'nodes' || pass === 'labels' || pass === 'heatmap' ? 0 : 1,
+          colorMode,
+          transparentBackground: options.transparentBackground
+        };
+        setExportRenderState(nextState);
+        await waitForFrames(2);
+        scheduleLabelVisibilityUpdate();
+        graph.refresh();
+        await waitForFrames(2);
+
+        renderer.render(scene, exportCamera);
+        const dataUrl = renderer.domElement.toDataURL('image/png');
+        downloadDataUrl(dataUrl, `${baseName}-${pass}.png`);
+      }
+
+      onExportStatus?.({
+        state: 'done',
+        requestId: request.id,
+        message: `Exported ${passes.length} pass(es).${skipped.length ? ' Skipped: ' + skipped.join(', ') : ''}`
+      });
+    } catch (err) {
+      console.error('Export failed', err);
+      onExportStatus?.({
+        state: 'error',
+        requestId: request.id,
+        message: err instanceof Error ? err.message : 'Export failed.'
+      });
+    } finally {
+      exportOrthographicRef.current = false;
+      setExportRenderState(null);
+      await waitForFrames(1);
+      scheduleLabelVisibilityUpdate();
+      if (overlayGroup) overlayGroup.visible = overlayWasVisible;
+      if (layoutSnapshot) {
+        restoreSeededLayout(layoutSnapshot);
+        graph.refresh();
+      }
+      renderer.setPixelRatio(prevPixelRatio);
+      renderer.setSize(prevSize.x, prevSize.y, false);
+      renderer.setClearColor(prevClearColor, prevClearAlpha);
+      camera.aspect = prevAspect;
+      camera.updateProjectionMatrix();
+      graph.cameraPosition({
+        x: prevCameraPosition.x,
+        y: prevCameraPosition.y,
+        z: prevCameraPosition.z
+      }, {
+        x: prevTarget.x,
+        y: prevTarget.y,
+        z: prevTarget.z
+      }, 0);
+      if (controls?.target) {
+        controls.target.copy(prevTarget);
+        if (controls.update) controls.update();
+      }
+      if (!wasPaused) {
+        resumeAnimation();
+      }
+      exportInProgressRef.current = false;
+      onExportRequestHandled?.(request.id);
+    }
+  }, [
+    applySeededLayout,
+    computeCameraPose,
+    createOrthographicCamera,
+    getHeatmapColorMode,
+    onExportRequestHandled,
+    onExportStatus,
+    restoreSeededLayout,
+    scheduleLabelVisibilityUpdate,
+    selectedNode,
+    viewMode,
+    waitForFrames,
+    pauseAnimation,
+    resumeAnimation
+  ]);
+
+  useEffect(() => {
+    if (!exportRequest) return;
+    runExportPipeline(exportRequest);
+  }, [exportRequest?.id, runExportPipeline]);
 
   const ensureOverlayGroups = useCallback(() => {
     const graph = graphRef.current;
@@ -1070,9 +1525,9 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   }, [enableMotionOptimizations]);
 
   useEffect(() => {
-    if (enablePerformanceMode) return;
+    if (enablePerformanceMode && !exportRenderState?.showLabels) return;
     scheduleLabelVisibilityUpdate();
-  }, [enableMotionOptimizations, enablePerformanceMode, reduceDetail, scheduleLabelVisibilityUpdate]);
+  }, [enableMotionOptimizations, enablePerformanceMode, reduceDetail, scheduleLabelVisibilityUpdate, exportRenderState]);
 
   useEffect(() => {
     scheduleLabelVisibilityUpdate();
@@ -1386,14 +1841,18 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   const linkTooltip = useCallback((link: Edge) => link.type, []);
 
   const nodeColor = useCallback((node: Node) => {
-    const base = getNodeColor(node, activeColorMode, groupingData, gitMetadata);
+    const colorMode = exportRenderState?.colorMode || activeColorMode;
+    const base = getNodeColor(node, colorMode, groupingData, gitMetadata);
     if (!selectedNode || focusMode) return base;
     if (!flowNodeIds) return base;
     return flowNodeIds.has(node.id) ? base : toRgba(base, 0.12);
-  }, [activeColorMode, groupingData, gitMetadata, selectedNode, focusMode, flowNodeIds]);
+  }, [activeColorMode, groupingData, gitMetadata, selectedNode, focusMode, flowNodeIds, exportRenderState]);
 
   const linkColor = useCallback((link: Edge) => {
     const base = EDGE_STYLES[link.type]?.stroke || EDGE_STYLES.default.stroke;
+    if (exportRenderState?.showLinks && !exportRenderState.highlightOnly) {
+      return toRgba(base, 0.75);
+    }
     if (!selectedNode) return toRgba(base, 0.4);
     if (focusMode) return toRgba(base, 0.85);
     const srcId = getLinkEndpointId(link.source);
@@ -1402,7 +1861,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       return toRgba(base, 0.85);
     }
     return toRgba(base, 0.05);
-  }, [selectedNode, focusMode, flowNodeIds]);
+  }, [selectedNode, focusMode, flowNodeIds, exportRenderState]);
 
   const nodeThreeObject = useCallback((node: Node) => {
     const cached = nodeObjectCache.current.get(node.id);
@@ -1431,9 +1890,29 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   }, []);
 
   const reducedDetail = enableMotionOptimizations && reduceDetail;
-  const aggressiveDetail = enablePerformanceMode || reducedDetail;
-  const labelAccessor = enablePerformanceMode ? undefined : nodeThreeObject;
+  const exporting = Boolean(exportRenderState);
+  const aggressiveDetail = exporting ? false : enablePerformanceMode || reducedDetail;
+  const labelAccessor = (enablePerformanceMode && !exportRenderState?.showLabels) ? undefined : nodeThreeObject;
   const linkWidthScale = aggressiveDetail ? 0.2 : reducedDetail ? 0.4 : 0.5;
+  const nodeOpacity = exportRenderState ? exportRenderState.nodeOpacity : 1;
+  const linkOpacity = exportRenderState ? exportRenderState.linkOpacity : 1;
+  const nodeVisibility = useCallback((node: Node) => {
+    if (!exportRenderState) return true;
+    if (exportRenderState.highlightOnly && flowNodeIds) {
+      return flowNodeIds.has(node.id);
+    }
+    return true;
+  }, [exportRenderState, flowNodeIds]);
+  const linkVisibility = useCallback((link: Edge) => {
+    if (!exportRenderState) return true;
+    if (!exportRenderState.showLinks) return false;
+    if (exportRenderState.highlightOnly && flowNodeIds) {
+      const srcId = getLinkEndpointId(link.source);
+      const tgtId = getLinkEndpointId(link.target);
+      return flowNodeIds.has(srcId || '') && flowNodeIds.has(tgtId || '');
+    }
+    return true;
+  }, [exportRenderState, flowNodeIds]);
   const linkWidth = useCallback((link: Edge) => {
     const base = EDGE_STYLES[link.type]?.width || EDGE_STYLES.default.width;
     const dashScale = isDashedLink(link) ? 0.6 : 1;
@@ -1476,13 +1955,15 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
           nodeVal={nodeVal}
           nodeLabel={nodeTooltip}
           nodeColor={nodeColor}
-          nodeOpacity={1}
+          nodeOpacity={nodeOpacity}
+          nodeVisibility={nodeVisibility}
           nodeThreeObject={labelAccessor}
-          nodeThreeObjectExtend={!enablePerformanceMode}
+          nodeThreeObjectExtend={!enablePerformanceMode || exportRenderState?.showLabels}
           linkLabel={linkTooltip}
           linkColor={linkColor}
           linkWidth={linkWidth}
-          linkOpacity={1}
+          linkOpacity={linkOpacity}
+          linkVisibility={linkVisibility}
           linkCurvature={linkCurvature}
           linkDirectionalArrowLength={arrowLength}
           linkDirectionalArrowRelPos={arrowLength > 0 ? 1 : 0}
