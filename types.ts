@@ -12,6 +12,7 @@ export interface Node {
   layer?: NodeLayer;
   cluster_id?: string;
   cluster_path?: string[];
+  importance?: number;
   size?: number;
   hotness?: number;
   bus_factor?: number;

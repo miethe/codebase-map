@@ -313,6 +313,14 @@ def enrich_graph(graph: Dict[str, Any], git_metadata: Optional[Dict[str, Any]] =
 
     node_index = {node.get("id"): node for node in nodes if node.get("id")}
     git_meta = git_metadata or {}
+    degree_map: Dict[str, int] = {}
+    for edge in edges:
+        source = edge.get("from")
+        target = edge.get("to")
+        if source:
+            degree_map[source] = degree_map.get(source, 0) + 1
+        if target:
+            degree_map[target] = degree_map.get(target, 0) + 1
 
     for node in nodes:
         if not node.get("id"):
@@ -330,6 +338,8 @@ def enrich_graph(graph: Dict[str, Any], git_metadata: Optional[Dict[str, Any]] =
 
         if node.get("size") is None:
             node["size"] = _file_line_count(node.get("file"), line_cache)
+        if node.get("importance") is None:
+            node["importance"] = degree_map.get(node["id"], 0)
 
         if not node.get("cluster_id") or not node.get("cluster_path"):
             cluster_id, cluster_path = _cluster_path(node)

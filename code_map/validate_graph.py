@@ -17,6 +17,15 @@ def _node_index(nodes: List[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
     return {node["id"]: node for node in nodes}
 
 
+CLUSTER_HIERARCHY = ("repo", "package", "module", "folder", "file", "symbol")
+
+
+def _cluster_prefix(value: str) -> str:
+    if ":" not in value:
+        return value
+    return value.split(":", 1)[0]
+
+
 def validate_graph(graph: Dict[str, Any]) -> List[str]:
     errors: List[str] = []
     nodes = graph.get("nodes", [])
@@ -24,6 +33,17 @@ def validate_graph(graph: Dict[str, Any]) -> List[str]:
 
     node_index = _node_index(nodes)
     node_ids = set(node_index.keys())
+
+    missing_edge_refs: List[str] = []
+    for edge in edges:
+        source = edge.get("from")
+        target = edge.get("to")
+        if source not in node_ids or target not in node_ids:
+            missing_edge_refs.append(f"{source}->{target}")
+
+    if missing_edge_refs:
+        errors.append(f"edge_references_missing_nodes:{len(missing_edge_refs)}")
+        errors.extend(missing_edge_refs[:20])
 
     incoming: Dict[str, List[Dict[str, Any]]] = defaultdict(list)
     for edge in edges:
@@ -86,6 +106,23 @@ def validate_graph(graph: Dict[str, Any]) -> List[str]:
         )
         if not has_component:
             errors.append(f"page_missing_component:{page_id}")
+
+    for node in nodes:
+        node_id = node.get("id")
+        cluster_path = node.get("cluster_path")
+        if not cluster_path:
+            errors.append(f"missing_cluster_path:{node_id}")
+            continue
+        prefixes = [_cluster_prefix(value) for value in cluster_path if value]
+        hierarchy_indexes = [CLUSTER_HIERARCHY.index(prefix) for prefix in prefixes if prefix in CLUSTER_HIERARCHY]
+        if len(hierarchy_indexes) != len(prefixes):
+            errors.append(f"cluster_path_unknown_prefix:{node_id}")
+            continue
+        if hierarchy_indexes != sorted(hierarchy_indexes):
+            errors.append(f"cluster_path_out_of_order:{node_id}")
+        cluster_id = node.get("cluster_id")
+        if cluster_id and cluster_path[-1] != cluster_id:
+            errors.append(f"cluster_id_mismatch:{node_id}")
 
     return errors
 

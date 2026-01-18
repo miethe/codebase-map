@@ -49,6 +49,10 @@ const filterEdgesToNodes = (graph: GraphData): GraphData => {
   const nodeIds = new Set(graph.nodes.map(node => node.id));
   const filteredEdges = graph.edges.filter(edge => nodeIds.has(edge.from) && nodeIds.has(edge.to));
   if (filteredEdges.length === graph.edges.length) return graph;
+  if (import.meta.env.DEV) {
+    const dropped = graph.edges.length - filteredEdges.length;
+    console.warn(`[graph] Dropped ${dropped} edges with missing node references.`);
+  }
   return { ...graph, edges: filteredEdges };
 };
 
