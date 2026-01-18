@@ -15,6 +15,8 @@ const BACKEND_TYPES = new Set(['api_endpoint', 'endpoint', 'handler', 'service',
 export const GraphContext = React.createContext<GraphContextType>({
   data: { nodes: [], edges: [] },
   lodData: null,
+  details: null,
+  isDetailsLoading: false,
   totalNodeCounts: {},
   totalEdgeCounts: {},
   moduleCounts: {},
@@ -34,6 +36,8 @@ export const GraphContext = React.createContext<GraphContextType>({
   setHoveredNode: () => { },
   focusMode: false,
   setFocusMode: () => { },
+  focusClusterId: null,
+  setFocusClusterId: () => { },
   viewMode: 'force',
   setViewMode: () => { },
   graphView: 'unified',
@@ -63,6 +67,8 @@ export const GraphContext = React.createContext<GraphContextType>({
   setExportStatus: () => { },
   cameraPresetRequest: null,
   setCameraPresetRequest: () => { },
+  gitMetadata: null,
+  dependencyData: null
 });
 
 const App: React.FC = () => {
@@ -83,6 +89,7 @@ const App: React.FC = () => {
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const [hoveredNode, setHoveredNode] = useState<Node | null>(null);
   const [focusMode, setFocusMode] = useState(false);
+  const [focusClusterId, setFocusClusterId] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>('force');
   const [graphView, setGraphView] = useState<GraphViewMode>('unified');
   const [activeModule, setActiveModule] = useState<string | null>(null);
@@ -99,6 +106,12 @@ const App: React.FC = () => {
   const [exportRequest, setExportRequest] = useState<ExportRequest | null>(null);
   const [exportStatus, setExportStatus] = useState<ExportStatus>({ state: 'idle' });
   const [cameraPresetRequest, setCameraPresetRequest] = useState<CameraPresetRequest | null>(null);
+
+  useEffect(() => {
+    if (graphView !== 'unified' || activeModule) {
+      setFocusClusterId(null);
+    }
+  }, [graphView, activeModule]);
 
 
   // Fetch data on mount
@@ -489,6 +502,8 @@ const App: React.FC = () => {
     setHoveredNode,
     focusMode,
     setFocusMode,
+    focusClusterId,
+    setFocusClusterId,
     viewMode,
     setViewMode,
     graphView,

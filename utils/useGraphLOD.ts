@@ -103,8 +103,15 @@ const applyClusterExpansions = (
     const clusterId = node.cluster_id || node.id;
     return !expandedSet.has(clusterId);
   });
-  const baseEdges = baseGraph.edges.filter(edge => !expandedSet.has(edge.from) && !expandedSet.has(edge.to));
-  const childEdges = childGraph.edges.filter(edge => childNodeIds.has(edge.from) && childNodeIds.has(edge.to));
+  const baseNodeIds = new Set(baseNodes.map(node => node.id));
+  const mergedNodeIds = new Set([...baseNodeIds, ...childNodeIds]);
+  const baseEdges = baseGraph.edges.filter(edge => baseNodeIds.has(edge.from) && baseNodeIds.has(edge.to));
+  const childEdges = childGraph.edges.filter(edge => {
+    const fromInChild = childNodeIds.has(edge.from);
+    const toInChild = childNodeIds.has(edge.to);
+    if (!fromInChild && !toInChild) return false;
+    return mergedNodeIds.has(edge.from) && mergedNodeIds.has(edge.to);
+  });
 
   const mergedNodeMap = new Map<string, Node>();
   baseNodes.forEach(node => mergedNodeMap.set(node.id, node));
@@ -122,13 +129,15 @@ interface UseGraphLODOptions {
   lodData?: GraphLODData | null;
   zoomLevel: number;
   allowLod: boolean;
+  focusClusterId?: string | null;
 }
 
 export const useGraphLOD = ({
   baseData,
   lodData,
   zoomLevel,
-  allowLod
+  allowLod,
+  focusClusterId
 }: UseGraphLODOptions) => {
   const [lodLevel, setLodLevel] = useState<LodLevel>(2);
   const [expandedClusters, setExpandedClusters] = useState<Set<string>>(new Set());
@@ -145,7 +154,6 @@ export const useGraphLOD = ({
     if (next !== lodLevelRef.current) {
       lodLevelRef.current = next;
       setLodLevel(next);
-      setExpandedClusters(new Set());
     }
   }, [allowLod, zoomLevel]);
 
@@ -169,9 +177,21 @@ export const useGraphLOD = ({
     const activeData = getLodData(lodData, lodLevel) || baseData;
     const childData = getLodData(lodData, Math.min(lodLevel + 1, 3) as LodLevel);
     let nextGraph = activeData;
+    const activeClusterIds = new Set(
+      activeData.nodes
+        .filter(node => node.kind === 'cluster')
+        .map(node => node.cluster_id || node.id)
+    );
+    const patchClusters = new Set<string>();
+    expandedClusters.forEach(clusterId => {
+      if (activeClusterIds.has(clusterId)) patchClusters.add(clusterId);
+    });
+    if (focusClusterId && activeClusterIds.has(focusClusterId)) {
+      patchClusters.add(focusClusterId);
+    }
 
-    if (childData && expandedClusters.size > 0 && lodLevel < 3) {
-      nextGraph = applyClusterExpansions(activeData, childData, expandedClusters);
+    if (childData && patchClusters.size > 0 && lodLevel < 3) {
+      nextGraph = applyClusterExpansions(activeData, childData, patchClusters);
     }
 
     if (lodLevel <= 1) {
@@ -182,7 +202,7 @@ export const useGraphLOD = ({
     }
 
     return attachTotalDegree(filterEdgesToNodes(nextGraph));
-  }, [allowLod, baseData, expandedClusters, lodData, lodLevel]);
+  }, [allowLod, baseData, expandedClusters, focusClusterId, lodData, lodLevel]);
 
   return {
     graphData,

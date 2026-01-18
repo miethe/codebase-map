@@ -12,6 +12,8 @@ export const GraphRenderer: React.FC = () => {
     setSelectedNode,
     setHoveredNode,
     focusMode,
+    focusClusterId,
+    setFocusClusterId,
     viewMode,
     activeColorMode,
     groupingData,
@@ -36,11 +38,12 @@ export const GraphRenderer: React.FC = () => {
   const useWebglRenderer = rendererMode === 'webgl';
 
   const allowLod = Boolean(lodData) && graphView === 'unified' && !activeModule;
-  const { graphData, toggleCluster } = useGraphLOD({
+  const { graphData, toggleCluster, expandedClusters } = useGraphLOD({
     baseData: data,
     lodData,
     zoomLevel,
-    allowLod
+    allowLod,
+    focusClusterId
   });
 
   const rendererProps = useMemo<GraphRendererProps>(() => ({
@@ -48,6 +51,7 @@ export const GraphRenderer: React.FC = () => {
     viewState: {
       viewMode,
       focusMode,
+      focusClusterId,
       selectedNode,
       activeColorMode,
       groupingData,
@@ -65,13 +69,23 @@ export const GraphRenderer: React.FC = () => {
       onNodeSelect: (node) => {
         if (allowLod && node?.kind === 'cluster') {
           const clusterId = node.cluster_id || node.id;
+          const isExpanded = expandedClusters.has(clusterId);
+          const isFocused = focusClusterId === clusterId;
+          if (isFocused && isExpanded) {
+            setFocusClusterId(null);
+          } else {
+            setFocusClusterId(clusterId);
+          }
           toggleCluster(clusterId);
           return;
         }
         setSelectedNode(node);
       },
       onNodeHover: setHoveredNode,
-      onBackgroundClick: () => setSelectedNode(null),
+      onBackgroundClick: () => {
+        setSelectedNode(null);
+        setFocusClusterId(null);
+      },
       onZoomChange: setZoomLevel,
       onExportStatus: setExportStatus,
       onExportRequestHandled: () => setExportRequest(null)
@@ -80,12 +94,14 @@ export const GraphRenderer: React.FC = () => {
     graphData,
     viewMode,
     focusMode,
+    focusClusterId,
     selectedNode,
     activeColorMode,
     groupingData,
     gitMetadata,
     allowLod,
     toggleCluster,
+    expandedClusters,
     enableMotionOptimizations,
     enablePerformanceMode,
     zoomSpeed,
@@ -96,6 +112,7 @@ export const GraphRenderer: React.FC = () => {
     cameraPresetRequest,
     setSelectedNode,
     setHoveredNode,
+    setFocusClusterId,
     setZoomLevel,
     setExportRequest,
     setExportStatus

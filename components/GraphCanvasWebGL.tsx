@@ -354,6 +354,16 @@ const createModuleLabelSprite = (text: string) => createTextSprite(text, {
   scale: 0.15
 });
 
+const createClusterLabelSprite = (text: string, focused: boolean) => createTextSprite(text, {
+  fontSize: 18,
+  fontWeight: 600,
+  padding: 6,
+  textColor: focused ? '#e0f2fe' : '#cbd5f5',
+  backgroundColor: focused ? 'rgba(14, 165, 233, 0.25)' : 'rgba(15, 23, 42, 0.55)',
+  fontFamily: '"Inter", sans-serif',
+  scale: 0.14
+});
+
 const getLabelBudget = (zoomLevel: number, nodeCount: number) => {
   const base = zoomLevel < 0.45 ? 70
     : zoomLevel < 0.9 ? 130
@@ -505,6 +515,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   const {
     selectedNode,
     focusMode,
+    focusClusterId,
     viewMode,
     activeColorMode,
     groupingData,
@@ -536,10 +547,13 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   const labelCache = useRef<Map<string, THREE.Sprite>>(new Map());
   const glyphCache = useRef<Map<string, THREE.Sprite>>(new Map());
   const overlayGroupRef = useRef<THREE.Group | null>(null);
+  const clusterOverlayRef = useRef<THREE.Group | null>(null);
   const moduleOverlayRef = useRef<THREE.Group | null>(null);
   const headerOverlayRef = useRef<THREE.Group | null>(null);
+  const clusterOverlayCache = useRef<Map<string, { box: THREE.LineLoop; label: THREE.Sprite; focused: boolean }>>(new Map());
   const moduleOverlayCache = useRef<Map<string, { box: THREE.LineLoop; label: THREE.Sprite }>>(new Map());
   const headerLabelCache = useRef<THREE.Sprite[]>([]);
+  const clusterOverlayTickRef = useRef<number>(0);
   const overlayTickRef = useRef<number>(0);
   const interactionTimeoutRef = useRef<number | null>(null);
   const lastCameraRef = useRef<{ x: number; y: number; z: number; time: number } | null>(null);
@@ -1243,14 +1257,18 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     const scene = graph.scene();
     const overlayGroup = new THREE.Group();
     overlayGroup.name = 'graph-overlays';
+    const clusterGroup = new THREE.Group();
+    clusterGroup.name = 'cluster-overlays';
     const moduleGroup = new THREE.Group();
     moduleGroup.name = 'module-overlays';
     const headerGroup = new THREE.Group();
     headerGroup.name = 'header-overlays';
+    overlayGroup.add(clusterGroup);
     overlayGroup.add(moduleGroup);
     overlayGroup.add(headerGroup);
     scene.add(overlayGroup);
     overlayGroupRef.current = overlayGroup;
+    clusterOverlayRef.current = clusterGroup;
     moduleOverlayRef.current = moduleGroup;
     headerOverlayRef.current = headerGroup;
     return overlayGroup;
@@ -1296,6 +1314,141 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       graphRef.current?.refresh();
     }
   }, [dimensions.width, dimensions.height, ensureOverlayGroups, viewMode]);
+
+  const updateClusterOverlays = useCallback(() => {
+    ensureOverlayGroups();
+    const clusterGroup = clusterOverlayRef.current;
+    if (!clusterGroup) return;
+    const dataSnapshot = graphDataRef.current;
+    if (!dataSnapshot) return;
+
+    const clusterNodes = dataSnapshot.nodes.filter(node => node.kind === 'cluster');
+    if (!clusterNodes.length) {
+      clusterGroup.visible = false;
+      return;
+    }
+    clusterGroup.visible = true;
+
+    const clusterIds = new Set(clusterNodes.map(node => node.cluster_id || node.id));
+    const clusterNodeMap = new Map(clusterNodes.map(node => [node.cluster_id || node.id, node]));
+    const membersByCluster = new Map<string, Node[]>();
+    clusterIds.forEach(id => membersByCluster.set(id, []));
+
+    dataSnapshot.nodes.forEach(node => {
+      if (!node.cluster_path) return;
+      node.cluster_path.forEach(clusterId => {
+        const bucket = membersByCluster.get(clusterId);
+        if (bucket) bucket.push(node);
+      });
+    });
+
+    const dimmed = Boolean(selectedNode && !focusMode);
+    const focusActive = Boolean(focusClusterId);
+
+    clusterOverlayCache.current.forEach((entry, key) => {
+      if (clusterIds.has(key)) return;
+      clusterGroup.remove(entry.box);
+      clusterGroup.remove(entry.label);
+      disposeLine(entry.box);
+      disposeSprite(entry.label);
+      clusterOverlayCache.current.delete(key);
+    });
+
+    clusterIds.forEach(clusterId => {
+      const clusterNode = clusterNodeMap.get(clusterId);
+      const members = membersByCluster.get(clusterId) || [];
+      let minX = Infinity;
+      let minY = Infinity;
+      let maxX = -Infinity;
+      let maxY = -Infinity;
+      members.forEach(node => {
+        if (node.x === undefined || node.y === undefined) return;
+        minX = Math.min(minX, node.x);
+        minY = Math.min(minY, node.y);
+        maxX = Math.max(maxX, node.x);
+        maxY = Math.max(maxY, node.y);
+      });
+
+      const memberCount = clusterNode?.member_count ?? members.length || 1;
+      const pad = 24 + Math.min(120, Math.log1p(memberCount) * 14);
+
+      if (minX === Infinity || minY === Infinity || maxX === -Infinity || maxY === -Infinity) {
+        if (clusterNode?.x === undefined || clusterNode?.y === undefined) return;
+        minX = clusterNode.x - pad;
+        maxX = clusterNode.x + pad;
+        minY = clusterNode.y - pad;
+        maxY = clusterNode.y + pad;
+      } else {
+        minX -= pad;
+        minY -= pad;
+        maxX += pad;
+        maxY += pad;
+      }
+
+      const focused = focusClusterId === clusterId;
+      const lineOpacity = focusActive
+        ? (focused ? (dimmed ? 0.2 : 0.55) : (dimmed ? 0.06 : 0.18))
+        : (dimmed ? 0.1 : 0.3);
+      const labelOpacity = focusActive
+        ? (focused ? (dimmed ? 0.45 : 0.9) : (dimmed ? 0.15 : 0.55))
+        : (dimmed ? 0.25 : 0.75);
+      const strokeColor = focused ? 0x38bdf8 : 0x1e293b;
+      const labelText = clusterNode?.label_short || clusterNode?.label || clusterId;
+
+      let entry = clusterOverlayCache.current.get(clusterId);
+      if (!entry) {
+        const geometry = new THREE.BufferGeometry();
+        const positions = new Float32Array(15);
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        const material = new THREE.LineBasicMaterial({
+          color: strokeColor,
+          transparent: true,
+          opacity: lineOpacity
+        });
+        const box = new THREE.LineLoop(geometry, material);
+        box.renderOrder = 1;
+        const label = createClusterLabelSprite(labelText, focused);
+        label.renderOrder = 2;
+        label.userData.text = labelText;
+        clusterGroup.add(box);
+        clusterGroup.add(label);
+        entry = { box, label, focused };
+        clusterOverlayCache.current.set(clusterId, entry);
+      } else {
+        if (entry.focused !== focused || entry.label.userData.text !== labelText) {
+          clusterGroup.remove(entry.label);
+          disposeSprite(entry.label);
+          const label = createClusterLabelSprite(labelText, focused);
+          label.renderOrder = 2;
+          label.userData.text = labelText;
+          clusterGroup.add(label);
+          entry.label = label;
+          entry.focused = focused;
+        }
+        const material = entry.box.material as THREE.LineBasicMaterial;
+        material.color.setHex(strokeColor);
+        material.opacity = lineOpacity;
+      }
+
+      const geometry = entry.box.geometry as THREE.BufferGeometry;
+      const attr = geometry.getAttribute('position') as THREE.BufferAttribute;
+      const array = attr.array as Float32Array;
+      array[0] = minX; array[1] = minY; array[2] = 0;
+      array[3] = maxX; array[4] = minY; array[5] = 0;
+      array[6] = maxX; array[7] = maxY; array[8] = 0;
+      array[9] = minX; array[10] = maxY; array[11] = 0;
+      array[12] = minX; array[13] = minY; array[14] = 0;
+      attr.needsUpdate = true;
+      geometry.computeBoundingSphere();
+
+      entry.label.material.opacity = labelOpacity;
+      entry.label.position.set(minX + 12, minY + 14, 0);
+    });
+
+    if (animationPausedRef.current) {
+      graphRef.current?.refresh();
+    }
+  }, [ensureOverlayGroups, focusClusterId, focusMode, selectedNode]);
 
   const updateModuleOverlays = useCallback(() => {
     if (viewMode !== 'hierarchical') {
@@ -1407,6 +1560,10 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       labelTickRef.current = now;
       scheduleLabelVisibilityUpdate();
     }
+    if (now - clusterOverlayTickRef.current > 240) {
+      clusterOverlayTickRef.current = now;
+      updateClusterOverlays();
+    }
     if (viewMode === 'hierarchical' && now - overlayTickRef.current > 220) {
       overlayTickRef.current = now;
       updateModuleOverlays();
@@ -1427,7 +1584,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
         });
       });
     }
-  }, [scheduleLabelVisibilityUpdate, updateModuleOverlays, viewMode]);
+  }, [scheduleLabelVisibilityUpdate, updateClusterOverlays, updateModuleOverlays, viewMode]);
 
   const handleEngineStop = useCallback(() => {
     scheduleLabelVisibilityUpdate();
@@ -1447,8 +1604,9 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     if (viewMode === 'hierarchical') {
       updateModuleOverlays();
     }
+    updateClusterOverlays();
     pauseAnimation();
-  }, [pauseAnimation, scheduleLabelVisibilityUpdate, updateModuleOverlays, viewMode]);
+  }, [pauseAnimation, scheduleLabelVisibilityUpdate, updateClusterOverlays, updateModuleOverlays, viewMode]);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -1498,6 +1656,11 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       if (overlayGroupRef.current) {
         graph.scene().remove(overlayGroupRef.current);
       }
+      clusterOverlayCache.current.forEach(entry => {
+        disposeLine(entry.box);
+        disposeSprite(entry.label);
+      });
+      clusterOverlayCache.current.clear();
       moduleOverlayCache.current.forEach(entry => {
         disposeLine(entry.box);
         disposeSprite(entry.label);
@@ -1508,6 +1671,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       });
       headerLabelCache.current = [];
       overlayGroupRef.current = null;
+      clusterOverlayRef.current = null;
       moduleOverlayRef.current = null;
       headerOverlayRef.current = null;
       const renderer = graph.renderer();
@@ -1665,6 +1829,10 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   useEffect(() => {
     updateModuleOverlays();
   }, [graphData.nodes.length, graphData.links.length, viewMode, updateModuleOverlays, selectedNode?.id, focusMode]);
+
+  useEffect(() => {
+    updateClusterOverlays();
+  }, [graphData.nodes.length, graphData.links.length, updateClusterOverlays, focusClusterId, selectedNode?.id, focusMode]);
 
   useEffect(() => {
     graphReadyRef.current = false;

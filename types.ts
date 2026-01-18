@@ -17,6 +17,7 @@ export interface Node {
   hotness?: number;
   bus_factor?: number;
   entrypoint?: boolean;
+  member_count?: number;
   externality?: NodeExternality;
   generated?: boolean;
   label_short?: string;
@@ -186,6 +187,8 @@ export interface GraphContextType {
   setHoveredNode: (node: Node | null) => void;
   focusMode: boolean;
   setFocusMode: (focus: boolean) => void;
+  focusClusterId: string | null;
+  setFocusClusterId: (clusterId: string | null) => void;
   viewMode: ViewMode;
   setViewMode: (mode: ViewMode) => void;
   graphView: GraphViewMode;
@@ -294,6 +297,7 @@ export const EDGE_STYLES: Record<string, { stroke: string; width: number; dash?:
 export interface GraphRendererViewState {
   viewMode: ViewMode;
   focusMode: boolean;
+  focusClusterId: string | null;
   selectedNode: Node | null;
   activeColorMode: string;
   groupingData: GroupingData | null;
