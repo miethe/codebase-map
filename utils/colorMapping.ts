@@ -23,6 +23,49 @@ const CATEGORICAL_PALETTE = [
 // Cache for stable color assignment to arbitrary strings
 const stringToColorCache = new Map<string, string>();
 
+const LOD_DOMAIN_COLORS: Record<string, string> = {
+    frontend: '#38bdf8', // sky-400
+    backend: '#f97316', // orange-500
+    unknown: '#94a3b8', // slate-400
+};
+
+const getClusterDomain = (node: Node): keyof typeof LOD_DOMAIN_COLORS | null => {
+    const parts = [node.id, node.cluster_id, ...(node.cluster_path || [])]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+    if (!parts) return null;
+
+    const tokens = parts.split(/[^a-z0-9]+/).filter(Boolean);
+    const tokenSet = new Set(tokens);
+    const has = (value: string) => tokenSet.has(value);
+
+    const isFrontend = (
+        has('frontend')
+        || has('web')
+        || has('ui')
+        || has('app')
+        || has('route')
+        || has('page')
+        || has('component')
+        || has('hook')
+    );
+    const isBackend = (
+        has('backend')
+        || has('api')
+        || has('server')
+        || has('db')
+        || has('core')
+        || has('cache')
+        || has('infra')
+    );
+
+    if (isFrontend && !isBackend) return 'frontend';
+    if (isBackend && !isFrontend) return 'backend';
+    if (isFrontend && isBackend) return 'backend';
+    return 'unknown';
+};
+
 /**
  * Assigns a stable color to a string from the palette.
  */
@@ -53,6 +96,10 @@ export const getNodeColor = (
 ): string => {
     // 1. Default Mode: Node Type
     if (mode === 'type') {
+        if (node.kind === 'cluster') {
+            const domain = getClusterDomain(node);
+            if (domain) return LOD_DOMAIN_COLORS[domain];
+        }
         return NODE_COLORS[node.type] || '#64748b';
     }
 

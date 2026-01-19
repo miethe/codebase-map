@@ -177,7 +177,8 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
     const [layoutCacheVersion, setLayoutCacheVersion] = useState(0);
     const lastLayoutCacheKeyRef = useRef<string | null>(null);
     const lastCacheWriteRef = useRef<number>(0);
-    const CLICK_DELAY = 220;
+    const CLICK_DELAY = 280;
+    const DOUBLE_CLICK_WINDOW = 380;
 
     useEffect(() => {
         if (!exportRequest) return;
@@ -682,6 +683,16 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
                     g.append("title");
 
                     g.append("text")
+                        .attr("class", "cluster-glyph")
+                        .attr("text-anchor", "middle")
+                        .attr("dy", "0.35em")
+                        .style("font-size", "11px")
+                        .style("font-weight", "600")
+                        .style("fill", "#e2e8f0")
+                        .style("opacity", 0.85)
+                        .style("pointer-events", "none");
+
+                    g.append("text")
                         .attr("class", "node-label")
                         .attr("x", 12)
                         .attr("y", 4)
@@ -704,7 +715,13 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
         // Update Node Attributes (for both new and existing)
         node.select(".node-circle")
             .attr("r", (d) => getNodeRadius(d))
-            .attr("fill", (d) => getNodeColor(d, activeColorMode, groupingData, gitMetadata)); // Use latest color logic
+            .attr("fill", (d) => getNodeColor(d, activeColorMode, groupingData, gitMetadata)) // Use latest color logic
+            .attr("stroke", (d) => d.kind === 'cluster' ? '#cbd5e1' : 'none')
+            .attr("stroke-width", (d) => d.kind === 'cluster' ? 1.5 : 0);
+
+        node.select(".cluster-glyph")
+            .text((d) => d.kind === 'cluster' ? '+' : '')
+            .style("display", (d) => d.kind === 'cluster' ? null : 'none');
 
         node.select("title")
             .text(d => `Type: ${d.type}\nID: ${d.id}\nVisible Connections: ${d.degree || 0}\nTotal Connections: ${d.totalDegree || 0}`);
@@ -723,7 +740,7 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
             }
             const now = performance.now();
             const lastClick = lastClickRef.current;
-            const isDoubleClick = Boolean(lastClick && lastClick.id === d.id && (now - lastClick.time) < 260);
+            const isDoubleClick = Boolean(lastClick && lastClick.id === d.id && (now - lastClick.time) < DOUBLE_CLICK_WINDOW);
             if (isDoubleClick) {
                 if (clickTimeoutRef.current) {
                     window.clearTimeout(clickTimeoutRef.current);

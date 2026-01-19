@@ -352,6 +352,17 @@ const createClusterGlyphSprite = (node: Node) => {
   context.arc(size / 2, size / 2, inner * 0.35, 0, Math.PI * 2);
   context.fill();
 
+  const plusSize = 10 + (intensity * 2);
+  context.strokeStyle = 'rgba(226, 232, 240, 0.9)';
+  context.lineWidth = 2;
+  context.lineCap = 'round';
+  context.beginPath();
+  context.moveTo(size / 2 - plusSize / 2, size / 2);
+  context.lineTo(size / 2 + plusSize / 2, size / 2);
+  context.moveTo(size / 2, size / 2 - plusSize / 2);
+  context.lineTo(size / 2, size / 2 + plusSize / 2);
+  context.stroke();
+
   const texture = new THREE.CanvasTexture(canvas);
   texture.minFilter = THREE.LinearFilter;
   const material = new THREE.SpriteMaterial({ map: texture, depthWrite: false, transparent: true });
@@ -517,7 +528,8 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   const [layoutCacheVersion, setLayoutCacheVersion] = useState(0);
   const lastLayoutCacheKeyRef = useRef<string | null>(null);
   const lastCacheWriteRef = useRef<number>(0);
-  const CLICK_DELAY = 220;
+  const CLICK_DELAY = 280;
+  const DOUBLE_CLICK_WINDOW = 380;
 
   const updateReduceDetail = useCallback((speed: number) => {
     if (!enableMotionOptimizations) return;
@@ -2265,7 +2277,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
             const clicked = node as Node;
             const now = performance.now();
             const lastClick = lastClickRef.current;
-            const isDoubleClick = Boolean(lastClick && lastClick.id === clicked.id && (now - lastClick.time) < 260);
+            const isDoubleClick = Boolean(lastClick && lastClick.id === clicked.id && (now - lastClick.time) < DOUBLE_CLICK_WINDOW);
             if (isDoubleClick) {
               if (clickTimeoutRef.current) {
                 window.clearTimeout(clickTimeoutRef.current);
