@@ -117,7 +117,6 @@ const getDownstreamNodes = (startNodeId: string, allEdges: Edge[], allNodes: Nod
 export const Sidebar: React.FC = () => {
     const {
         data,
-        data,
         details,
         isDetailsLoading,
         totalNodeCounts,
