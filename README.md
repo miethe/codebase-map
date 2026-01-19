@@ -2,11 +2,19 @@
 <img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
 </div>
 
-# Run and deploy your AI Studio app
+# Codebase Map
 
-This contains everything you need to run your app locally.
+Interactive, multi-LOD visualization of a repository’s architecture and dependencies. The UI supports focused cluster expansion, readable label budgets, and navigation helpers for large graphs.
 
-View your app in AI Studio: https://ai.studio/apps/drive/1FfSkOQG9lAfTd7L3lVWQdbRJHcJZ5A5Z
+## Highlights
+- Cluster-aware LOD expansion with sticky focus and breadcrumbs.
+- Backbone edge aggregation with density control at low LODs.
+- Label budgeting and importance ranking for stable, readable zooming.
+- Focus modes for upstream, downstream, and k-hop exploration.
+- WebGL cluster overlays for fast visual boundaries.
+
+## Docs
+- `docs/visualization-layering-ux.md` for the layering + zoom UX feature set.
 
 ## Run Locally
 
@@ -18,3 +26,7 @@ View your app in AI Studio: https://ai.studio/apps/drive/1FfSkOQG9lAfTd7L3lVWQdb
 2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
 3. Run the app:
    `npm run dev`
+
+## Notes
+- LOD datasets are loaded automatically when `codebase-graph.lod*.json` files are present.
+- To use the WebGL renderer, set `VITE_GRAPH_RENDERER=webgl` before running the dev server.

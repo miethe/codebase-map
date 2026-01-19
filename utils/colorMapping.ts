@@ -117,8 +117,8 @@ export const getNodeColor = (
         }
     }
 
-    // Fallback node color if not found in group
-    return '#334155'; // slate-700 (dim, indicates no membership)
+    // Fallback to type colors when a node doesn't belong to a grouping or has no metadata
+    return NODE_COLORS[node.type] || '#334155'; // slate-700 (dim, indicates no membership)
 };
 
 /**

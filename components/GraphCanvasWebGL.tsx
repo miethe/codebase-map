@@ -928,7 +928,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     const dataSnapshot = graphDataRef.current;
     if (!dataSnapshot) return;
     const shouldShow = exportState ? exportState.showLabels : (!enableMotionOptimizations || !reduceDetail);
-    const restrictToHighlight = Boolean(selectedNode && focusMode === 'off' && highlightNodeIds);
+    const restrictToHighlight = Boolean(selectedNode && selectedNode.kind !== 'cluster' && focusMode === 'off' && highlightNodeIds);
     if (!shouldShow && labelVisibilityModeRef.current === 'hidden') return;
     camera.updateMatrixWorld();
     const projScreenMatrix = projScreenMatrixRef.current;
@@ -2104,6 +2104,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     const colorMode = exportRenderState?.colorMode || activeColorMode;
     const base = getNodeColor(node, colorMode, groupingData, gitMetadata);
     if (!selectedNode || focusMode !== 'off') return base;
+    if (selectedNode.kind === 'cluster') return base;
     if (!highlightNodeIds) return base;
     return highlightNodeIds.has(node.id) ? base : toRgba(base, 0.12);
   }, [activeColorMode, groupingData, gitMetadata, selectedNode, focusMode, highlightNodeIds, exportRenderState]);
@@ -2115,6 +2116,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     }
     if (!selectedNode) return toRgba(base, 0.4);
     if (focusMode !== 'off') return toRgba(base, 0.85);
+    if (selectedNode.kind === 'cluster') return toRgba(base, 0.4);
     const srcId = getLinkEndpointId(link.source);
     const tgtId = getLinkEndpointId(link.target);
     if (highlightNodeIds?.has(srcId || '') && highlightNodeIds?.has(tgtId || '')) {

@@ -266,6 +266,13 @@ export const NODE_SIZE_CONFIG = {
 };
 
 export const NODE_COLORS: Record<string, string> = {
+  repo: '#38bdf8', // sky-400
+  package: '#34d399', // emerald-400
+  module: '#22c55e', // green-500
+  folder: '#fbbf24', // amber-400
+  file: '#a78bfa', // violet-400
+  symbol: '#f472b6', // pink-400
+  cluster: '#94a3b8', // slate-400
   route: '#a855f7', // purple-500
   page: '#3b82f6', // blue-500
   component: '#22d3ee', // cyan-400

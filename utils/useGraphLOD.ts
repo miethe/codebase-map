@@ -22,12 +22,26 @@ const nextLodLevel = (zoomLevel: number, current: LodLevel): LodLevel => {
   return 3;
 };
 
+const getLodLevelForZoom = (zoomLevel: number): LodLevel => {
+  if (zoomLevel < LOD_THRESHOLDS[0]) return 0;
+  if (zoomLevel < LOD_THRESHOLDS[1]) return 1;
+  if (zoomLevel < LOD_THRESHOLDS[2]) return 2;
+  return 3;
+};
+
 const getLodData = (lodData: GraphLODData | null | undefined, level: LodLevel): GraphData | null => {
   if (!lodData) return null;
   if (level === 0) return lodData.lod0 || null;
   if (level === 1) return lodData.lod1 || null;
   if (level === 2) return lodData.lod2 || null;
   return lodData.lod3 || null;
+};
+
+const getManualBaseLevel = (lodData: GraphLODData | null | undefined): LodLevel => {
+  if (lodData?.lod0) return 0;
+  if (lodData?.lod1) return 1;
+  if (lodData?.lod2) return 2;
+  return 3;
 };
 
 const attachTotalDegree = (graph: GraphData): GraphData => {
@@ -212,7 +226,11 @@ export const useGraphLOD = ({
   focusClusterId,
   backboneEdgeDensity = 1
 }: UseGraphLODOptions) => {
-  const [lodLevel, setLodLevel] = useState<LodLevel>(2);
+  const [lodLevel, setLodLevel] = useState<LodLevel>(() => {
+    if (!allowLod) return 3;
+    if (lodMode === 'manual') return getManualBaseLevel(lodData);
+    return getLodLevelForZoom(zoomLevel);
+  });
   const [expandedClusters, setExpandedClusters] = useState<Set<string>>(new Set());
   const lodLevelRef = useRef<LodLevel>(lodLevel);
 
@@ -224,10 +242,11 @@ export const useGraphLOD = ({
       return;
     }
     if (lodMode === 'manual') {
-      if (lodLevelRef.current === 3) {
-        const fallbackLevel: LodLevel = lodData?.lod2 ? 2 : lodData?.lod1 ? 1 : lodData?.lod0 ? 0 : 3;
-        lodLevelRef.current = fallbackLevel;
-        setLodLevel(fallbackLevel);
+      const baseLevel = getManualBaseLevel(lodData);
+      if (lodLevelRef.current !== baseLevel) {
+        lodLevelRef.current = baseLevel;
+        setLodLevel(baseLevel);
+        setExpandedClusters(new Set());
       }
       return;
     }

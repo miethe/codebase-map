@@ -884,11 +884,12 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
         if (svg.empty()) return;
 
         // Update Node Opacity
+        const shouldDimForSelection = Boolean(selectedNode && selectedNode.kind !== 'cluster' && focusMode === 'off');
+
         svg.selectAll<SVGGElement, Node>(".node-group")
             .transition().duration(200)
             .attr("opacity", (d) => {
-                if (!selectedNode) return 1;
-                if (focusMode !== 'off') return 1;
+                if (!shouldDimForSelection) return 1;
                 return highlightNodeIds && highlightNodeIds.has(d.id) ? 1 : 0.1;
             });
 
@@ -896,8 +897,7 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
         svg.selectAll<SVGTextElement, Node>(".node-label")
             .transition().duration(200)
             .style("opacity", (d) => {
-                if (!selectedNode) return 1;
-                if (focusMode !== 'off') return 1;
+                if (!shouldDimForSelection) return 1;
                 return highlightNodeIds && highlightNodeIds.has(d.id) ? 1 : 0;
             })
             .style("fill", (d) => d.id === selectedNode?.id ? "#fff" : "#cbd5e1");
@@ -915,8 +915,7 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
         svg.selectAll<SVGPathElement, any>(".edge-path")
             .transition().duration(200)
             .attr("stroke-opacity", (d) => {
-                if (!selectedNode) return 0.6;
-                if (focusMode !== 'off') return 0.9;
+                if (!shouldDimForSelection) return 0.6;
                 const srcId = d.source.id || d.source;
                 const tgtId = d.target.id || d.target;
                 return (highlightNodeIds?.has(srcId) && highlightNodeIds?.has(tgtId)) ? 0.9 : 0.05;
@@ -925,11 +924,11 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
         // Update Group Box Dimming
         svg.selectAll(".group-boxes rect")
             .transition().duration(200)
-            .attr("opacity", selectedNode && focusMode === 'off' ? 0.1 : 0.5);
+            .attr("opacity", shouldDimForSelection ? 0.1 : 0.5);
 
         svg.selectAll(".group-boxes text")
             .transition().duration(200)
-            .attr("opacity", selectedNode && focusMode === 'off' ? 0.2 : 0.8);
+            .attr("opacity", shouldDimForSelection ? 0.2 : 0.8);
 
     }, [selectedNode, highlightNodeIds, focusMode]);
 
