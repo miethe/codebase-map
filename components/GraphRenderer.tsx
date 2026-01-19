@@ -4,6 +4,7 @@ import { GraphCanvas } from './GraphCanvas';
 import { GraphCanvasWebGL } from './GraphCanvasWebGL';
 import { GraphRendererProps } from '../types';
 import { useGraphLOD } from '../utils/useGraphLOD';
+import { buildLayoutCacheKey } from '../utils/layoutCache';
 
 export const GraphRenderer: React.FC = () => {
   const {
@@ -33,14 +34,16 @@ export const GraphRenderer: React.FC = () => {
     exportRequest,
     setExportRequest,
     setExportStatus,
-    cameraPresetRequest
+    cameraPresetRequest,
+    cameraJumpRequest,
+    layoutCacheSeed
   } = useContext(GraphContext);
 
   const rendererMode = (import.meta.env.VITE_GRAPH_RENDERER || 'svg').toLowerCase();
   const useWebglRenderer = rendererMode === 'webgl';
 
   const allowLod = Boolean(lodData) && graphView === 'unified' && !activeModule;
-  const { graphData, toggleCluster, expandedClusters } = useGraphLOD({
+  const { graphData, toggleCluster, expandedClusters, lodLevel } = useGraphLOD({
     baseData: data,
     lodData,
     zoomLevel,
@@ -48,6 +51,12 @@ export const GraphRenderer: React.FC = () => {
     focusClusterId,
     backboneEdgeDensity
   });
+
+  const layoutCacheKey = useMemo(() => {
+    if (!layoutCacheSeed) return null;
+    const sourceTag = graphData.source || 'base';
+    return buildLayoutCacheKey([layoutCacheSeed, sourceTag, `lod:${lodLevel}`]);
+  }, [layoutCacheSeed, graphData.source, lodLevel]);
 
   const rendererProps = useMemo<GraphRendererProps>(() => ({
     data: graphData,
@@ -67,7 +76,10 @@ export const GraphRenderer: React.FC = () => {
       rotateSpeed,
       zoomLevel,
       exportRequest,
-      cameraPresetRequest
+      cameraPresetRequest,
+      cameraJumpRequest,
+      layoutCacheKey,
+      lodLevel
     },
     handlers: {
       onNodeSelect: (node) => {
@@ -115,6 +127,9 @@ export const GraphRenderer: React.FC = () => {
     zoomLevel,
     exportRequest,
     cameraPresetRequest,
+    cameraJumpRequest,
+    layoutCacheKey,
+    lodLevel,
     setSelectedNode,
     setHoveredNode,
     setFocusClusterId,

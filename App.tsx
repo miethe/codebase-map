@@ -3,7 +3,7 @@ import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { GraphRenderer } from './components/GraphRenderer';
 import { Sidebar } from './components/Sidebar';
 import { Breadcrumbs } from './components/Breadcrumbs';
-import { GraphData, GraphLODData, Node, GraphContextType, ViewMode, GraphViewMode, EDGE_STYLES, DetailsData, GitMetadata, DependencyGraph, ExportRequest, ExportStatus, CameraPresetRequest, FocusMode } from './types';
+import { GraphData, GraphLODData, Node, GraphContextType, ViewMode, GraphViewMode, EDGE_STYLES, DetailsData, GitMetadata, DependencyGraph, ExportRequest, ExportStatus, CameraPresetRequest, CameraJumpRequest, FocusMode } from './types';
 import { Layout, Loader2, AlertCircle, ChevronDown, ChevronUp, GitBranch, MoreVertical } from 'lucide-react';
 
 import { deriveModulePath, getDisplayModule, buildNodePathMap } from './utils/moduleGrouping';
@@ -18,6 +18,7 @@ export const GraphContext = React.createContext<GraphContextType>({
   lodData: null,
   details: null,
   isDetailsLoading: false,
+  layoutCacheSeed: '',
   totalNodeCounts: {},
   totalEdgeCounts: {},
   moduleCounts: {},
@@ -72,6 +73,8 @@ export const GraphContext = React.createContext<GraphContextType>({
   setExportStatus: () => { },
   cameraPresetRequest: null,
   setCameraPresetRequest: () => { },
+  cameraJumpRequest: null,
+  setCameraJumpRequest: () => { },
   gitMetadata: null,
   dependencyData: null
 });
@@ -113,6 +116,7 @@ const App: React.FC = () => {
   const [exportRequest, setExportRequest] = useState<ExportRequest | null>(null);
   const [exportStatus, setExportStatus] = useState<ExportStatus>({ state: 'idle' });
   const [cameraPresetRequest, setCameraPresetRequest] = useState<CameraPresetRequest | null>(null);
+  const [cameraJumpRequest, setCameraJumpRequest] = useState<CameraJumpRequest | null>(null);
 
   useEffect(() => {
     if (graphView !== 'unified' || activeModule) {
@@ -486,9 +490,55 @@ const App: React.FC = () => {
 
     return {
       nodes: visibleNodes,
-      edges: visibleEdges
+      edges: visibleEdges,
+      generated_at: rawData.generated_at,
+      schema_version: rawData.schema_version,
+      source: rawData.source,
+      source_commit: rawData.source_commit
     };
   }, [rawData, filters, edgeTypeFilters, graphView, selectedNode, activeModule, hideIntraFileEdges, hideTestGeneratedVendor, onlyCrossBoundaryEdges]);
+
+  const layoutCacheSeed = useMemo(() => {
+    const serializeToggleMap = (map: Record<string, boolean>) => (
+      Object.keys(map)
+        .sort()
+        .map(key => `${key}:${map[key] ? 1 : 0}`)
+        .join(',')
+    );
+    const sourceCommit = rawData.source_commit || lodData?.lod0?.source_commit || 'unknown';
+    const schemaVersion = rawData.schema_version || lodData?.lod0?.schema_version || 'v1';
+    const generatedAt = rawData.generated_at || lodData?.lod0?.generated_at || '';
+    const nodeFilters = serializeToggleMap(filters);
+    const edgeFilters = serializeToggleMap(edgeTypeFilters);
+    return [
+      sourceCommit,
+      schemaVersion,
+      generatedAt,
+      viewMode,
+      graphView,
+      activeModule || 'all',
+      hideIntraFileEdges ? 'intra:0' : 'intra:1',
+      hideTestGeneratedVendor ? 'prod:0' : 'prod:1',
+      onlyCrossBoundaryEdges ? 'cross:1' : 'cross:0',
+      `nodes:${nodeFilters}`,
+      `edges:${edgeFilters}`
+    ].join('|');
+  }, [
+    rawData.source_commit,
+    rawData.schema_version,
+    rawData.generated_at,
+    lodData?.lod0?.source_commit,
+    lodData?.lod0?.schema_version,
+    lodData?.lod0?.generated_at,
+    filters,
+    edgeTypeFilters,
+    graphView,
+    activeModule,
+    hideIntraFileEdges,
+    hideTestGeneratedVendor,
+    onlyCrossBoundaryEdges,
+    viewMode
+  ]);
 
   // Derived context value
   const contextValue: GraphContextType = {
@@ -496,6 +546,7 @@ const App: React.FC = () => {
     lodData,
     details,
     isDetailsLoading,
+    layoutCacheSeed,
     totalNodeCounts,
     totalEdgeCounts,
     moduleCounts,
@@ -550,6 +601,8 @@ const App: React.FC = () => {
     setExportStatus,
     cameraPresetRequest,
     setCameraPresetRequest,
+    cameraJumpRequest,
+    setCameraJumpRequest,
     gitMetadata,
     dependencyData
   };

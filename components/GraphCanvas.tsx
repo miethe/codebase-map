@@ -5,6 +5,7 @@ import { getNodeColor } from '../utils/colorMapping';
 import { computeClusterLayout } from '../utils/clusterLayout';
 import { getFocusNodeIds } from '../utils/focusModes';
 import { getLabelBucketForZoom, getNextLabelBucket, getLabelBudgetForBucket, getLabelRank, compareLabelRank, shouldForceLabel } from '../utils/labeling';
+import { loadLayoutCache, saveLayoutCache, LayoutCachePoint } from '../utils/layoutCache';
 
 const GROUP_MAPPING: Record<string, number> = {
     'route': 0,
@@ -119,6 +120,17 @@ const getCleanLabel = (node: Node) => {
     return text;
 };
 
+const getLinkTooltip = (edge: Edge) => {
+    if (!edge.aggregated) return edge.type;
+    const count = edge.memberCount || edge.weight || edge.members?.length || 0;
+    const samples = edge.members?.slice(0, 6) || [];
+    const preview = samples.map(sample => `${sample.from} → ${sample.to}`).join('\n');
+    const suffix = edge.members && edge.members.length > samples.length
+        ? `\n+${edge.members.length - samples.length} more`
+        : '';
+    return `${edge.type} (${count} edges)\n${preview}${suffix}`.trim();
+};
+
 export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, handlers }) => {
     const svgRef = useRef<SVGSVGElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -133,7 +145,9 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
         enableMotionOptimizations,
         zoomSpeed,
         zoomLevel,
-        exportRequest
+        exportRequest,
+        cameraJumpRequest,
+        layoutCacheKey
     } = viewState;
     const {
         onNodeSelect,
@@ -146,7 +160,8 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const simulationRef = useRef<d3.Simulation<Node, undefined> | null>(null);
-    const nodePositions = useRef<Map<string, { x: number, y: number, vx?: number, vy?: number }>>(new Map());
+    const nodePositions = useRef<Map<string, LayoutCachePoint>>(new Map());
+    const zoomBehaviorRef = useRef<d3.ZoomBehavior<SVGSVGElement, unknown> | null>(null);
     // Store the zoom transform to prevent reset on data updates
     const zoomTransform = useRef<d3.ZoomTransform>(d3.zoomIdentity);
     // Track dragging state to prevent click events (which trigger view resets via re-render)
@@ -156,6 +171,9 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
     const labelBucketRef = useRef(labelBucket);
     const interactionTimeoutRef = useRef<number | null>(null);
     const lastZoomRef = useRef<{ x: number; y: number; k: number; time: number } | null>(null);
+    const [layoutCacheVersion, setLayoutCacheVersion] = useState(0);
+    const lastLayoutCacheKeyRef = useRef<string | null>(null);
+    const lastCacheWriteRef = useRef<number>(0);
 
     useEffect(() => {
         if (!exportRequest) return;
@@ -174,6 +192,19 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
             setLabelBucket(next);
         }
     }, [zoomLevel]);
+
+    useEffect(() => {
+        if (!layoutCacheKey) return;
+        if (layoutCacheKey === lastLayoutCacheKeyRef.current) return;
+        lastLayoutCacheKeyRef.current = layoutCacheKey;
+        const cached = loadLayoutCache(layoutCacheKey);
+        nodePositions.current.clear();
+        if (cached) {
+            cached.forEach((pos, id) => nodePositions.current.set(id, pos));
+        }
+        setLayoutCacheVersion(prev => prev + 1);
+    }, [layoutCacheKey]);
+
 
     const updateReduceDetail = useCallback((speed: number) => {
         if (!enableMotionOptimizations) return;
@@ -249,6 +280,15 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
     }, [selectedNode?.id, data.edges, highlightMode, focusHopCount]);
     const focusActive = Boolean(selectedNode && focusMode !== 'off' && highlightNodeIds);
 
+    const canUseLayoutCache = Boolean(layoutCacheKey) && !focusActive;
+    const persistLayoutCache = useCallback((force = false) => {
+        if (!layoutCacheKey || !canUseLayoutCache) return;
+        const now = performance.now();
+        if (!force && now - lastCacheWriteRef.current < 5000) return;
+        lastCacheWriteRef.current = now;
+        saveLayoutCache(layoutCacheKey, nodePositions.current);
+    }, [layoutCacheKey, canUseLayoutCache]);
+
     // Stable data derivation with position persistence & Degree Calculation
     const { visibleNodes, visibleEdges } = useMemo(() => {
         // Need deep copies for D3
@@ -285,7 +325,7 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
         }
 
         return { visibleNodes: nodes, visibleEdges: edges };
-    }, [data, focusMode, focusActive, viewMode, selectedNode?.id, highlightNodeIds]);
+    }, [data, focusMode, focusActive, viewMode, selectedNode?.id, highlightNodeIds, layoutCacheVersion]);
 
     const labelVisibleIds = useMemo(() => {
         if (!visibleNodes.length) return new Set<string>();
@@ -306,6 +346,37 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
         });
         return ids;
     }, [visibleNodes, labelBucket, selectedNode?.id, highlightNodeIds]);
+
+    useEffect(() => {
+        if (!cameraJumpRequest) return;
+        let cancelled = false;
+        const attemptJump = () => {
+            if (cancelled) return;
+            const svg = svgRef.current;
+            const zoom = zoomBehaviorRef.current;
+            const container = containerRef.current;
+            if (!svg || !zoom || !container) {
+                requestAnimationFrame(attemptJump);
+                return;
+            }
+            const pos = nodePositions.current.get(cameraJumpRequest.nodeId);
+            if (!pos) {
+                requestAnimationFrame(attemptJump);
+                return;
+            }
+            const { width, height } = container.getBoundingClientRect();
+            const k = zoomTransform.current.k || 1;
+            const x = width / 2 - (pos.x || 0) * k;
+            const y = height / 2 - (pos.y || 0) * k;
+            const nextTransform = d3.zoomIdentity.translate(x, y).scale(k);
+            d3.select(svg).transition().duration(650).call(zoom.transform, nextTransform);
+            zoomTransform.current = nextTransform;
+        };
+        attemptJump();
+        return () => {
+            cancelled = true;
+        };
+    }, [cameraJumpRequest?.runId]);
 
     // Pre-calculate Cluster Layout if in Hierarchical Mode
     const clusterPositions = useMemo(() => {
@@ -360,6 +431,7 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
                     zoomTransform.current = event.transform;
                     handleZoomInteraction(event.transform);
                 });
+            zoomBehaviorRef.current = zoom;
             svg.call(zoom).call(zoom.transform, zoomTransform.current);
 
             // Background Click Handler to Clear Selection
@@ -582,7 +654,7 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
             })
             .attr("stroke-opacity", 0.6);
 
-        link.select("title").text(d => d.type);
+        link.select("title").text(d => getLinkTooltip(d as Edge));
 
         // 3. Nodes
         const node = nodeLayer
@@ -725,6 +797,7 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
                     nodePositions.current.set(n.id, { x: n.x, y: n.y, vx: n.vx, vy: n.vy });
                 }
             });
+            persistLayoutCache();
         });
 
         // Restart simulation to wake it up
@@ -732,6 +805,7 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
 
         // Cleanup
         return () => {
+            persistLayoutCache(true);
             simulation.stop();
         };
 
@@ -758,7 +832,7 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
             registerInteraction(0.2);
         }
 
-    }, [visibleNodes, visibleEdges, labelVisibleIds, viewMode, clusterPositions, activeColorMode, groupingData, gitMetadata, zoomSpeed, handleZoomInteraction, registerInteraction]);
+    }, [visibleNodes, visibleEdges, labelVisibleIds, viewMode, clusterPositions, activeColorMode, groupingData, gitMetadata, zoomSpeed, handleZoomInteraction, registerInteraction, persistLayoutCache]);
     // ^ Added dependencies so colors update when mode changes
 
     // EFFECT: Reduced Detail Mode while Interacting

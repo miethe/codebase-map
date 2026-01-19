@@ -7,6 +7,7 @@ import { getNodeColor } from '../utils/colorMapping';
 import { computeClusterLayout } from '../utils/clusterLayout';
 import { getFocusNodeIds } from '../utils/focusModes';
 import { getLabelBucketForZoom, getNextLabelBucket, getLabelBudgetForBucket, getLabelRank, compareLabelRank, shouldForceLabel } from '../utils/labeling';
+import { loadLayoutCache, saveLayoutCache, LayoutCachePoint } from '../utils/layoutCache';
 
 const GROUP_MAPPING: Record<string, number> = {
   route: 0,
@@ -450,7 +451,9 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     rotateSpeed,
     zoomLevel,
     exportRequest,
-    cameraPresetRequest
+    cameraPresetRequest,
+    cameraJumpRequest,
+    layoutCacheKey
   } = viewState;
   const {
     onNodeSelect,
@@ -463,7 +466,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
 
   const containerRef = useRef<HTMLDivElement>(null);
   const graphRef = useRef<ForceGraphMethods | null>(null);
-  const nodePositions = useRef<Map<string, { x: number; y: number; z: number; vx?: number; vy?: number; vz?: number }>>(new Map());
+  const nodePositions = useRef<Map<string, LayoutCachePoint>>(new Map());
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [reduceDetail, setReduceDetail] = useState(false);
   const nodeObjectCache = useRef<Map<string, THREE.Object3D>>(new Map());
@@ -506,6 +509,11 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   const exportOrthographicRef = useRef(false);
   const [labelBucket, setLabelBucket] = useState(() => getLabelBucketForZoom(zoomLevel));
   const labelBucketRef = useRef(labelBucket);
+  const [hoveredEdge, setHoveredEdge] = useState<Edge | null>(null);
+  const [pointerPosition, setPointerPosition] = useState({ x: 0, y: 0 });
+  const [layoutCacheVersion, setLayoutCacheVersion] = useState(0);
+  const lastLayoutCacheKeyRef = useRef<string | null>(null);
+  const lastCacheWriteRef = useRef<number>(0);
 
   const updateReduceDetail = useCallback((speed: number) => {
     if (!enableMotionOptimizations) return;
@@ -518,6 +526,15 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       return next === prev ? prev : next;
     });
   }, [enableMotionOptimizations]);
+
+  const handlePointerMove = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
+    const bounds = containerRef.current?.getBoundingClientRect();
+    if (!bounds) return;
+    setPointerPosition({
+      x: event.clientX - bounds.left,
+      y: event.clientY - bounds.top
+    });
+  }, []);
 
   useEffect(() => {
     exportRenderStateRef.current = exportRenderState;
@@ -676,6 +693,31 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     }
   }, [computeCameraPose, dimensions.height, dimensions.width]);
 
+  const flyToNode = useCallback((node: Node, transitionMs = 850) => {
+    const graph = graphRef.current;
+    if (!graph) return;
+    const camera = graph.camera() as THREE.PerspectiveCamera;
+    const controls = graph.controls() as any;
+    const target = controls?.target ? controls.target.clone() : new THREE.Vector3(0, 0, 0);
+    const currentPos = camera.position.clone();
+    const offset = currentPos.sub(target);
+    const nextTarget = new THREE.Vector3(node.x ?? 0, node.y ?? 0, node.z ?? 0);
+    const nextPos = nextTarget.clone().add(offset);
+    graph.cameraPosition({
+      x: nextPos.x,
+      y: nextPos.y,
+      z: nextPos.z
+    }, {
+      x: nextTarget.x,
+      y: nextTarget.y,
+      z: nextTarget.z
+    }, transitionMs);
+    if (controls?.target) {
+      controls.target.copy(nextTarget);
+      if (controls.update) controls.update();
+    }
+  }, []);
+
   const createOrthographicCamera = useCallback((presetId: CameraPresetId, width: number, height: number) => {
     const aspectRatio = width / Math.max(1, height);
     const pose = computeCameraPose(presetId, aspectRatio);
@@ -792,6 +834,18 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   }, [viewMode]);
 
   useEffect(() => {
+    if (!layoutCacheKey) return;
+    if (layoutCacheKey === lastLayoutCacheKeyRef.current) return;
+    lastLayoutCacheKeyRef.current = layoutCacheKey;
+    const cached = loadLayoutCache(layoutCacheKey);
+    nodePositions.current.clear();
+    if (cached) {
+      cached.forEach((pos, id) => nodePositions.current.set(id, pos));
+    }
+    setLayoutCacheVersion(prev => prev + 1);
+  }, [layoutCacheKey]);
+
+  useEffect(() => {
     if (!cameraPresetRequest) return;
     let cancelled = false;
     const attemptApply = () => {
@@ -808,12 +862,49 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     };
   }, [cameraPresetRequest?.runId, applyCameraPreset, dimensions.height, dimensions.width]);
 
+  useEffect(() => {
+    if (!cameraJumpRequest) return;
+    let cancelled = false;
+    const attemptJump = () => {
+      if (cancelled) return;
+      const graph = graphRef.current;
+      if (!graph) {
+        requestAnimationFrame(attemptJump);
+        return;
+      }
+      const dataSnapshot = graphDataRef.current;
+      if (!dataSnapshot) {
+        requestAnimationFrame(attemptJump);
+        return;
+      }
+      const node = dataSnapshot.nodes.find(item => item.id === cameraJumpRequest.nodeId);
+      if (!node || node.x === undefined || node.y === undefined) {
+        requestAnimationFrame(attemptJump);
+        return;
+      }
+      flyToNode(node, 750);
+    };
+    attemptJump();
+    return () => {
+      cancelled = true;
+    };
+  }, [cameraJumpRequest?.runId, flyToNode]);
+
   const highlightMode = focusMode === 'off' ? 'flow' : focusMode;
   const highlightNodeIds = useMemo(() => {
     if (!selectedNode) return null;
     return getFocusNodeIds(highlightMode, selectedNode.id, data.edges, focusHopCount);
   }, [selectedNode?.id, data.edges, highlightMode, focusHopCount]);
   const focusActive = Boolean(selectedNode && focusMode !== 'off' && highlightNodeIds);
+
+  const canUseLayoutCache = Boolean(layoutCacheKey) && !focusActive;
+  const persistLayoutCache = useCallback((force = false) => {
+    if (!layoutCacheKey || !canUseLayoutCache) return;
+    const now = performance.now();
+    if (!force && now - lastCacheWriteRef.current < 5000) return;
+    lastCacheWriteRef.current = now;
+    saveLayoutCache(layoutCacheKey, nodePositions.current);
+  }, [layoutCacheKey, canUseLayoutCache]);
 
   const updateLabelVisibility = useCallback(() => {
     const graph = graphRef.current;
@@ -1520,8 +1611,9 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
           vz: node.vz
         });
       });
+      persistLayoutCache();
     }
-  }, [scheduleLabelVisibilityUpdate, updateClusterOverlays, updateModuleOverlays, viewMode]);
+  }, [persistLayoutCache, scheduleLabelVisibilityUpdate, updateClusterOverlays, updateModuleOverlays, viewMode]);
 
   const handleEngineStop = useCallback(() => {
     scheduleLabelVisibilityUpdate();
@@ -1538,12 +1630,13 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
         vz: node.vz
       });
     });
+    persistLayoutCache(true);
     if (viewMode === 'hierarchical') {
       updateModuleOverlays();
     }
     updateClusterOverlays();
     pauseAnimation();
-  }, [pauseAnimation, scheduleLabelVisibilityUpdate, updateClusterOverlays, updateModuleOverlays, viewMode]);
+  }, [pauseAnimation, persistLayoutCache, scheduleLabelVisibilityUpdate, updateClusterOverlays, updateModuleOverlays, viewMode]);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -1691,7 +1784,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     }
 
     return { nodes, edges };
-  }, [data, focusMode, focusActive, selectedNode?.id, highlightNodeIds]);
+  }, [data, focusMode, focusActive, selectedNode?.id, highlightNodeIds, layoutCacheVersion]);
 
   const moduleCenters = useMemo(() => {
     if (viewMode !== 'hierarchical') return null;
@@ -1762,6 +1855,44 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   useEffect(() => {
     graphDataRef.current = graphData;
   }, [graphData]);
+
+  useEffect(() => {
+    setHoveredEdge(null);
+  }, [graphData.nodes.length, graphData.links.length]);
+
+  const edgePreview = useMemo(() => {
+    if (!hoveredEdge?.aggregated || !hoveredEdge.members?.length) return null;
+    const dataSnapshot = graphDataRef.current;
+    const nodeLabels = new Map<string, string>();
+    if (dataSnapshot) {
+      dataSnapshot.nodes.forEach(node => {
+        nodeLabels.set(node.id, getCleanLabel(node));
+      });
+    }
+    const items = hoveredEdge.members.slice(0, 8).map(member => {
+      const fromLabel = nodeLabels.get(member.from) || member.from;
+      const toLabel = nodeLabels.get(member.to) || member.to;
+      return {
+        from: fromLabel,
+        to: toLabel,
+        type: member.type || hoveredEdge.type
+      };
+    });
+    return {
+      count: hoveredEdge.memberCount || hoveredEdge.weight || hoveredEdge.members.length,
+      items
+    };
+  }, [hoveredEdge, graphData.nodes.length]);
+
+  const edgePreviewPosition = useMemo(() => {
+    if (!edgePreview) return null;
+    const width = 260;
+    const height = Math.min(260, 70 + edgePreview.items.length * 18);
+    const padding = 12;
+    const x = Math.min(pointerPosition.x + 16, Math.max(padding, dimensions.width - width - padding));
+    const y = Math.min(pointerPosition.y + 16, Math.max(padding, dimensions.height - height - padding));
+    return { x, y };
+  }, [edgePreview, pointerPosition.x, pointerPosition.y, dimensions.width, dimensions.height]);
 
   useEffect(() => {
     updateModuleOverlays();
@@ -1949,7 +2080,13 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     `Type: ${node.type}\nID: ${node.id}\nVisible Connections: ${node.degree || 0}\nTotal Connections: ${node.totalDegree || 0}`
   ), []);
 
-  const linkTooltip = useCallback((link: Edge) => link.type, []);
+  const linkTooltip = useCallback((link: Edge) => {
+    if (link.aggregated) {
+      const count = link.memberCount || link.weight || link.members?.length || 0;
+      return `${link.type} (${count} edges)`;
+    }
+    return link.type;
+  }, []);
 
   const nodeColor = useCallback((node: Node) => {
     const colorMode = exportRenderState?.colorMode || activeColorMode;
@@ -2054,7 +2191,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   const hasRenderableData = graphData.nodes.length > 0 || graphData.links.length > 0;
 
   return (
-    <div ref={containerRef} className="h-full w-full">
+    <div ref={containerRef} className="h-full w-full relative" onMouseMove={handlePointerMove}>
       {dimensions.width > 0 && dimensions.height > 0 && hasRenderableData && (
         <ForceGraph3D<Node, Edge>
           ref={graphRef}
@@ -2076,6 +2213,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
           linkOpacity={linkOpacity}
           linkVisibility={linkVisibility}
           linkCurvature={linkCurvature}
+          onLinkHover={link => setHoveredEdge((link as Edge) || null)}
           linkDirectionalArrowLength={arrowLength}
           linkDirectionalArrowRelPos={arrowLength > 0 ? 1 : 0}
           linkDirectionalArrowColor={arrowLength > 0 ? linkColor : undefined}
@@ -2119,6 +2257,31 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
           }}
           numDimensions={viewMode === 'hierarchical' ? 2 : 3}
         />
+      )}
+      {edgePreview && edgePreviewPosition && (
+        <div
+          className="absolute z-30 pointer-events-none bg-slate-950/90 border border-slate-700/70 rounded-md shadow-lg p-2 text-xs text-slate-200 w-[260px]"
+          style={{ left: edgePreviewPosition.x, top: edgePreviewPosition.y }}
+        >
+          <div className="flex items-center justify-between text-[11px] text-slate-400 mb-1">
+            <span className="font-semibold uppercase tracking-wide">{hoveredEdge?.type || 'Edge'}</span>
+            <span>{edgePreview.count} edges</span>
+          </div>
+          <div className="space-y-1">
+            {edgePreview.items.map((item, idx) => (
+              <div key={`${item.from}-${item.to}-${idx}`} className="flex items-center gap-2 text-[11px]">
+                <span className="truncate max-w-[110px] text-slate-200">{item.from}</span>
+                <span className="text-slate-500">→</span>
+                <span className="truncate max-w-[110px] text-slate-200">{item.to}</span>
+              </div>
+            ))}
+            {hoveredEdge?.members && hoveredEdge.members.length > edgePreview.items.length && (
+              <div className="text-[10px] text-slate-500">
+                +{hoveredEdge.members.length - edgePreview.items.length} more
+              </div>
+            )}
+          </div>
+        </div>
       )}
     </div>
   );

@@ -117,6 +117,7 @@ const getDownstreamNodes = (startNodeId: string, allEdges: Edge[], allNodes: Nod
 export const Sidebar: React.FC = () => {
     const {
         data,
+        data,
         details,
         isDetailsLoading,
         totalNodeCounts,
@@ -138,6 +139,7 @@ export const Sidebar: React.FC = () => {
         setFocusMode,
         focusHopCount,
         setFocusHopCount,
+        setFocusClusterId,
         viewMode,
         setViewMode,
         graphView,
@@ -154,7 +156,8 @@ export const Sidebar: React.FC = () => {
         setBackboneEdgeDensity,
         exportStatus,
         setExportRequest,
-        setCameraPresetRequest
+        setCameraPresetRequest,
+        setCameraJumpRequest
     } = useContext(GraphContext);
     const [searchTerm, setSearchTerm] = useState("");
     const [activePreset, setActivePreset] = useState<string>('');
@@ -167,6 +170,38 @@ export const Sidebar: React.FC = () => {
     const [exportSeededLayout, setExportSeededLayout] = useState(true);
     const [exportSeed, setExportSeed] = useState('v1');
     const [exportPasses, setExportPasses] = useState<ExportPass[]>(['nodes', 'edges', 'labels', 'highlights', 'heatmap']);
+    const normalizedSearchTerm = searchTerm.trim().toLowerCase();
+    const searchResults = useMemo(() => {
+        if (!normalizedSearchTerm) return [];
+        const tokens = normalizedSearchTerm.split(/\s+/).filter(Boolean);
+        if (!tokens.length) return [];
+        const scored: Array<{ node: Node; score: number }> = [];
+        data.nodes.forEach(node => {
+            const combined = `${node.label || ''} ${node.label_short || ''} ${node.id} ${node.file || ''} ${node.cluster_id || ''}`.toLowerCase();
+            const matchesAll = tokens.every(token => combined.includes(token));
+            if (!matchesAll) return;
+            let score = 0;
+            if (combined.startsWith(normalizedSearchTerm)) score += 80;
+            if (combined.includes(normalizedSearchTerm)) score += 40;
+            if ((node.id || '').toLowerCase().startsWith(normalizedSearchTerm)) score += 50;
+            if ((node.label || '').toLowerCase().startsWith(normalizedSearchTerm)) score += 35;
+            score += Math.max(0, 20 - combined.indexOf(tokens[0] || ''));
+            scored.push({ node, score });
+        });
+        return scored
+            .sort((a, b) => b.score - a.score || a.node.id.localeCompare(b.node.id))
+            .slice(0, 8);
+    }, [data.nodes, normalizedSearchTerm]);
+
+    const handleSearchSelect = (node: Node) => {
+        setSelectedNode(node);
+        if (node.kind === 'cluster') {
+            setFocusClusterId(node.cluster_id || node.id);
+        } else if (node.cluster_path?.length) {
+            setFocusClusterId(node.cluster_path[node.cluster_path.length - 1]);
+        }
+        setCameraJumpRequest({ nodeId: node.id, runId: Date.now() });
+    };
 
     const toggleFilter = (type: string) => {
         setFilters({ ...filters, [type]: !filters[type] });
@@ -399,8 +434,31 @@ export const Sidebar: React.FC = () => {
                         className="w-full bg-slate-800 text-slate-200 pl-9 pr-4 py-2 rounded-md border border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs placeholder:text-slate-600"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
+                        onKeyDown={(event) => {
+                            if (event.key === 'Enter' && searchResults.length > 0) {
+                                event.preventDefault();
+                                handleSearchSelect(searchResults[0].node);
+                            }
+                        }}
                     />
                 </div>
+                {searchResults.length > 0 && (
+                    <div className="space-y-1 max-h-48 overflow-y-auto pr-1">
+                        {searchResults.map(result => (
+                            <button
+                                key={result.node.id}
+                                className="w-full text-left px-2 py-1.5 rounded bg-slate-800/40 border border-slate-800 hover:bg-slate-800 hover:border-slate-600 transition-colors flex items-center justify-between gap-2"
+                                onClick={() => handleSearchSelect(result.node)}
+                            >
+                                <div className="min-w-0">
+                                    <div className="text-xs text-slate-200 truncate">{formatNodeLabel(result.node)}</div>
+                                    <div className="text-[10px] text-slate-500 truncate">{result.node.type}{result.node.file ? ` • ${result.node.file}` : ''}</div>
+                                </div>
+                                <ArrowRight size={12} className="text-slate-600 flex-shrink-0" />
+                            </button>
+                        ))}
+                    </div>
+                )}
 
                 {/* Layout Modes */}
                 <div className="flex bg-slate-800 p-1 rounded-md border border-slate-700">

@@ -62,6 +62,9 @@ export interface Edge {
   distance_class?: EdgeDistanceClass;
   confidence?: EdgeConfidence;
   bidirectional?: boolean;
+  aggregated?: boolean;
+  memberCount?: number;
+  members?: Array<{ from: string; to: string; type?: string }>;
   // D3 simulation properties (added at runtime)
   source?: Node | string;
   target?: Node | string;
@@ -110,6 +113,11 @@ export interface ExportStatus {
 
 export interface CameraPresetRequest {
   id: CameraPresetId;
+  runId: number;
+}
+
+export interface CameraJumpRequest {
+  nodeId: string;
   runId: number;
 }
 
@@ -169,6 +177,7 @@ export interface GraphContextType {
   lodData?: GraphLODData | null;
   details: DetailsData | null; // The rich details loaded asynchronously
   isDetailsLoading: boolean;
+  layoutCacheSeed: string;
   totalNodeCounts: Record<string, number>; // Stats based on raw data (for sidebar)
   totalEdgeCounts: Record<string, number>; // Stats based on raw data (for sidebar)
   moduleCounts: Record<string, number>; // Stats for modules
@@ -225,6 +234,8 @@ export interface GraphContextType {
   setExportStatus: (status: ExportStatus) => void;
   cameraPresetRequest: CameraPresetRequest | null;
   setCameraPresetRequest: (request: CameraPresetRequest | null) => void;
+  cameraJumpRequest: CameraJumpRequest | null;
+  setCameraJumpRequest: (request: CameraJumpRequest | null) => void;
   // Metadata Support
   gitMetadata: GitMetadata | null;
   dependencyData: DependencyGraph | null;
@@ -316,6 +327,9 @@ export interface GraphRendererViewState {
   zoomLevel: number;
   exportRequest: ExportRequest | null;
   cameraPresetRequest: CameraPresetRequest | null;
+  cameraJumpRequest: CameraJumpRequest | null;
+  layoutCacheKey: string | null;
+  lodLevel: number;
 }
 
 export interface GraphRendererHandlers {

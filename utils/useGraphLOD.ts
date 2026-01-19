@@ -59,7 +59,10 @@ const filterEdgesToNodes = (graph: GraphData): GraphData => {
 const aggregateClusterEdges = (nodes: Node[], edges: Edge[]): Edge[] => {
   const nodeIndex = new Map(nodes.map(node => [node.id, node]));
   const bundledEdges = new Map<string, Edge>();
+  const bundledMembers = new Map<string, Array<{ from: string; to: string; type?: string }>>();
+  const bundledCounts = new Map<string, number>();
   const passthroughEdges: Edge[] = [];
+  const MAX_EDGE_SAMPLE = 12;
 
   edges.forEach(edge => {
     const source = nodeIndex.get(edge.from);
@@ -90,15 +93,30 @@ const aggregateClusterEdges = (nodes: Node[], edges: Edge[]): Edge[] => {
     const key = `${sourceClusterId}::${targetClusterId}::${edgeType}`;
     const existing = bundledEdges.get(key);
     if (!existing) {
+      const members = [{ from: edge.from, to: edge.to, type: edge.type }];
+      bundledMembers.set(key, members);
+      bundledCounts.set(key, 1);
       bundledEdges.set(key, {
         ...edge,
         from: sourceClusterId,
         to: targetClusterId,
-        weight: edge.weight || 1
+        weight: edge.weight || 1,
+        aggregated: true,
+        memberCount: 1,
+        members
       });
       return;
     }
+    const members = bundledMembers.get(key);
+    if (members && members.length < MAX_EDGE_SAMPLE) {
+      members.push({ from: edge.from, to: edge.to, type: edge.type });
+    }
+    const count = (bundledCounts.get(key) || 1) + 1;
+    bundledCounts.set(key, count);
     existing.weight = (existing.weight || 0) + (edge.weight || 1);
+    existing.aggregated = true;
+    existing.memberCount = count;
+    if (members) existing.members = members;
   });
 
   return [...passthroughEdges, ...bundledEdges.values()];
