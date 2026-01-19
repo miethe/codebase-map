@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Edge, GraphData, GraphLODData, Node } from '../types';
+import { Edge, GraphData, GraphLODData, LodMode, Node } from '../types';
 
 const LOD_THRESHOLDS = [0.45, 0.9, 1.8];
 const LOD_HYSTERESIS = 0.1;
@@ -198,6 +198,7 @@ interface UseGraphLODOptions {
   lodData?: GraphLODData | null;
   zoomLevel: number;
   allowLod: boolean;
+  lodMode: LodMode;
   focusClusterId?: string | null;
   backboneEdgeDensity?: number;
 }
@@ -207,6 +208,7 @@ export const useGraphLOD = ({
   lodData,
   zoomLevel,
   allowLod,
+  lodMode,
   focusClusterId,
   backboneEdgeDensity = 1
 }: UseGraphLODOptions) => {
@@ -221,12 +223,20 @@ export const useGraphLOD = ({
       setExpandedClusters(new Set());
       return;
     }
+    if (lodMode === 'manual') {
+      if (lodLevelRef.current === 3) {
+        const fallbackLevel: LodLevel = lodData?.lod2 ? 2 : lodData?.lod1 ? 1 : lodData?.lod0 ? 0 : 3;
+        lodLevelRef.current = fallbackLevel;
+        setLodLevel(fallbackLevel);
+      }
+      return;
+    }
     const next = nextLodLevel(zoomLevel, lodLevelRef.current);
     if (next !== lodLevelRef.current) {
       lodLevelRef.current = next;
       setLodLevel(next);
     }
-  }, [allowLod, zoomLevel]);
+  }, [allowLod, zoomLevel, lodMode, lodData]);
 
   const toggleCluster = useCallback((clusterId: string) => {
     setExpandedClusters(prev => {

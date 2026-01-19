@@ -3,7 +3,7 @@ import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { GraphRenderer } from './components/GraphRenderer';
 import { Sidebar } from './components/Sidebar';
 import { Breadcrumbs } from './components/Breadcrumbs';
-import { GraphData, GraphLODData, Node, GraphContextType, ViewMode, GraphViewMode, EDGE_STYLES, DetailsData, GitMetadata, DependencyGraph, ExportRequest, ExportStatus, CameraPresetRequest, CameraJumpRequest, FocusMode } from './types';
+import { GraphData, GraphLODData, Node, GraphContextType, ViewMode, GraphViewMode, EDGE_STYLES, DetailsData, GitMetadata, DependencyGraph, ExportRequest, ExportStatus, CameraPresetRequest, CameraJumpRequest, FocusMode, LodMode } from './types';
 import { Layout, Loader2, AlertCircle, ChevronDown, ChevronUp, GitBranch, MoreVertical } from 'lucide-react';
 
 import { deriveModulePath, getDisplayModule, buildNodePathMap } from './utils/moduleGrouping';
@@ -57,6 +57,8 @@ export const GraphContext = React.createContext<GraphContextType>({
   setEnableMotionOptimizations: () => { },
   enablePerformanceMode: false,
   setEnablePerformanceMode: () => { },
+  lodMode: 'manual',
+  setLodMode: () => { },
   zoomSpeed: 1,
   setZoomSpeed: () => { },
   panSpeed: 0.6,
@@ -106,6 +108,7 @@ const App: React.FC = () => {
   const [isNodeLegendOpen, setIsNodeLegendOpen] = useState(true); // Open by default
   const [enableMotionOptimizations, setEnableMotionOptimizations] = useState(true);
   const [enablePerformanceMode, setEnablePerformanceMode] = useState(false);
+  const [lodMode, setLodMode] = useState<LodMode>('manual');
   const [zoomSpeed, setZoomSpeed] = useState(1);
   const [panSpeed, setPanSpeed] = useState(0.6);
   const [rotateSpeed, setRotateSpeed] = useState(0.8);
@@ -585,6 +588,8 @@ const App: React.FC = () => {
     setEnableMotionOptimizations,
     enablePerformanceMode,
     setEnablePerformanceMode,
+    lodMode,
+    setLodMode,
     zoomSpeed,
     setZoomSpeed,
     panSpeed,
@@ -772,6 +777,38 @@ const App: React.FC = () => {
                         onChange={(event) => setEnablePerformanceMode(event.target.checked)}
                       />
                     </label>
+                    <div className="space-y-2">
+                      <div className="text-[10px] uppercase tracking-[0.2em] text-slate-500">Detail Mode</div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setLodMode('manual')}
+                          className={`rounded-md border px-2 py-1 text-[11px] transition-colors ${
+                            lodMode === 'manual'
+                              ? 'border-indigo-400/60 bg-indigo-500/20 text-indigo-200'
+                              : 'border-slate-700/70 bg-slate-900 text-slate-400 hover:text-slate-200'
+                          }`}
+                        >
+                          Manual
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setLodMode('auto')}
+                          className={`rounded-md border px-2 py-1 text-[11px] transition-colors ${
+                            lodMode === 'auto'
+                              ? 'border-indigo-400/60 bg-indigo-500/20 text-indigo-200'
+                              : 'border-slate-700/70 bg-slate-900 text-slate-400 hover:text-slate-200'
+                          }`}
+                        >
+                          Auto
+                        </button>
+                      </div>
+                      <p className="text-[10px] text-slate-500">
+                        {lodMode === 'manual'
+                          ? 'Manual: double-click clusters to expand detail.'
+                          : 'Auto: detail changes as you zoom.'}
+                      </p>
+                    </div>
                   </div>
 
                   <div className="mt-4 text-[10px] uppercase tracking-[0.2em] text-slate-500">Interaction</div>

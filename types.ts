@@ -5,6 +5,7 @@ export type NodeExternality = 'internal' | 'vendor' | 'third_party';
 export type EdgeDistanceClass = 'local' | 'cross-folder' | 'cross-module' | 'cross-package' | 'cross-service';
 export type EdgeConfidence = 'static' | 'heuristic' | 'dynamic';
 export type FocusMode = 'off' | 'flow' | 'upstream' | 'downstream' | 'k-hop';
+export type LodMode = 'auto' | 'manual';
 
 export interface Node {
   id: string;
@@ -218,6 +219,8 @@ export interface GraphContextType {
   setEnableMotionOptimizations: (enabled: boolean) => void;
   enablePerformanceMode: boolean;
   setEnablePerformanceMode: (enabled: boolean) => void;
+  lodMode: LodMode;
+  setLodMode: (mode: LodMode) => void;
   zoomSpeed: number;
   setZoomSpeed: (value: number) => void;
   panSpeed: number;
@@ -334,6 +337,7 @@ export interface GraphRendererViewState {
 
 export interface GraphRendererHandlers {
   onNodeSelect: (node: Node | null) => void;
+  onNodeExpand?: (node: Node) => void;
   onNodeHover: (node: Node | null) => void;
   onBackgroundClick?: () => void;
   onZoomChange?: (zoomLevel: number) => void;

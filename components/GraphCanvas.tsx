@@ -151,6 +151,7 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
     } = viewState;
     const {
         onNodeSelect,
+        onNodeExpand,
         onNodeHover,
         onBackgroundClick,
         onZoomChange,
@@ -171,9 +172,12 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
     const labelBucketRef = useRef(labelBucket);
     const interactionTimeoutRef = useRef<number | null>(null);
     const lastZoomRef = useRef<{ x: number; y: number; k: number; time: number } | null>(null);
+    const clickTimeoutRef = useRef<number | null>(null);
+    const lastClickRef = useRef<{ id: string; time: number } | null>(null);
     const [layoutCacheVersion, setLayoutCacheVersion] = useState(0);
     const lastLayoutCacheKeyRef = useRef<string | null>(null);
     const lastCacheWriteRef = useRef<number>(0);
+    const CLICK_DELAY = 220;
 
     useEffect(() => {
         if (!exportRequest) return;
@@ -263,6 +267,9 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
         return () => {
             if (interactionTimeoutRef.current) {
                 window.clearTimeout(interactionTimeoutRef.current);
+            }
+            if (clickTimeoutRef.current) {
+                window.clearTimeout(clickTimeoutRef.current);
             }
         };
     }, []);
@@ -433,6 +440,7 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
                 });
             zoomBehaviorRef.current = zoom;
             svg.call(zoom).call(zoom.transform, zoomTransform.current);
+            svg.on("dblclick.zoom", null);
 
             // Background Click Handler to Clear Selection
             svg.on("click", (event) => {
@@ -713,9 +721,31 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
                 isDragging.current = false;
                 return;
             }
-            // Use ref for toggle check to ensure we have fresh state
-            const currentSelected = selectedNodeRef.current;
-            onNodeSelect(d.id === currentSelected?.id ? null : d);
+            const now = performance.now();
+            const lastClick = lastClickRef.current;
+            const isDoubleClick = Boolean(lastClick && lastClick.id === d.id && (now - lastClick.time) < 260);
+            if (isDoubleClick) {
+                if (clickTimeoutRef.current) {
+                    window.clearTimeout(clickTimeoutRef.current);
+                    clickTimeoutRef.current = null;
+                }
+                lastClickRef.current = null;
+                if (onNodeExpand) {
+                    onNodeExpand(d);
+                }
+                onNodeSelect(d);
+                return;
+            }
+            lastClickRef.current = { id: d.id, time: now };
+            if (clickTimeoutRef.current) {
+                window.clearTimeout(clickTimeoutRef.current);
+            }
+            clickTimeoutRef.current = window.setTimeout(() => {
+                // Use ref for toggle check to ensure we have fresh state
+                const currentSelected = selectedNodeRef.current;
+                onNodeSelect(d.id === currentSelected?.id ? null : d);
+                clickTimeoutRef.current = null;
+            }, CLICK_DELAY);
         })
             .on("mouseover", (event, d) => onNodeHover(d))
             .on("mouseout", () => onNodeHover(null));

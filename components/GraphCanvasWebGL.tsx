@@ -457,6 +457,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   } = viewState;
   const {
     onNodeSelect,
+    onNodeExpand,
     onNodeHover,
     onBackgroundClick,
     onZoomChange,
@@ -482,6 +483,8 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   const clusterOverlayTickRef = useRef<number>(0);
   const overlayTickRef = useRef<number>(0);
   const interactionTimeoutRef = useRef<number | null>(null);
+  const clickTimeoutRef = useRef<number | null>(null);
+  const lastClickRef = useRef<{ id: string; time: number } | null>(null);
   const lastCameraRef = useRef<{ x: number; y: number; z: number; time: number } | null>(null);
   const labelUpdateFrameRef = useRef<number | null>(null);
   const labelUpdateTimeoutRef = useRef<number | null>(null);
@@ -514,6 +517,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   const [layoutCacheVersion, setLayoutCacheVersion] = useState(0);
   const lastLayoutCacheKeyRef = useRef<string | null>(null);
   const lastCacheWriteRef = useRef<number>(0);
+  const CLICK_DELAY = 220;
 
   const updateReduceDetail = useCallback((speed: number) => {
     if (!enableMotionOptimizations) return;
@@ -539,6 +543,14 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   useEffect(() => {
     exportRenderStateRef.current = exportRenderState;
   }, [exportRenderState]);
+
+  useEffect(() => {
+    return () => {
+      if (clickTimeoutRef.current) {
+        window.clearTimeout(clickTimeoutRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const next = getNextLabelBucket(zoomLevel, labelBucketRef.current);
@@ -2247,9 +2259,31 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
             registerInteraction(0.2);
           }}
           onNodeHover={node => onNodeHover((node as Node) || null)}
-          onNodeClick={node => {
+          onNodeClick={(node) => {
             const clicked = node as Node;
-            onNodeSelect(selectedNode?.id === clicked.id ? null : clicked);
+            const now = performance.now();
+            const lastClick = lastClickRef.current;
+            const isDoubleClick = Boolean(lastClick && lastClick.id === clicked.id && (now - lastClick.time) < 260);
+            if (isDoubleClick) {
+              if (clickTimeoutRef.current) {
+                window.clearTimeout(clickTimeoutRef.current);
+                clickTimeoutRef.current = null;
+              }
+              lastClickRef.current = null;
+              if (onNodeExpand) {
+                onNodeExpand(clicked);
+              }
+              onNodeSelect(clicked);
+              return;
+            }
+            lastClickRef.current = { id: clicked.id, time: now };
+            if (clickTimeoutRef.current) {
+              window.clearTimeout(clickTimeoutRef.current);
+            }
+            clickTimeoutRef.current = window.setTimeout(() => {
+              onNodeSelect(selectedNode?.id === clicked.id ? null : clicked);
+              clickTimeoutRef.current = null;
+            }, CLICK_DELAY);
           }}
           onBackgroundClick={() => {
             if (onBackgroundClick) onBackgroundClick();

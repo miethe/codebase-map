@@ -24,6 +24,7 @@ export const GraphRenderer: React.FC = () => {
     activeModule,
     enableMotionOptimizations,
     enablePerformanceMode,
+    lodMode,
     zoomSpeed,
     panSpeed,
     rotateSpeed,
@@ -48,6 +49,7 @@ export const GraphRenderer: React.FC = () => {
     lodData,
     zoomLevel,
     allowLod,
+    lodMode,
     focusClusterId,
     backboneEdgeDensity
   });
@@ -83,19 +85,19 @@ export const GraphRenderer: React.FC = () => {
     },
     handlers: {
       onNodeSelect: (node) => {
-        if (allowLod && node?.kind === 'cluster') {
-          const clusterId = node.cluster_id || node.id;
-          const isExpanded = expandedClusters.has(clusterId);
-          const isFocused = focusClusterId === clusterId;
-          if (isFocused && isExpanded) {
-            setFocusClusterId(null);
-          } else {
-            setFocusClusterId(clusterId);
-          }
-          toggleCluster(clusterId);
-          return;
-        }
         setSelectedNode(node);
+      },
+      onNodeExpand: (node) => {
+        if (!allowLod || node?.kind !== 'cluster') return;
+        const clusterId = node.cluster_id || node.id;
+        const isExpanded = expandedClusters.has(clusterId);
+        const isFocused = focusClusterId === clusterId;
+        if (isFocused && isExpanded) {
+          setFocusClusterId(null);
+        } else {
+          setFocusClusterId(clusterId);
+        }
+        toggleCluster(clusterId);
       },
       onNodeHover: setHoveredNode,
       onBackgroundClick: () => {
