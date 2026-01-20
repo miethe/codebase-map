@@ -7,6 +7,8 @@ export type EdgeConfidence = 'static' | 'heuristic' | 'dynamic';
 export type FocusMode = 'off' | 'flow' | 'upstream' | 'downstream' | 'k-hop';
 export type LodMode = 'auto' | 'manual';
 
+export const CLUSTER_KINDS = new Set(['cluster', 'package', 'module', 'folder']);
+
 export interface Node {
   id: string;
   type: string;

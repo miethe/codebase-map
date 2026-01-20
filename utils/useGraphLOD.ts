@@ -1,12 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Edge, GraphData, GraphLODData, LodMode, Node } from '../types';
+import { CLUSTER_KINDS, Edge, GraphData, GraphLODData, LodMode, Node } from '../types';
 
 const LOD_THRESHOLDS = [0.45, 0.9, 1.8, 3.0];
 const LOD_HYSTERESIS = 0.1;
 
 type LodLevel = 0 | 1 | 2 | 3 | 4;
-
-const CLUSTER_KINDS = new Set(['cluster', 'package', 'module', 'folder']);
 
 const nextLodLevel = (zoomLevel: number, current: LodLevel): LodLevel => {
   if (current === 0) {

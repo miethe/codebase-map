@@ -2,7 +2,7 @@ import React, { useContext, useMemo } from 'react';
 import { GraphContext } from '../App';
 import { GraphCanvas } from './GraphCanvas';
 import { GraphCanvasWebGL } from './GraphCanvasWebGL';
-import { GraphRendererProps } from '../types';
+import { CLUSTER_KINDS, GraphRendererProps } from '../types';
 import { useGraphLOD } from '../utils/useGraphLOD';
 import { buildLayoutCacheKey } from '../utils/layoutCache';
 
@@ -88,7 +88,7 @@ export const GraphRenderer: React.FC = () => {
         setSelectedNode(node);
       },
       onNodeExpand: (node) => {
-        if (!allowLod || node?.kind !== 'cluster') return;
+        if (!allowLod || !node?.kind || !CLUSTER_KINDS.has(node.kind)) return;
         const clusterId = node.cluster_id || node.id;
         const isExpanded = expandedClusters.has(clusterId);
         const isFocused = focusClusterId === clusterId;
