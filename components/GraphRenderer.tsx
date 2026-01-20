@@ -100,7 +100,8 @@ export const GraphRenderer: React.FC = () => {
         setSelectedNode(node);
       },
       onNodeExpand: (node) => {
-        if (!allowLod || !node?.kind || !CLUSTER_KINDS.has(node.kind)) return;
+        const isExpandable = Boolean(node?.canExpand ?? (node?.kind && CLUSTER_KINDS.has(node.kind)));
+        if (!allowLod || !isExpandable) return;
         const clusterId = node.cluster_id || node.id;
         const isExpanded = expandedClusters.has(clusterId);
         const isFocused = focusClusterId === clusterId;

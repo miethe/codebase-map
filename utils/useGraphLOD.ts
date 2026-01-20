@@ -6,6 +6,14 @@ const LOD_HYSTERESIS = 0.1;
 
 type LodLevel = 0 | 1 | 2 | 3 | 4;
 
+const getNodeDepth = (node: Node): number => {
+  if (typeof node.lodDepth === 'number') return Math.max(0, Math.round(node.lodDepth));
+  if (node.cluster_path?.length) return Math.max(0, node.cluster_path.length - 1);
+  return 0;
+};
+
+const getClusterId = (node: Node) => node.cluster_id || node.id;
+
 const nextLodLevel = (zoomLevel: number, current: LodLevel): LodLevel => {
   if (current === 0) {
     return zoomLevel > LOD_THRESHOLDS[0] + LOD_HYSTERESIS ? 1 : 0;
@@ -66,6 +74,26 @@ const getClusterLevel = (node: Node): LodLevel | null => {
   if (last.startsWith('folder:')) return 2;
   if (last.startsWith('file:')) return 3;
   return null;
+};
+
+const buildDescendantDepthMap = (graphs: Array<GraphData | null | undefined>) => {
+  const map = new Map<string, number>();
+  graphs.forEach(graph => {
+    if (!graph) return;
+    graph.nodes.forEach(node => {
+      const path = node.cluster_path;
+      if (!path || path.length < 2) return;
+      const nodeDepth = getNodeDepth(node);
+      path.forEach((clusterId, index) => {
+        if (nodeDepth <= index) return;
+        const existing = map.get(clusterId);
+        if (existing === undefined || nodeDepth < existing) {
+          map.set(clusterId, nodeDepth);
+        }
+      });
+    });
+  });
+  return map;
 };
 
 const findChildLevel = (
@@ -250,16 +278,44 @@ const applyClusterExpansions = (
 
   const expandedList = Array.from(expandedClusters);
   const expandedSet = new Set(expandedList);
+  const parentDepthMap = new Map<string, number>();
+
+  baseGraph.nodes.forEach(node => {
+    const clusterId = getClusterId(node);
+    if (!expandedSet.has(clusterId)) return;
+    parentDepthMap.set(clusterId, getNodeDepth(node));
+  });
+
+  const nextDepthByCluster = new Map<string, number>();
+  expandedList.forEach(clusterId => {
+    const parentDepth = parentDepthMap.get(clusterId);
+    if (parentDepth === undefined) return;
+    let minDepth: number | null = null;
+    childGraph.nodes.forEach(node => {
+      if (!node.cluster_path?.includes(clusterId)) return;
+      const depth = getNodeDepth(node);
+      if (depth <= parentDepth) return;
+      if (minDepth === null || depth < minDepth) minDepth = depth;
+    });
+    if (minDepth !== null) nextDepthByCluster.set(clusterId, minDepth);
+  });
+
+  const expandableClusters = new Set(nextDepthByCluster.keys());
 
   const childNodes = childGraph.nodes.filter(node => {
     if (!node.cluster_path) return false;
-    return expandedList.some(clusterId => node.cluster_path?.includes(clusterId));
+    const nodeDepth = getNodeDepth(node);
+    return expandedList.some(clusterId => {
+      const targetDepth = nextDepthByCluster.get(clusterId);
+      if (targetDepth === undefined) return false;
+      return node.cluster_path?.includes(clusterId) && nodeDepth === targetDepth;
+    });
   });
   const childNodeIds = new Set(childNodes.map(node => node.id));
 
   const baseNodes = baseGraph.nodes.filter(node => {
-    const clusterId = node.cluster_id || node.id;
-    return !expandedSet.has(clusterId);
+    const clusterId = getClusterId(node);
+    return !expandableClusters.has(clusterId);
   });
   const baseNodeIds = new Set(baseNodes.map(node => node.id));
   const mergedNodeIds = new Set([...baseNodeIds, ...childNodeIds]);
@@ -308,6 +364,12 @@ export const useGraphLOD = ({
   });
   const [expandedClusters, setExpandedClusters] = useState<Set<string>>(new Set());
   const lodLevelRef = useRef<LodLevel>(lodLevel);
+  const descendantDepthMap = useMemo(() => {
+    if (lodData && (lodData.lod0 || lodData.lod1 || lodData.lod2 || lodData.lod3 || lodData.lod4)) {
+      return buildDescendantDepthMap([lodData.lod0, lodData.lod1, lodData.lod2, lodData.lod3, lodData.lod4]);
+    }
+    return buildDescendantDepthMap([baseData]);
+  }, [baseData, lodData]);
 
   useEffect(() => {
     if (!allowLod) {
@@ -346,7 +408,19 @@ export const useGraphLOD = ({
 
   const graphData = useMemo(() => {
     if (!allowLod) {
-      return attachTotalDegree(filterEdgesToNodes(baseData));
+      const baseGraph = attachTotalDegree(filterEdgesToNodes(baseData));
+      if (!descendantDepthMap.size) return baseGraph;
+      return {
+        ...baseGraph,
+        nodes: baseGraph.nodes.map(node => {
+          if (!node.kind || !CLUSTER_KINDS.has(node.kind)) return node;
+          const clusterId = getClusterId(node);
+          const nextDepth = descendantDepthMap.get(clusterId);
+          if (nextDepth === undefined) return { ...node, canExpand: false };
+          const canExpand = nextDepth > getNodeDepth(node);
+          return canExpand === node.canExpand ? node : { ...node, canExpand };
+        })
+      };
     }
 
     const baseLevel = lodMode === 'manual' ? getManualBaseLevel(lodData) : lodLevel;
@@ -391,8 +465,20 @@ export const useGraphLOD = ({
       };
     }
 
-    return attachTotalDegree(filterEdgesToNodes(nextGraph));
-  }, [allowLod, baseData, expandedClusters, focusClusterId, lodData, lodLevel, lodMode, backboneEdgeDensity]);
+    const nextGraphWithDegree = attachTotalDegree(filterEdgesToNodes(nextGraph));
+    if (!descendantDepthMap.size) return nextGraphWithDegree;
+    return {
+      ...nextGraphWithDegree,
+      nodes: nextGraphWithDegree.nodes.map(node => {
+        if (!node.kind || !CLUSTER_KINDS.has(node.kind)) return node;
+        const clusterId = getClusterId(node);
+        const nextDepth = descendantDepthMap.get(clusterId);
+        if (nextDepth === undefined) return { ...node, canExpand: false };
+        const canExpand = nextDepth > getNodeDepth(node);
+        return canExpand === node.canExpand ? node : { ...node, canExpand };
+      })
+    };
+  }, [allowLod, baseData, expandedClusters, focusClusterId, lodData, lodLevel, lodMode, backboneEdgeDensity, descendantDepthMap]);
 
   return {
     graphData,

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three';
 import ForceGraph3D, { ForceGraphMethods } from 'react-force-graph-3d';
 import { forceCollide, forceZ } from 'd3-force-3d';
-import { Node as GraphNode, Edge, GraphRendererProps, NODE_SIZE_CONFIG, EDGE_STYLES, ExportPass, CameraPresetId, ExportRequest, DrilldownContext } from '../types';
+import { Node as GraphNode, Edge, GraphRendererProps, NODE_SIZE_CONFIG, EDGE_STYLES, ExportPass, CameraPresetId, ExportRequest, DrilldownContext, CLUSTER_KINDS } from '../types';
 
 // Fix for global Node type collision
 type Node = GraphNode;
@@ -2537,7 +2537,8 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     labelCache.current.set(node.id, labelSprite);
     group.add(labelSprite);
 
-    if (node.kind === 'cluster') {
+    const showExpandGlyph = Boolean(node.canExpand ?? (node.kind && CLUSTER_KINDS.has(node.kind)));
+    if (showExpandGlyph) {
       const glyphSprite = createClusterGlyphSprite(node);
       if (glyphSprite) {
         glyphSprite.visible = true;

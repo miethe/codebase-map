@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import * as d3 from 'd3';
-import { Node, Edge, NODE_SIZE_CONFIG, EDGE_STYLES, GraphRendererProps, DrilldownContext } from '../types';
+import { Node, Edge, NODE_SIZE_CONFIG, EDGE_STYLES, GraphRendererProps, DrilldownContext, CLUSTER_KINDS } from '../types';
 import { getNodeColor } from '../utils/colorMapping';
 import { computeClusterLayout } from '../utils/clusterLayout';
 import { getFocusNodeIds } from '../utils/focusModes';
@@ -800,8 +800,14 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
             .attr("stroke-width", (d) => d.kind === 'cluster' ? 1.5 : 0);
 
         node.select(".cluster-glyph")
-            .text((d) => d.kind === 'cluster' ? '+' : '')
-            .style("display", (d) => d.kind === 'cluster' ? null : 'none');
+            .text((d) => {
+                const showExpandGlyph = Boolean(d.canExpand ?? (d.kind && CLUSTER_KINDS.has(d.kind)));
+                return showExpandGlyph ? '+' : '';
+            })
+            .style("display", (d) => {
+                const showExpandGlyph = Boolean(d.canExpand ?? (d.kind && CLUSTER_KINDS.has(d.kind)));
+                return showExpandGlyph ? null : 'none';
+            });
 
         node.select("title")
             .text(d => {
