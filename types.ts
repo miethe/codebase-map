@@ -16,6 +16,7 @@ export interface Node {
   layer?: NodeLayer;
   cluster_id?: string;
   cluster_path?: string[];
+  lodDepth?: number;
   importance?: number;
   size?: number;
   hotness?: number;
@@ -223,6 +224,12 @@ export interface GraphContextType {
   // Visualization Support
   activeColorMode: string;
   setActiveColorMode: (mode: string) => void;
+  layeredLodEnabled: boolean;
+  setLayeredLodEnabled: (enabled: boolean) => void;
+  layerSpacing: number;
+  setLayerSpacing: (value: number) => void;
+  showLodPlanes: boolean;
+  setShowLodPlanes: (enabled: boolean) => void;
   enableMotionOptimizations: boolean;
   setEnableMotionOptimizations: (enabled: boolean) => void;
   enablePerformanceMode: boolean;
@@ -337,6 +344,9 @@ export interface GraphRendererViewState {
   activeColorMode: string;
   groupingData: GroupingData | null;
   gitMetadata: GitMetadata | null;
+  layeredLodEnabled: boolean;
+  layerSpacing: number;
+  showLodPlanes: boolean;
   enableMotionOptimizations: boolean;
   enablePerformanceMode: boolean;
   zoomSpeed: number;

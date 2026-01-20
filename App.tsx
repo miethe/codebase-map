@@ -53,6 +53,12 @@ export const GraphContext = React.createContext<GraphContextType>({
   setActiveGroupingMode: () => { },
   activeColorMode: 'type',
   setActiveColorMode: () => { },
+  layeredLodEnabled: false,
+  setLayeredLodEnabled: () => { },
+  layerSpacing: 160,
+  setLayerSpacing: () => { },
+  showLodPlanes: true,
+  setShowLodPlanes: () => { },
   enableMotionOptimizations: true,
   setEnableMotionOptimizations: () => { },
   enablePerformanceMode: false,
@@ -87,6 +93,9 @@ const App: React.FC = () => {
   const [lodData, setLodData] = useState<GraphLODData | null>(null);
   const [activeGroupingMode, setActiveGroupingMode] = useState<string>('structure');
   const [activeColorMode, setActiveColorMode] = useState<string>('type');
+  const [layeredLodEnabled, setLayeredLodEnabled] = useState(false);
+  const [layerSpacing, setLayerSpacing] = useState(160);
+  const [showLodPlanes, setShowLodPlanes] = useState(true);
 
   const [gitMetadata, setGitMetadata] = useState<GitMetadata | null>(null);
   const [dependencyData, setDependencyData] = useState<DependencyGraph | null>(null);
@@ -585,6 +594,12 @@ const App: React.FC = () => {
     setActiveGroupingMode,
     activeColorMode,
     setActiveColorMode,
+    layeredLodEnabled,
+    setLayeredLodEnabled,
+    layerSpacing,
+    setLayerSpacing,
+    showLodPlanes,
+    setShowLodPlanes,
     enableMotionOptimizations,
     setEnableMotionOptimizations,
     enablePerformanceMode,

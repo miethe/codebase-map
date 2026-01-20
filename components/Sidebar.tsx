@@ -150,6 +150,12 @@ export const Sidebar: React.FC = () => {
         setActiveGroupingMode,
         activeColorMode,
         setActiveColorMode,
+        layeredLodEnabled,
+        setLayeredLodEnabled,
+        layerSpacing,
+        setLayerSpacing,
+        showLodPlanes,
+        setShowLodPlanes,
         gitMetadata,
         backboneEdgeDensity,
         setBackboneEdgeDensity,
@@ -846,6 +852,52 @@ export const Sidebar: React.FC = () => {
                                 </select>
                                 <ChevronDown size={12} className="absolute right-2.5 top-2.5 text-slate-500 pointer-events-none" />
                             </div>
+                        </div>
+
+                        {/* Layered LOD Controls */}
+                        <div className="space-y-2">
+                            <label className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider block">Layered LOD</label>
+                            <label className="flex items-center justify-between p-2 rounded bg-slate-800/40 border border-slate-700/50">
+                                <div className="flex flex-col">
+                                    <span className="text-xs font-medium text-slate-300">Enable depth stacking</span>
+                                    <span className="text-[10px] text-slate-500">Separates LODs into stacked planes.</span>
+                                </div>
+                                <input
+                                    type="checkbox"
+                                    checked={layeredLodEnabled}
+                                    onChange={(event) => setLayeredLodEnabled(event.target.checked)}
+                                    className="rounded border-slate-600 bg-slate-700 text-indigo-500 focus:ring-offset-slate-900 accent-indigo-500"
+                                />
+                            </label>
+                            <div className={`space-y-1 ${layeredLodEnabled ? '' : 'opacity-50'}`}>
+                                <div className="flex items-center justify-between text-[11px] text-slate-300">
+                                    <span>Layer spacing</span>
+                                    <span className="text-[10px] text-slate-500">{Math.round(layerSpacing)} units</span>
+                                </div>
+                                <input
+                                    type="range"
+                                    min="80"
+                                    max="400"
+                                    step="10"
+                                    value={layerSpacing}
+                                    onChange={(event) => setLayerSpacing(Number(event.target.value))}
+                                    disabled={!layeredLodEnabled}
+                                    className="w-full accent-indigo-500"
+                                />
+                            </div>
+                            <label className={`flex items-center justify-between p-2 rounded bg-slate-800/40 border border-slate-700/50 ${layeredLodEnabled ? '' : 'opacity-50'}`}>
+                                <div className="flex flex-col">
+                                    <span className="text-xs font-medium text-slate-300">Show LOD planes</span>
+                                    <span className="text-[10px] text-slate-500">Translucent depth guides + labels.</span>
+                                </div>
+                                <input
+                                    type="checkbox"
+                                    checked={showLodPlanes}
+                                    onChange={(event) => setShowLodPlanes(event.target.checked)}
+                                    disabled={!layeredLodEnabled}
+                                    className="rounded border-slate-600 bg-slate-700 text-indigo-500 focus:ring-offset-slate-900 accent-indigo-500"
+                                />
+                            </label>
                         </div>
                     </div>
                 </CollapsibleSection>

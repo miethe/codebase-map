@@ -49,6 +49,8 @@ const ARCHITECTURE_FLOW: Record<string, number> = {
   type: 0.5
 };
 
+const LOD_PLANE_COLORS = ['#0f172a', '#1e293b', '#243244', '#334155', '#475569'];
+
 // Helper: Calculate Node Radius using Logarithmic Scale
 const getNodeRadius = (node: Node) => {
   const totalDegree = node.totalDegree || 0;
@@ -176,6 +178,16 @@ const getBalloonRadius = (node: Node, maxRadius: number) => {
   // Pre-computed layouts might mean we don't even need this force, but keeping it for dynamic modes
   return minRadius + (maxRadius - minRadius) * layer;
 };
+
+const getNodeLodDepth = (node: Node) => {
+  if (typeof node.lodDepth === 'number') return Math.max(0, Math.round(node.lodDepth));
+  if (node.cluster_path?.length) return Math.max(0, node.cluster_path.length - 1);
+  return 0;
+};
+
+const getLodPlaneColor = (depth: number) => LOD_PLANE_COLORS[depth % LOD_PLANE_COLORS.length];
+
+const clampLayerSpacing = (value: number) => Math.min(400, Math.max(80, value));
 
 const getChargeStrength = (node: Node, mode: string) => {
   const degree = node.degree || 0;
@@ -311,13 +323,23 @@ const createModuleLabelSprite = (text: string) => createTextSprite(text, {
 });
 
 const createClusterLabelSprite = (text: string, focused: boolean) => createTextSprite(text, {
-  fontSize: 18,
-  fontWeight: 600,
-  padding: 6,
-  textColor: focused ? '#e0f2fe' : '#cbd5f5',
-  backgroundColor: focused ? 'rgba(14, 165, 233, 0.25)' : 'rgba(15, 23, 42, 0.55)',
+  fontSize: 22,
+  fontWeight: 700,
+  padding: 8,
+  textColor: focused ? '#e0f2fe' : '#d1d5f5',
+  backgroundColor: focused ? 'rgba(14, 165, 233, 0.35)' : 'rgba(15, 23, 42, 0.65)',
   fontFamily: '"Inter", sans-serif',
-  scale: 0.14
+  scale: 0.18
+});
+
+const createLodPlaneLabelSprite = (text: string, color: string) => createTextSprite(text, {
+  fontSize: 18,
+  fontWeight: 700,
+  padding: 6,
+  textColor: '#e2e8f0',
+  backgroundColor: toRgba(color, 0.45),
+  fontFamily: '"Inter", sans-serif',
+  scale: 0.16
 });
 
 const getGlyphIntensity = (node: Node) => {
@@ -460,6 +482,9 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     activeColorMode,
     groupingData,
     gitMetadata,
+    layeredLodEnabled,
+    layerSpacing,
+    showLodPlanes,
     enableMotionOptimizations,
     enablePerformanceMode,
     zoomSpeed,
@@ -490,12 +515,15 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   const labelCache = useRef<Map<string, THREE.Sprite>>(new Map());
   const glyphCache = useRef<Map<string, THREE.Sprite>>(new Map());
   const overlayGroupRef = useRef<THREE.Group | null>(null);
+  const lodPlaneOverlayRef = useRef<THREE.Group | null>(null);
   const clusterOverlayRef = useRef<THREE.Group | null>(null);
   const moduleOverlayRef = useRef<THREE.Group | null>(null);
   const headerOverlayRef = useRef<THREE.Group | null>(null);
-  const clusterOverlayCache = useRef<Map<string, { box: THREE.LineLoop; label: THREE.Sprite; focused: boolean }>>(new Map());
+  const lodPlaneOverlayCache = useRef<Map<number, { plane: THREE.Mesh; label: THREE.Sprite }>>(new Map());
+  const clusterOverlayCache = useRef<Map<string, { box: THREE.LineSegments; label: THREE.Sprite; focused: boolean }>>(new Map());
   const moduleOverlayCache = useRef<Map<string, { box: THREE.LineLoop; label: THREE.Sprite }>>(new Map());
   const headerLabelCache = useRef<THREE.Sprite[]>([]);
+  const lodPlaneTickRef = useRef<number>(0);
   const clusterOverlayTickRef = useRef<number>(0);
   const overlayTickRef = useRef<number>(0);
   const interactionTimeoutRef = useRef<number | null>(null);
@@ -940,6 +968,8 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     return getFocusNodeIds(highlightMode, selectedNode.id, data.edges, focusHopCount);
   }, [selectedNode?.id, data.edges, highlightMode, focusHopCount]);
   const focusActive = Boolean(selectedNode && focusMode !== 'off' && highlightNodeIds);
+  const layeringActive = layeredLodEnabled && viewMode !== 'structured';
+  const effectiveLayerSpacing = clampLayerSpacing(layerSpacing);
 
   const canUseLayoutCache = Boolean(layoutCacheKey) && !focusActive;
   const persistLayoutCache = useCallback((force = false) => {
@@ -1325,21 +1355,33 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   const ensureOverlayGroups = useCallback(() => {
     const graph = graphRef.current;
     if (!graph) return null;
-    if (overlayGroupRef.current) return overlayGroupRef.current;
+    if (overlayGroupRef.current) {
+      if (!lodPlaneOverlayRef.current) {
+        const lodPlaneGroup = new THREE.Group();
+        lodPlaneGroup.name = 'lod-plane-overlays';
+        overlayGroupRef.current.add(lodPlaneGroup);
+        lodPlaneOverlayRef.current = lodPlaneGroup;
+      }
+      return overlayGroupRef.current;
+    }
     const scene = graph.scene();
     const overlayGroup = new THREE.Group();
     overlayGroup.name = 'graph-overlays';
+    const lodPlaneGroup = new THREE.Group();
+    lodPlaneGroup.name = 'lod-plane-overlays';
     const clusterGroup = new THREE.Group();
     clusterGroup.name = 'cluster-overlays';
     const moduleGroup = new THREE.Group();
     moduleGroup.name = 'module-overlays';
     const headerGroup = new THREE.Group();
     headerGroup.name = 'header-overlays';
+    overlayGroup.add(lodPlaneGroup);
     overlayGroup.add(clusterGroup);
     overlayGroup.add(moduleGroup);
     overlayGroup.add(headerGroup);
     scene.add(overlayGroup);
     overlayGroupRef.current = overlayGroup;
+    lodPlaneOverlayRef.current = lodPlaneGroup;
     clusterOverlayRef.current = clusterGroup;
     moduleOverlayRef.current = moduleGroup;
     headerOverlayRef.current = headerGroup;
@@ -1352,10 +1394,24 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     material.dispose();
   };
 
-  const disposeLine = (line: THREE.LineLoop) => {
+  const disposeLine = (line: THREE.Line) => {
     line.geometry.dispose();
-    const material = line.material as THREE.Material;
-    material.dispose();
+    const material = line.material;
+    if (Array.isArray(material)) {
+      material.forEach(item => item.dispose());
+    } else {
+      material.dispose();
+    }
+  };
+
+  const disposeMesh = (mesh: THREE.Mesh) => {
+    mesh.geometry.dispose();
+    const material = mesh.material;
+    if (Array.isArray(material)) {
+      material.forEach(item => item.dispose());
+    } else {
+      material.dispose();
+    }
   };
 
   const updateStructuredHeaders = useCallback(() => {
@@ -1386,6 +1442,94 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       graphRef.current?.refresh();
     }
   }, [dimensions.width, dimensions.height, ensureOverlayGroups, viewMode]);
+
+  const updateLodPlanes = useCallback(() => {
+    ensureOverlayGroups();
+    const planeGroup = lodPlaneOverlayRef.current;
+    if (!planeGroup) return;
+    const shouldShow = layeringActive && showLodPlanes;
+    planeGroup.visible = shouldShow;
+    if (!shouldShow) return;
+    const dataSnapshot = graphDataRef.current;
+    if (!dataSnapshot) return;
+
+    const depthSet = new Set<number>();
+    dataSnapshot.nodes.forEach(node => {
+      depthSet.add(getNodeLodDepth(node));
+    });
+    const depths = Array.from(depthSet).sort((a, b) => a - b);
+    if (!depths.length) {
+      planeGroup.visible = false;
+      return;
+    }
+
+    const bounds = getGraphBounds();
+    if (!bounds) return;
+    const padding = Math.max(140, Math.min(bounds.size.x, bounds.size.y) * 0.25);
+    const width = Math.max(200, bounds.size.x + padding);
+    const height = Math.max(200, bounds.size.y + padding);
+
+    const activeDepths = new Set(depths);
+    lodPlaneOverlayCache.current.forEach((entry, depth) => {
+      if (activeDepths.has(depth)) return;
+      planeGroup.remove(entry.plane);
+      planeGroup.remove(entry.label);
+      disposeMesh(entry.plane);
+      disposeSprite(entry.label);
+      lodPlaneOverlayCache.current.delete(depth);
+    });
+
+    depths.forEach(depth => {
+      const planeColor = getLodPlaneColor(depth);
+      const labelText = `LOD${depth}`;
+      let entry = lodPlaneOverlayCache.current.get(depth);
+      if (!entry) {
+        const geometry = new THREE.PlaneGeometry(1, 1);
+        const material = new THREE.MeshBasicMaterial({
+          color: new THREE.Color(planeColor),
+          transparent: true,
+          opacity: 0.08,
+          depthWrite: false,
+          side: THREE.DoubleSide
+        });
+        const plane = new THREE.Mesh(geometry, material);
+        plane.renderOrder = -1;
+        const label = createLodPlaneLabelSprite(labelText, planeColor);
+        label.renderOrder = 2;
+        label.userData.text = labelText;
+        label.userData.color = planeColor;
+        planeGroup.add(plane);
+        planeGroup.add(label);
+        entry = { plane, label };
+        lodPlaneOverlayCache.current.set(depth, entry);
+      } else if (entry.label.userData.text !== labelText || entry.label.userData.color !== planeColor) {
+        planeGroup.remove(entry.label);
+        disposeSprite(entry.label);
+        const label = createLodPlaneLabelSprite(labelText, planeColor);
+        label.renderOrder = 2;
+        label.userData.text = labelText;
+        label.userData.color = planeColor;
+        planeGroup.add(label);
+        entry.label = label;
+      }
+
+      const material = entry.plane.material as THREE.MeshBasicMaterial;
+      material.color.set(planeColor);
+      material.opacity = 0.08;
+
+      const planeZ = -depth * effectiveLayerSpacing;
+      entry.plane.position.set(bounds.center.x, bounds.center.y, planeZ);
+      entry.plane.scale.set(width, height, 1);
+      const labelOffsetX = -(width * 0.5) + 24;
+      const labelOffsetY = (height * 0.5) - 24;
+      entry.label.position.set(bounds.center.x + labelOffsetX, bounds.center.y + labelOffsetY, planeZ + 8);
+      entry.label.material.opacity = 0.9;
+    });
+
+    if (animationPausedRef.current) {
+      graphRef.current?.refresh();
+    }
+  }, [ensureOverlayGroups, effectiveLayerSpacing, getGraphBounds, layeringActive, showLodPlanes]);
 
   const updateClusterOverlays = useCallback(() => {
     ensureOverlayGroups();
@@ -1429,32 +1573,54 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     clusterIds.forEach(clusterId => {
       const clusterNode = clusterNodeMap.get(clusterId);
       const members = membersByCluster.get(clusterId) || [];
+      if (members.length === 0) {
+        const existing = clusterOverlayCache.current.get(clusterId);
+        if (existing) {
+          clusterGroup.remove(existing.box);
+          clusterGroup.remove(existing.label);
+          disposeLine(existing.box);
+          disposeSprite(existing.label);
+          clusterOverlayCache.current.delete(clusterId);
+        }
+        return;
+      }
       let minX = Infinity;
       let minY = Infinity;
+      let minZ = Infinity;
       let maxX = -Infinity;
       let maxY = -Infinity;
+      let maxZ = -Infinity;
       members.forEach(node => {
         if (node.x === undefined || node.y === undefined) return;
+        const z = node.z ?? 0;
         minX = Math.min(minX, node.x);
         minY = Math.min(minY, node.y);
+        minZ = Math.min(minZ, z);
         maxX = Math.max(maxX, node.x);
         maxY = Math.max(maxY, node.y);
+        maxZ = Math.max(maxZ, z);
       });
 
       const memberCount = (clusterNode?.member_count ?? members.length) || 1;
       const pad = 24 + Math.min(120, Math.log1p(memberCount) * 14);
+      const padZ = Math.max(18, Math.min(80, pad * 0.6));
 
       if (minX === Infinity || minY === Infinity || maxX === -Infinity || maxY === -Infinity) {
         if (clusterNode?.x === undefined || clusterNode?.y === undefined) return;
+        const fallbackZ = clusterNode.z ?? 0;
         minX = clusterNode.x - pad;
         maxX = clusterNode.x + pad;
         minY = clusterNode.y - pad;
         maxY = clusterNode.y + pad;
+        minZ = fallbackZ - padZ;
+        maxZ = fallbackZ + padZ;
       } else {
         minX -= pad;
         minY -= pad;
         maxX += pad;
         maxY += pad;
+        minZ -= padZ;
+        maxZ += padZ;
       }
 
       const focused = focusClusterId === clusterId;
@@ -1470,17 +1636,18 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       let entry = clusterOverlayCache.current.get(clusterId);
       if (!entry) {
         const geometry = new THREE.BufferGeometry();
-        const positions = new Float32Array(15);
+        const positions = new Float32Array(72);
         geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
         const material = new THREE.LineBasicMaterial({
           color: strokeColor,
           transparent: true,
-          opacity: lineOpacity
+          opacity: lineOpacity,
+          depthWrite: false
         });
-        const box = new THREE.LineLoop(geometry, material);
+        const box = new THREE.LineSegments(geometry, material);
         box.renderOrder = 1;
         const label = createClusterLabelSprite(labelText, focused);
-        label.renderOrder = 2;
+        label.renderOrder = 3;
         label.userData.text = labelText;
         clusterGroup.add(box);
         clusterGroup.add(label);
@@ -1505,16 +1672,25 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       const geometry = entry.box.geometry as THREE.BufferGeometry;
       const attr = geometry.getAttribute('position') as THREE.BufferAttribute;
       const array = attr.array as Float32Array;
-      array[0] = minX; array[1] = minY; array[2] = 0;
-      array[3] = maxX; array[4] = minY; array[5] = 0;
-      array[6] = maxX; array[7] = maxY; array[8] = 0;
-      array[9] = minX; array[10] = maxY; array[11] = 0;
-      array[12] = minX; array[13] = minY; array[14] = 0;
+      array.set([
+        minX, minY, minZ, maxX, minY, minZ,
+        maxX, minY, minZ, maxX, maxY, minZ,
+        maxX, maxY, minZ, minX, maxY, minZ,
+        minX, maxY, minZ, minX, minY, minZ,
+        minX, minY, maxZ, maxX, minY, maxZ,
+        maxX, minY, maxZ, maxX, maxY, maxZ,
+        maxX, maxY, maxZ, minX, maxY, maxZ,
+        minX, maxY, maxZ, minX, minY, maxZ,
+        minX, minY, minZ, minX, minY, maxZ,
+        maxX, minY, minZ, maxX, minY, maxZ,
+        maxX, maxY, minZ, maxX, maxY, maxZ,
+        minX, maxY, minZ, minX, maxY, maxZ
+      ]);
       attr.needsUpdate = true;
       geometry.computeBoundingSphere();
 
       entry.label.material.opacity = labelOpacity;
-      entry.label.position.set(minX + 12, minY + 14, 0);
+      entry.label.position.set(minX + 12, maxY + 16, maxZ + 10);
     });
 
     if (animationPausedRef.current) {
@@ -1632,6 +1808,10 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       labelTickRef.current = now;
       scheduleLabelVisibilityUpdate();
     }
+    if (now - lodPlaneTickRef.current > 480) {
+      lodPlaneTickRef.current = now;
+      updateLodPlanes();
+    }
     if (now - clusterOverlayTickRef.current > 240) {
       clusterOverlayTickRef.current = now;
       updateClusterOverlays();
@@ -1657,7 +1837,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       });
       persistLayoutCache();
     }
-  }, [persistLayoutCache, scheduleLabelVisibilityUpdate, updateClusterOverlays, updateModuleOverlays, viewMode]);
+  }, [persistLayoutCache, scheduleLabelVisibilityUpdate, updateClusterOverlays, updateLodPlanes, updateModuleOverlays, viewMode]);
 
   const handleEngineStop = useCallback(() => {
     scheduleLabelVisibilityUpdate();
@@ -1678,9 +1858,10 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     if (viewMode === 'hierarchical') {
       updateModuleOverlays();
     }
+    updateLodPlanes();
     updateClusterOverlays();
     pauseAnimation();
-  }, [pauseAnimation, persistLayoutCache, scheduleLabelVisibilityUpdate, updateClusterOverlays, updateModuleOverlays, viewMode]);
+  }, [pauseAnimation, persistLayoutCache, scheduleLabelVisibilityUpdate, updateClusterOverlays, updateLodPlanes, updateModuleOverlays, viewMode]);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -1730,6 +1911,11 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       if (overlayGroupRef.current) {
         graph.scene().remove(overlayGroupRef.current);
       }
+      lodPlaneOverlayCache.current.forEach(entry => {
+        disposeMesh(entry.plane);
+        disposeSprite(entry.label);
+      });
+      lodPlaneOverlayCache.current.clear();
       clusterOverlayCache.current.forEach(entry => {
         disposeLine(entry.box);
         disposeSprite(entry.label);
@@ -1745,6 +1931,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       });
       headerLabelCache.current = [];
       overlayGroupRef.current = null;
+      lodPlaneOverlayRef.current = null;
       clusterOverlayRef.current = null;
       moduleOverlayRef.current = null;
       headerOverlayRef.current = null;
@@ -1901,6 +2088,10 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   }, [graphData]);
 
   useEffect(() => {
+    updateLodPlanes();
+  }, [graphData.nodes.length, graphData.links.length, updateLodPlanes]);
+
+  useEffect(() => {
     setHoveredEdge(null);
   }, [graphData.nodes.length, graphData.links.length]);
 
@@ -2025,14 +2216,26 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
         graph.d3Force('balloon', null);
         graph.d3Force('x', null);
         graph.d3Force('y', null);
-        graph.d3Force('z', forceZ<Node>().z(0).strength(0.05));
+        if (layeringActive) {
+          graph.d3Force('z', forceZ<Node>()
+            .z((node: Node) => -getNodeLodDepth(node) * effectiveLayerSpacing)
+            .strength(0.08));
+        } else {
+          graph.d3Force('z', forceZ<Node>().z(0).strength(0.05));
+        }
       } else if (viewMode === 'force' && dimensions.width && dimensions.height) {
         graph.d3Force('module', null);
         const maxRadius = Math.min(dimensions.width, dimensions.height) * 0.45;
         graph.d3Force('balloon', createBalloonForce(maxRadius, 0.12));
         graph.d3Force('x', null);
         graph.d3Force('y', null);
-        graph.d3Force('z', null);
+        if (layeringActive) {
+          graph.d3Force('z', forceZ<Node>()
+            .z((node: Node) => -getNodeLodDepth(node) * effectiveLayerSpacing)
+            .strength(0.06));
+        } else {
+          graph.d3Force('z', null);
+        }
       } else {
         graph.d3Force('module', null);
         graph.d3Force('balloon', null);
@@ -2056,6 +2259,8 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     dimensions.height,
     graphData.nodes.length,
     graphData.links.length,
+    layeringActive,
+    effectiveLayerSpacing,
     requestReheat
   ]);
 
@@ -2227,6 +2432,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   }, [aggressiveDetail, reducedDetail]);
   const arrowLength = aggressiveDetail ? 0 : reducedDetail ? 1.5 : 3;
   const isHierarchical = viewMode === 'hierarchical';
+  const useTwoDimensional = viewMode === 'hierarchical' && !layeringActive;
   const cooldownTicks = isHierarchical ? 180 : enablePerformanceMode ? 140 : undefined;
   const cooldownTime = isHierarchical ? 8000 : enablePerformanceMode ? 6000 : undefined;
   const alphaDecay = isHierarchical ? 0.05 : enablePerformanceMode ? 0.035 : 0.0228;
@@ -2323,7 +2529,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
             if (onBackgroundClick) onBackgroundClick();
             else onNodeSelect(null);
           }}
-          numDimensions={viewMode === 'hierarchical' ? 2 : 3}
+          numDimensions={useTwoDimensional ? 2 : 3}
         />
       )}
       {edgePreview && edgePreviewPosition && (
