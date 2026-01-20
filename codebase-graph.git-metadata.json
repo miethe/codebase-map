@@ -29,6 +29,18 @@
     "last_modified": 1762713464000,
     "unique_authors": 1
   },
+  ".claude/adrs/filtering-implementation.md": {
+    "change_count": 1,
+    "change_count_30d": 1,
+    "last_modified": 1768792318000,
+    "unique_authors": 1
+  },
+  ".claude/adrs/metadata-storage-strategy.md": {
+    "change_count": 1,
+    "change_count_30d": 1,
+    "last_modified": 1768792318000,
+    "unique_authors": 1
+  },
   ".claude/agents/ai/agent-expert.md": {
     "change_count": 2,
     "change_count_30d": 1,
@@ -1207,19 +1219,19 @@
   },
   ".claude/progress/artifact-deletion-v1/phase-1-progress.md": {
     "change_count": 2,
-    "change_count_30d": 2,
+    "change_count_30d": 0,
     "last_modified": 1766264717000,
     "unique_authors": 1
   },
   ".claude/progress/artifact-deletion-v1/phase-2-progress.md": {
     "change_count": 2,
-    "change_count_30d": 2,
+    "change_count_30d": 0,
     "last_modified": 1766272679000,
     "unique_authors": 1
   },
   ".claude/progress/artifact-deletion-v1/phase-3-progress.md": {
     "change_count": 2,
-    "change_count_30d": 2,
+    "change_count_30d": 0,
     "last_modified": 1766283905000,
     "unique_authors": 1
   },
@@ -1611,6 +1623,36 @@
     "change_count": 2,
     "change_count_30d": 0,
     "last_modified": 1765555134000,
+    "unique_authors": 1
+  },
+  ".claude/progress/marketplace-sources-enhancement-v1/phase-4-6-progress.md": {
+    "change_count": 1,
+    "change_count_30d": 1,
+    "last_modified": 1768771864000,
+    "unique_authors": 1
+  },
+  ".claude/progress/marketplace-sources-enhancement-v1/phase-7-8-progress.md": {
+    "change_count": 4,
+    "change_count_30d": 4,
+    "last_modified": 1768792318000,
+    "unique_authors": 1
+  },
+  ".claude/progress/marketplace-sources-enhancement/phase-1-3-progress.md": {
+    "change_count": 1,
+    "change_count_30d": 1,
+    "last_modified": 1768770729000,
+    "unique_authors": 1
+  },
+  ".claude/progress/marketplace-sources-enhancement/phase-4-6-progress.md": {
+    "change_count": 1,
+    "change_count_30d": 1,
+    "last_modified": 1768770729000,
+    "unique_authors": 1
+  },
+  ".claude/progress/marketplace-sources-enhancement/phase-7-8-progress.md": {
+    "change_count": 1,
+    "change_count_30d": 1,
+    "last_modified": 1768770729000,
     "unique_authors": 1
   },
   ".claude/progress/marketplace-sources-non_skills-v1/phase-1-progress.md": {
@@ -3673,7 +3715,7 @@
   },
   ".claude/worknotes/artifact-deletion-v1/context.md": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766262902000,
     "unique_authors": 1
   },
@@ -3697,7 +3739,7 @@
   },
   ".claude/worknotes/bug-fixes-2025-12.md": {
     "change_count": 54,
-    "change_count_30d": 21,
+    "change_count_30d": 18,
     "last_modified": 1767216821000,
     "unique_authors": 1
   },
@@ -3879,6 +3921,12 @@
     "change_count": 1,
     "change_count_30d": 1,
     "last_modified": 1767212320000,
+    "unique_authors": 1
+  },
+  ".claude/worknotes/marketplace-sources-enhancement/context.md": {
+    "change_count": 1,
+    "change_count_30d": 1,
+    "last_modified": 1768770729000,
     "unique_authors": 1
   },
   ".claude/worknotes/notification-system/NS-P5-01-keyboard-navigation-summary.md": {
@@ -4309,7 +4357,7 @@
   },
   ".claude/worknotes/phase3/fe-014-performance-optimization.md": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766283196000,
     "unique_authors": 1
   },
@@ -4542,9 +4590,9 @@
     "unique_authors": 1
   },
   "CHANGELOG.md": {
-    "change_count": 8,
-    "change_count_30d": 3,
-    "last_modified": 1768683744000,
+    "change_count": 9,
+    "change_count_30d": 4,
+    "last_modified": 1768792318000,
     "unique_authors": 2
   },
   "CLAUDE.md": {
@@ -4697,6 +4745,12 @@
     "last_modified": 1768586608000,
     "unique_authors": 1
   },
+  "docs/api/endpoints/marketplace-sources.md": {
+    "change_count": 1,
+    "change_count_30d": 1,
+    "last_modified": 1768792318000,
+    "unique_authors": 1
+  },
   "docs/architecture/detection-system-design.md": {
     "change_count": 1,
     "change_count_30d": 1,
@@ -4719,6 +4773,12 @@
     "change_count": 1,
     "change_count_30d": 1,
     "last_modified": 1766631494000,
+    "unique_authors": 1
+  },
+  "docs/components/marketplace-source-components.md": {
+    "change_count": 1,
+    "change_count_30d": 1,
+    "last_modified": 1768792318000,
     "unique_authors": 1
   },
   "docs/dev/README.md": {
@@ -5015,10 +5075,28 @@
     "last_modified": 1766345193000,
     "unique_authors": 1
   },
+  "docs/dev/guides/extending-source-filters.md": {
+    "change_count": 1,
+    "change_count_30d": 1,
+    "last_modified": 1768792318000,
+    "unique_authors": 1
+  },
   "docs/dev/optimization/template-deployment.md": {
     "change_count": 1,
     "change_count_30d": 1,
     "last_modified": 1766345193000,
+    "unique_authors": 1
+  },
+  "docs/guides/user/source-filtering.md": {
+    "change_count": 1,
+    "change_count_30d": 1,
+    "last_modified": 1768791979000,
+    "unique_authors": 1
+  },
+  "docs/guides/user/source-import.md": {
+    "change_count": 1,
+    "change_count_30d": 1,
+    "last_modified": 1768791979000,
     "unique_authors": 1
   },
   "docs/ops/README.md": {
@@ -5231,6 +5309,12 @@
     "last_modified": 1767212320000,
     "unique_authors": 1
   },
+  "docs/project_plans/PRDs/enhancements/marketplace-sources-enhancement-v1.md": {
+    "change_count": 1,
+    "change_count_30d": 1,
+    "last_modified": 1768770729000,
+    "unique_authors": 1
+  },
   "docs/project_plans/PRDs/enhancements/persistent-project-cache-v1.md": {
     "change_count": 1,
     "change_count_30d": 0,
@@ -5269,7 +5353,7 @@
   },
   "docs/project_plans/PRDs/features/artifact-deletion-v1.md": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766262902000,
     "unique_authors": 1
   },
@@ -5533,7 +5617,7 @@
   },
   "docs/project_plans/implementation_plans/bug-fixes/context-entities-page-fix-v1.md": {
     "change_count": 2,
-    "change_count_30d": 2,
+    "change_count_30d": 1,
     "last_modified": 1766345193000,
     "unique_authors": 1
   },
@@ -5645,6 +5729,30 @@
     "last_modified": 1767212320000,
     "unique_authors": 1
   },
+  "docs/project_plans/implementation_plans/enhancements/marketplace-sources-enhancement-v1.md": {
+    "change_count": 1,
+    "change_count_30d": 1,
+    "last_modified": 1768770729000,
+    "unique_authors": 1
+  },
+  "docs/project_plans/implementation_plans/enhancements/marketplace-sources-enhancement-v1/phase-1-3-backend.md": {
+    "change_count": 1,
+    "change_count_30d": 1,
+    "last_modified": 1768770729000,
+    "unique_authors": 1
+  },
+  "docs/project_plans/implementation_plans/enhancements/marketplace-sources-enhancement-v1/phase-4-6-frontend.md": {
+    "change_count": 1,
+    "change_count_30d": 1,
+    "last_modified": 1768770729000,
+    "unique_authors": 1
+  },
+  "docs/project_plans/implementation_plans/enhancements/marketplace-sources-enhancement-v1/phase-7-8-validation.md": {
+    "change_count": 1,
+    "change_count_30d": 1,
+    "last_modified": 1768770729000,
+    "unique_authors": 1
+  },
   "docs/project_plans/implementation_plans/enhancements/persistent-project-cache-v1.md": {
     "change_count": 2,
     "change_count_30d": 0,
@@ -5749,13 +5857,13 @@
   },
   "docs/project_plans/implementation_plans/features/agent-context-entities-v2.md": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766256132000,
     "unique_authors": 1
   },
   "docs/project_plans/implementation_plans/features/artifact-deletion-v1.md": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766262902000,
     "unique_authors": 1
   },
@@ -5971,7 +6079,7 @@
   },
   "docs/project_plans/implementation_plans/refactors/documentation-cleanup-plan-v1/documentation-cleanup-plan-v1.md": {
     "change_count": 5,
-    "change_count_30d": 4,
+    "change_count_30d": 2,
     "last_modified": 1766715507000,
     "unique_authors": 1
   },
@@ -6043,7 +6151,7 @@
   },
   "docs/project_plans/reports/next-phase-recommendations-2025-12-19.md": {
     "change_count": 2,
-    "change_count_30d": 2,
+    "change_count_30d": 1,
     "last_modified": 1766345211000,
     "unique_authors": 1
   },
@@ -6510,9 +6618,9 @@
     "unique_authors": 2
   },
   "skillmeat/api/openapi.json": {
-    "change_count": 10,
-    "change_count_30d": 4,
-    "last_modified": 1768586608000,
+    "change_count": 11,
+    "change_count_30d": 5,
+    "last_modified": 1768770721000,
     "unique_authors": 3
   },
   "skillmeat/api/openapi.py": {
@@ -6565,7 +6673,7 @@
   },
   "skillmeat/api/routers/context_entities.py": {
     "change_count": 3,
-    "change_count_30d": 2,
+    "change_count_30d": 1,
     "last_modified": 1767797563000,
     "unique_authors": 1
   },
@@ -6600,9 +6708,9 @@
     "unique_authors": 2
   },
   "skillmeat/api/routers/marketplace_sources.py": {
-    "change_count": 38,
-    "change_count_30d": 36,
-    "last_modified": 1768509161000,
+    "change_count": 40,
+    "change_count_30d": 38,
+    "last_modified": 1768848550000,
     "unique_authors": 1
   },
   "skillmeat/api/routers/match.py": {
@@ -6750,9 +6858,9 @@
     "unique_authors": 1
   },
   "skillmeat/api/schemas/marketplace.py": {
-    "change_count": 32,
-    "change_count_30d": 28,
-    "last_modified": 1768509161000,
+    "change_count": 33,
+    "change_count_30d": 29,
+    "last_modified": 1768770721000,
     "unique_authors": 2
   },
   "skillmeat/api/schemas/match.py": {
@@ -6865,7 +6973,7 @@
   },
   "skillmeat/api/tests/test_context_entities.py": {
     "change_count": 2,
-    "change_count_30d": 2,
+    "change_count_30d": 1,
     "last_modified": 1767797563000,
     "unique_authors": 1
   },
@@ -7069,7 +7177,7 @@
   },
   "skillmeat/cache/migrations/versions/20251220_1000_add_content_description_to_artifacts.py": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766258646000,
     "unique_authors": 1
   },
@@ -7127,10 +7235,16 @@
     "last_modified": 1767890330000,
     "unique_authors": 1
   },
+  "skillmeat/cache/migrations/versions/20260118_1000_add_marketplace_source_metadata_fields.py": {
+    "change_count": 1,
+    "change_count_30d": 1,
+    "last_modified": 1768770721000,
+    "unique_authors": 1
+  },
   "skillmeat/cache/models.py": {
-    "change_count": 20,
+    "change_count": 21,
     "change_count_30d": 11,
-    "last_modified": 1768666684000,
+    "last_modified": 1768770721000,
     "unique_authors": 1
   },
   "skillmeat/cache/refresh.py": {
@@ -7140,9 +7254,9 @@
     "unique_authors": 1
   },
   "skillmeat/cache/repositories.py": {
-    "change_count": 5,
-    "change_count_30d": 2,
-    "last_modified": 1768511446000,
+    "change_count": 6,
+    "change_count_30d": 3,
+    "last_modified": 1768770721000,
     "unique_authors": 1
   },
   "skillmeat/cache/repository.py": {
@@ -7284,9 +7398,9 @@
     "unique_authors": 1
   },
   "skillmeat/core/marketplace/__init__.py": {
-    "change_count": 7,
-    "change_count_30d": 4,
-    "last_modified": 1767664404000,
+    "change_count": 8,
+    "change_count_30d": 5,
+    "last_modified": 1768770721000,
     "unique_authors": 1
   },
   "skillmeat/core/marketplace/content_hash.py": {
@@ -7308,15 +7422,15 @@
     "unique_authors": 1
   },
   "skillmeat/core/marketplace/github_scanner.py": {
-    "change_count": 18,
-    "change_count_30d": 16,
-    "last_modified": 1768690373000,
+    "change_count": 19,
+    "change_count_30d": 17,
+    "last_modified": 1768770721000,
     "unique_authors": 2
   },
   "skillmeat/core/marketplace/heuristic_detector.py": {
-    "change_count": 22,
-    "change_count_30d": 21,
-    "last_modified": 1768506779000,
+    "change_count": 23,
+    "change_count_30d": 22,
+    "last_modified": 1768770721000,
     "unique_authors": 1
   },
   "skillmeat/core/marketplace/import_coordinator.py": {
@@ -7335,6 +7449,12 @@
     "change_count": 1,
     "change_count_30d": 0,
     "last_modified": 1765052497000,
+    "unique_authors": 1
+  },
+  "skillmeat/core/marketplace/source_manager.py": {
+    "change_count": 1,
+    "change_count_30d": 1,
+    "last_modified": 1768770721000,
     "unique_authors": 1
   },
   "skillmeat/core/mcp/__init__.py": {
@@ -8227,25 +8347,25 @@
   },
   "skillmeat/web/__tests__/a11y/ACCESSIBILITY_AUDIT_SUMMARY.md": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766283680000,
     "unique_authors": 1
   },
   "skillmeat/web/__tests__/a11y/ACCESSIBILITY_CHECKLIST.md": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766283680000,
     "unique_authors": 1
   },
   "skillmeat/web/__tests__/a11y/README.md": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766283680000,
     "unique_authors": 1
   },
   "skillmeat/web/__tests__/a11y/TASK_FE-016_COMPLETION_REPORT.md": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766283680000,
     "unique_authors": 1
   },
@@ -8257,7 +8377,7 @@
   },
   "skillmeat/web/__tests__/a11y/artifact-deletion-dialog.a11y.test.tsx": {
     "change_count": 2,
-    "change_count_30d": 2,
+    "change_count_30d": 1,
     "last_modified": 1768233971000,
     "unique_authors": 1
   },
@@ -8296,6 +8416,12 @@
     "change_count_30d": 0,
     "last_modified": 1764446197000,
     "unique_authors": 2
+  },
+  "skillmeat/web/__tests__/a11y/marketplace-sources-a11y.test.tsx": {
+    "change_count": 1,
+    "change_count_30d": 1,
+    "last_modified": 1768791276000,
+    "unique_authors": 1
   },
   "skillmeat/web/__tests__/a11y/merge-workflow.a11y.test.tsx": {
     "change_count": 2,
@@ -8431,7 +8557,7 @@
   },
   "skillmeat/web/__tests__/components/entity/artifact-deletion-dialog.test.tsx": {
     "change_count": 2,
-    "change_count_30d": 2,
+    "change_count_30d": 1,
     "last_modified": 1768233971000,
     "unique_authors": 1
   },
@@ -8501,6 +8627,12 @@
     "last_modified": 1767901845000,
     "unique_authors": 1
   },
+  "skillmeat/web/__tests__/components/marketplace/count-badge.test.tsx": {
+    "change_count": 1,
+    "change_count_30d": 1,
+    "last_modified": 1768790937000,
+    "unique_authors": 1
+  },
   "skillmeat/web/__tests__/components/marketplace/directory-tag-input.test.tsx": {
     "change_count": 1,
     "change_count_30d": 1,
@@ -8511,6 +8643,24 @@
     "change_count": 2,
     "change_count_30d": 2,
     "last_modified": 1768233971000,
+    "unique_authors": 1
+  },
+  "skillmeat/web/__tests__/components/marketplace/repo-details-modal.test.tsx": {
+    "change_count": 1,
+    "change_count_30d": 1,
+    "last_modified": 1768790937000,
+    "unique_authors": 1
+  },
+  "skillmeat/web/__tests__/components/marketplace/source-filter-bar.test.tsx": {
+    "change_count": 1,
+    "change_count_30d": 1,
+    "last_modified": 1768790937000,
+    "unique_authors": 1
+  },
+  "skillmeat/web/__tests__/components/marketplace/tag-badge.test.tsx": {
+    "change_count": 1,
+    "change_count_30d": 1,
+    "last_modified": 1768790937000,
     "unique_authors": 1
   },
   "skillmeat/web/__tests__/components/notifications/NotificationCenter.test.tsx": {
@@ -8545,7 +8695,7 @@
   },
   "skillmeat/web/__tests__/hooks/use-artifact-deletion.test.tsx": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766264673000,
     "unique_authors": 1
   },
@@ -8575,7 +8725,7 @@
   },
   "skillmeat/web/__tests__/integration/artifact-deletion.test.tsx": {
     "change_count": 2,
-    "change_count_30d": 2,
+    "change_count_30d": 1,
     "last_modified": 1768233971000,
     "unique_authors": 1
   },
@@ -8663,6 +8813,12 @@
     "last_modified": 1766888307000,
     "unique_authors": 1
   },
+  "skillmeat/web/__tests__/marketplace/sources-page-filters.test.tsx": {
+    "change_count": 1,
+    "change_count_30d": 1,
+    "last_modified": 1768790937000,
+    "unique_authors": 1
+  },
   "skillmeat/web/__tests__/mcp/MCPServerList.test.tsx": {
     "change_count": 2,
     "change_count_30d": 0,
@@ -8701,7 +8857,7 @@
   },
   "skillmeat/web/app/context-entities/page.tsx": {
     "change_count": 4,
-    "change_count_30d": 2,
+    "change_count_30d": 1,
     "last_modified": 1768233991000,
     "unique_authors": 1
   },
@@ -8814,15 +8970,15 @@
     "unique_authors": 1
   },
   "skillmeat/web/app/marketplace/sources/[id]/page.tsx": {
-    "change_count": 24,
-    "change_count_30d": 22,
-    "last_modified": 1768511322000,
+    "change_count": 26,
+    "change_count_30d": 24,
+    "last_modified": 1768850517000,
     "unique_authors": 1
   },
   "skillmeat/web/app/marketplace/sources/page.tsx": {
-    "change_count": 5,
-    "change_count_30d": 3,
-    "last_modified": 1768508303000,
+    "change_count": 8,
+    "change_count_30d": 6,
+    "last_modified": 1768850517000,
     "unique_authors": 1
   },
   "skillmeat/web/app/mcp/[name]/page.tsx": {
@@ -9241,7 +9397,7 @@
   },
   "skillmeat/web/components/context/context-entity-card.tsx": {
     "change_count": 6,
-    "change_count_30d": 3,
+    "change_count_30d": 0,
     "last_modified": 1766258357000,
     "unique_authors": 1
   },
@@ -9253,7 +9409,7 @@
   },
   "skillmeat/web/components/context/context-entity-editor.tsx": {
     "change_count": 4,
-    "change_count_30d": 2,
+    "change_count_30d": 1,
     "last_modified": 1768233961000,
     "unique_authors": 1
   },
@@ -9271,7 +9427,7 @@
   },
   "skillmeat/web/components/context/deploy-to-project-dialog.tsx": {
     "change_count": 4,
-    "change_count_30d": 2,
+    "change_count_30d": 1,
     "last_modified": 1768485729000,
     "unique_authors": 2
   },
@@ -9457,13 +9613,13 @@
   },
   "skillmeat/web/components/entity/README.md": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766283284000,
     "unique_authors": 1
   },
   "skillmeat/web/components/entity/artifact-deletion-dialog.tsx": {
     "change_count": 4,
-    "change_count_30d": 4,
+    "change_count_30d": 1,
     "last_modified": 1768233991000,
     "unique_authors": 1
   },
@@ -9499,7 +9655,7 @@
   },
   "skillmeat/web/components/entity/entity-actions.tsx": {
     "change_count": 5,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766272094000,
     "unique_authors": 2
   },
@@ -9589,7 +9745,7 @@
   },
   "skillmeat/web/components/entity/unified-entity-modal.tsx": {
     "change_count": 40,
-    "change_count_30d": 13,
+    "change_count_30d": 12,
     "last_modified": 1768426302000,
     "unique_authors": 2
   },
@@ -9708,15 +9864,21 @@
     "unique_authors": 1
   },
   "skillmeat/web/components/marketplace/add-source-modal.tsx": {
-    "change_count": 5,
-    "change_count_30d": 4,
-    "last_modified": 1768233934000,
+    "change_count": 6,
+    "change_count_30d": 5,
+    "last_modified": 1768773191000,
     "unique_authors": 1
   },
   "skillmeat/web/components/marketplace/bulk-tag-dialog.tsx": {
     "change_count": 2,
     "change_count_30d": 2,
     "last_modified": 1768233934000,
+    "unique_authors": 1
+  },
+  "skillmeat/web/components/marketplace/count-badge.tsx": {
+    "change_count": 1,
+    "change_count_30d": 1,
+    "last_modified": 1768771864000,
     "unique_authors": 1
   },
   "skillmeat/web/components/marketplace/delete-source-dialog.tsx": {
@@ -9732,9 +9894,9 @@
     "unique_authors": 1
   },
   "skillmeat/web/components/marketplace/edit-source-modal.tsx": {
-    "change_count": 3,
-    "change_count_30d": 2,
-    "last_modified": 1768233934000,
+    "change_count": 4,
+    "change_count_30d": 3,
+    "last_modified": 1768773191000,
     "unique_authors": 1
   },
   "skillmeat/web/components/marketplace/exclude-artifact-dialog.tsx": {
@@ -9747,6 +9909,12 @@
     "change_count": 3,
     "change_count_30d": 3,
     "last_modified": 1768233934000,
+    "unique_authors": 1
+  },
+  "skillmeat/web/components/marketplace/repo-details-modal.tsx": {
+    "change_count": 4,
+    "change_count_30d": 4,
+    "last_modified": 1768852403000,
     "unique_authors": 1
   },
   "skillmeat/web/components/marketplace/rescan-updates-dialog.tsx": {
@@ -9762,9 +9930,21 @@
     "unique_authors": 1
   },
   "skillmeat/web/components/marketplace/source-card.tsx": {
-    "change_count": 3,
+    "change_count": 5,
+    "change_count_30d": 3,
+    "last_modified": 1768848550000,
+    "unique_authors": 1
+  },
+  "skillmeat/web/components/marketplace/source-filter-bar.tsx": {
+    "change_count": 2,
+    "change_count_30d": 2,
+    "last_modified": 1768850517000,
+    "unique_authors": 1
+  },
+  "skillmeat/web/components/marketplace/tag-badge.tsx": {
+    "change_count": 1,
     "change_count_30d": 1,
-    "last_modified": 1766866366000,
+    "last_modified": 1768771864000,
     "unique_authors": 1
   },
   "skillmeat/web/components/mcp/MCPDeployButton.tsx": {
@@ -10237,7 +10417,7 @@
   },
   "skillmeat/web/hooks/use-artifact-deletion.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766264673000,
     "unique_authors": 1
   },
@@ -10285,7 +10465,7 @@
   },
   "skillmeat/web/hooks/use-deployments.ts": {
     "change_count": 2,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766283196000,
     "unique_authors": 1
   },
@@ -10507,7 +10687,7 @@
   },
   "skillmeat/web/lib/api/artifacts.ts": {
     "change_count": 2,
-    "change_count_30d": 2,
+    "change_count_30d": 1,
     "last_modified": 1768333600000,
     "unique_authors": 1
   },
@@ -10549,7 +10729,7 @@
   },
   "skillmeat/web/lib/api/index.ts": {
     "change_count": 12,
-    "change_count_30d": 4,
+    "change_count_30d": 3,
     "last_modified": 1768679034000,
     "unique_authors": 1
   },
@@ -12217,7 +12397,7 @@
   },
   "skillmeat/web/tests/e2e/artifact-deletion.spec.ts": {
     "change_count": 1,
-    "change_count_30d": 1,
+    "change_count_30d": 0,
     "last_modified": 1766272600000,
     "unique_authors": 1
   },
@@ -12267,6 +12447,24 @@
     "change_count": 1,
     "change_count_30d": 1,
     "last_modified": 1767232853000,
+    "unique_authors": 1
+  },
+  "skillmeat/web/tests/e2e/marketplace-repo-details-modal.spec.ts": {
+    "change_count": 1,
+    "change_count_30d": 1,
+    "last_modified": 1768791276000,
+    "unique_authors": 1
+  },
+  "skillmeat/web/tests/e2e/marketplace-source-filtering.spec.ts": {
+    "change_count": 1,
+    "change_count_30d": 1,
+    "last_modified": 1768791276000,
+    "unique_authors": 1
+  },
+  "skillmeat/web/tests/e2e/marketplace-source-import.spec.ts": {
+    "change_count": 1,
+    "change_count_30d": 1,
+    "last_modified": 1768791276000,
     "unique_authors": 1
   },
   "skillmeat/web/tests/e2e/marketplace-sources.spec.ts": {
@@ -12450,9 +12648,9 @@
     "unique_authors": 1
   },
   "skillmeat/web/types/marketplace.ts": {
-    "change_count": 15,
-    "change_count_30d": 11,
-    "last_modified": 1768511322000,
+    "change_count": 18,
+    "change_count_30d": 14,
+    "last_modified": 1768850517000,
     "unique_authors": 2
   },
   "skillmeat/web/types/mcp.ts": {
@@ -12627,6 +12825,24 @@
     "change_count": 1,
     "change_count_30d": 0,
     "last_modified": 1763402304000,
+    "unique_authors": 1
+  },
+  "tests/api/test_marketplace_source_filtering.py": {
+    "change_count": 1,
+    "change_count_30d": 1,
+    "last_modified": 1768790937000,
+    "unique_authors": 1
+  },
+  "tests/api/test_marketplace_source_performance.py": {
+    "change_count": 1,
+    "change_count_30d": 1,
+    "last_modified": 1768791831000,
+    "unique_authors": 1
+  },
+  "tests/api/test_marketplace_source_security.py": {
+    "change_count": 1,
+    "change_count_30d": 1,
+    "last_modified": 1768791831000,
     "unique_authors": 1
   },
   "tests/api/test_marketplace_sources.py": {

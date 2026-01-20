@@ -159,7 +159,7 @@ const App: React.FC = () => {
 
         // Load LOD datasets (optional)
         try {
-          const lodLevels = [0, 1, 2, 3];
+          const lodLevels = [0, 1, 2, 3, 4];
           const lodResults = await Promise.all(lodLevels.map(async level => {
             try {
               const res = await fetch(`./codebase-graph.lod${level}.json`);
@@ -173,9 +173,10 @@ const App: React.FC = () => {
             lod0: lodResults[0] || undefined,
             lod1: lodResults[1] || undefined,
             lod2: lodResults[2] || undefined,
-            lod3: lodResults[3] || undefined
+            lod3: lodResults[3] || undefined,
+            lod4: lodResults[4] || undefined
           };
-          if (nextLodData.lod0 || nextLodData.lod1 || nextLodData.lod2 || nextLodData.lod3) {
+          if (nextLodData.lod0 || nextLodData.lod1 || nextLodData.lod2 || nextLodData.lod3 || nextLodData.lod4) {
             setLodData(nextLodData);
           }
         } catch (e) {
@@ -379,14 +380,14 @@ const App: React.FC = () => {
       return false;
     };
 
-    const isIntraFileEdge = (edge: Edge) => {
+    const isIntraFileEdge = (edge: any) => {
       const source = nodeIndex.get(edge.from);
       const target = nodeIndex.get(edge.to);
       if (!source?.file || !target?.file) return false;
       return source.file === target.file;
     };
 
-    const isCrossBoundaryEdge = (edge: Edge) => {
+    const isCrossBoundaryEdge = (edge: any) => {
       if (edge.distance_class) return edge.distance_class !== 'local';
       const source = nodeIndex.get(edge.from);
       const target = nodeIndex.get(edge.to);
@@ -615,7 +616,7 @@ const App: React.FC = () => {
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
       if (!settingsRef.current) return;
-      if (!settingsRef.current.contains(event.target as Node)) {
+      if (!settingsRef.current.contains(event.target as any)) {
         setIsSettingsOpen(false);
       }
     };
@@ -783,22 +784,20 @@ const App: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => setLodMode('manual')}
-                          className={`rounded-md border px-2 py-1 text-[11px] transition-colors ${
-                            lodMode === 'manual'
-                              ? 'border-indigo-400/60 bg-indigo-500/20 text-indigo-200'
-                              : 'border-slate-700/70 bg-slate-900 text-slate-400 hover:text-slate-200'
-                          }`}
+                          className={`rounded-md border px-2 py-1 text-[11px] transition-colors ${lodMode === 'manual'
+                            ? 'border-indigo-400/60 bg-indigo-500/20 text-indigo-200'
+                            : 'border-slate-700/70 bg-slate-900 text-slate-400 hover:text-slate-200'
+                            }`}
                         >
                           Manual
                         </button>
                         <button
                           type="button"
                           onClick={() => setLodMode('auto')}
-                          className={`rounded-md border px-2 py-1 text-[11px] transition-colors ${
-                            lodMode === 'auto'
-                              ? 'border-indigo-400/60 bg-indigo-500/20 text-indigo-200'
-                              : 'border-slate-700/70 bg-slate-900 text-slate-400 hover:text-slate-200'
-                          }`}
+                          className={`rounded-md border px-2 py-1 text-[11px] transition-colors ${lodMode === 'auto'
+                            ? 'border-indigo-400/60 bg-indigo-500/20 text-indigo-200'
+                            : 'border-slate-700/70 bg-slate-900 text-slate-400 hover:text-slate-200'
+                            }`}
                         >
                           Auto
                         </button>

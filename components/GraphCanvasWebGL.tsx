@@ -2,7 +2,10 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three';
 import ForceGraph3D, { ForceGraphMethods } from 'react-force-graph-3d';
 import { forceCollide, forceZ } from 'd3-force-3d';
-import { Node, Edge, GraphRendererProps, NODE_SIZE_CONFIG, EDGE_STYLES, ExportPass, CameraPresetId, ExportRequest } from '../types';
+import { Node as GraphNode, Edge, GraphRendererProps, NODE_SIZE_CONFIG, EDGE_STYLES, ExportPass, CameraPresetId, ExportRequest } from '../types';
+
+// Fix for global Node type collision
+type Node = GraphNode;
 import { getNodeColor } from '../utils/colorMapping';
 import { computeClusterLayout } from '../utils/clusterLayout';
 import { getFocusNodeIds } from '../utils/focusModes';
@@ -168,7 +171,9 @@ const getStableDirection = (key: string) => {
 
 const getBalloonRadius = (node: Node, maxRadius: number) => {
   const layer = ARCHITECTURE_FLOW[node.type] ?? 0.5;
-  const minRadius = maxRadius * 0.2;
+  const minRadius = maxRadius * 0.15; // Slightly reduced minimum
+  // Adjust for finer granularity with more LODs
+  // Pre-computed layouts might mean we don't even need this force, but keeping it for dynamic modes
   return minRadius + (maxRadius - minRadius) * layer;
 };
 
@@ -782,15 +787,30 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
         vy: node.vy,
         vz: node.vz
       });
-      const dir = getStableDirection(`${seed}|${node.id}`);
-      const scalar = 0.55 + (hashString(`${node.id}|${seed}`) / MAX_UINT32) * 0.45;
-      const radius = baseRadius * scalar;
-      node.x = dir.x * radius;
-      node.y = dir.y * radius;
-      node.z = viewMode === 'hierarchical' ? 0 : dir.z * radius;
-      node.fx = node.x;
-      node.fy = node.y;
-      node.fz = node.z;
+      // Respect pre-computed layout if available
+      if (node.fx != null && node.fy != null) {
+        // Using fx/fy locks the node in D3 force.
+        // If we want it to just START there but be movable, we set x/y only.
+        // But for "fast static" views, we prefer locking.
+        // Use node.fx/node.fy directly from data if present.
+      } else {
+        // Fallback to seeded random
+        const dir = getStableDirection(`${seed}|${node.id}`);
+        const scalar = 0.55 + (hashString(`${node.id}|${seed}`) / MAX_UINT32) * 0.45;
+        const radius = baseRadius * scalar;
+        node.x = dir.x * radius;
+        node.y = dir.y * radius;
+        node.z = viewMode === 'hierarchical' ? 0 : dir.z * radius;
+
+        if (viewMode === 'force') {
+          // Only lock if we want totally static. For now let D3 settle it unless pre-computed.
+          node.fx = undefined;
+          node.fy = undefined;
+          node.fz = undefined;
+        }
+      }
+
+      // Zero out velocity
       node.vx = 0;
       node.vy = 0;
       node.vz = 0;
@@ -1381,8 +1401,8 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     }
     clusterGroup.visible = true;
 
-    const clusterIds = new Set(clusterNodes.map(node => node.cluster_id || node.id));
-    const clusterNodeMap = new Map(clusterNodes.map(node => [node.cluster_id || node.id, node]));
+    const clusterIds = new Set<string>(clusterNodes.map(node => node.cluster_id || node.id));
+    const clusterNodeMap = new Map<string, Node>(clusterNodes.map(node => [node.cluster_id || node.id, node]));
     const membersByCluster = new Map<string, Node[]>();
     clusterIds.forEach(id => membersByCluster.set(id, []));
 

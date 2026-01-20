@@ -97,6 +97,75 @@ def _find_cluster_id(cluster_path: Optional[List[str]], prefix: str) -> Optional
     return None
 
 
+    build_lod_graphs(graph, out_dir, prefix, details_path)
+    
+    # Also verify that layout and metrics are computed
+    # ...
+
+
+def build_lod_graphs(
+    graph: Dict[str, Any],
+    out_dir: Path,
+    prefix: str,
+    details_path: Optional[Path] = None,
+) -> None:
+    nodes = graph.get("nodes", []) or []
+    edges = graph.get("edges", []) or []
+    base_metadata = {
+        "schema_version": graph.get("schema_version"),
+        "generated_at": graph.get("generated_at"),
+        "source_commit": graph.get("source_commit"),
+    }
+    
+    # Import locally to avoid circular deps if any, or just for cleanliness
+    try:
+        from .compute_layout import compute_layout
+        from .compute_metrics import compute_metrics
+    except ImportError:
+        # If running as script
+        from scripts.code_map.compute_layout import compute_layout
+        from scripts.code_map.compute_metrics import compute_metrics
+
+    # Pre-compute metrics (global)
+    print("Computing metrics...")
+    metrics_map = compute_metrics(nodes, edges)
+    # Inject metrics into source nodes
+    for node in nodes:
+        node_id = node.get("id")
+        if node_id and node_id in metrics_map:
+            node.setdefault("metrics", {}).update(metrics_map[node_id])
+            # Also copy pagerank/community to top level for easy access if needed
+            if "community" in metrics_map[node_id]:
+                node["community"] = metrics_map[node_id]["community"]
+
+    # Generate LODs 0 to 4 (LOD 2 is now Folders)
+    for lod in range(5):
+        print(f"Generating LOD {lod}...")
+        payload = _aggregate_lod_graph(nodes, edges, lod, base_metadata)
+        
+        # Compute Layout for this LOD
+        print(f"Computing layout for LOD {lod} ({len(payload['nodes'])} nodes)...")
+        layout_map = compute_layout(payload["nodes"], payload["edges"])
+        
+        # Inject layout into nodes
+        for node in payload["nodes"]:
+            if node["id"] in layout_map:
+                x, y, z = layout_map[node["id"]]
+                node["fx"] = x
+                node["fy"] = y
+                node["fz"] = z
+                # Also set initial positions
+                node["x"] = x
+                node["y"] = y
+                node["z"] = z
+
+        out_path = out_dir / f"{prefix}.lod{lod}.json"
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        with out_path.open("w", encoding="utf-8") as handle:
+            json.dump(payload, handle, indent=2, sort_keys=True)
+            handle.write("\n")
+
+
 def _cluster_id_for_lod(node: Dict[str, Any], lod: int) -> Optional[str]:
     cluster_path = node.get("cluster_path")
     if lod == 0:
@@ -108,15 +177,28 @@ def _cluster_id_for_lod(node: Dict[str, Any], lod: int) -> Optional[str]:
             or _find_cluster_id(cluster_path, "package:")
         )
     if lod == 2:
+        # LOD 2 is now FOLDERS
+        return (
+             _find_cluster_id(cluster_path, "folder:")
+             or _find_cluster_id(cluster_path, "module:")
+             or _find_cluster_id(cluster_path, "package:")
+        )
+    if lod == 3:
+        # LOD 3 is now FILES
         return (
             _find_cluster_id(cluster_path, "file:")
             or _find_cluster_id(cluster_path, "folder:")
             or _find_cluster_id(cluster_path, "module:")
             or _find_cluster_id(cluster_path, "package:")
         )
-    if lod == 3:
+    if lod == 4:
         return node.get("cluster_id") or f"symbol:{node.get('id')}"
     return None
+
+
+def _cluster_type(lod: int) -> str:
+    return {0: "package", 1: "module", 2: "folder", 3: "file", 4: "symbol"}.get(lod, "cluster")
+
 
 
 def _cluster_label(cluster_id: str) -> str:
@@ -125,17 +207,13 @@ def _cluster_label(cluster_id: str) -> str:
     return cluster_id.split(":", 1)[-1]
 
 
-def _cluster_type(lod: int) -> str:
-    return {0: "package", 1: "module", 2: "file", 3: "symbol"}.get(lod, "cluster")
-
-
 def _aggregate_lod_graph(
     nodes: List[Dict[str, Any]],
     edges: List[Dict[str, Any]],
     lod: int,
     base_metadata: Dict[str, Any],
 ) -> Dict[str, Any]:
-    if lod == 3:
+    if lod == 4:
         return {
             **base_metadata,
             "source": f"lod{lod}",
@@ -159,7 +237,7 @@ def _aggregate_lod_graph(
             cluster = {
                 "id": cluster_id,
                 "type": _cluster_type(lod),
-                "kind": "cluster",
+                "kind": _cluster_type(lod),
                 "label": _cluster_label(cluster_id),
                 "label_short": _cluster_label(cluster_id).split("/")[-1],
                 "size": 0,
@@ -167,15 +245,22 @@ def _aggregate_lod_graph(
                 "member_layers": {},
                 "cluster_id": cluster_id,
             }
+            # Try to copy existing node data if the cluster IS the node (e.g. LOD 3 file)
+            if cluster_id == node_id:
+                cluster.update(node)
+                cluster["kind"] = _cluster_type(lod)
+            
             cluster_path = node.get("cluster_path") or []
             if cluster_id in cluster_path:
                 idx = cluster_path.index(cluster_id)
                 cluster["cluster_path"] = cluster_path[: idx + 1]
             cluster_nodes[cluster_id] = cluster
-        cluster["member_count"] += 1
-        cluster["size"] += node.get("size") or 0
-        layer = node.get("layer") or "unknown"
-        cluster["member_layers"][layer] = cluster["member_layers"].get(layer, 0) + 1
+        
+        if cluster_id != node_id:
+            cluster["member_count"] += 1
+            cluster["size"] += node.get("size") or 0
+            layer = node.get("layer") or "unknown"
+            cluster["member_layers"][layer] = cluster["member_layers"].get(layer, 0) + 1
 
     for cluster_id, cluster in cluster_nodes.items():
         layer_counts = cluster.get("member_layers") or {}
@@ -216,27 +301,6 @@ def _aggregate_lod_graph(
         "nodes": list(cluster_nodes.values()),
         "edges": list(aggregated_edges.values()),
     }
-
-
-def build_lod_graphs(
-    graph: Dict[str, Any],
-    out_dir: Path,
-    prefix: str,
-) -> None:
-    nodes = graph.get("nodes", []) or []
-    edges = graph.get("edges", []) or []
-    base_metadata = {
-        "schema_version": graph.get("schema_version"),
-        "generated_at": graph.get("generated_at"),
-        "source_commit": graph.get("source_commit"),
-    }
-    for lod in range(4):
-        payload = _aggregate_lod_graph(nodes, edges, lod, base_metadata)
-        out_path = out_dir / f"{prefix}.lod{lod}.json"
-        out_path.parent.mkdir(parents=True, exist_ok=True)
-        with out_path.open("w", encoding="utf-8") as handle:
-            json.dump(payload, handle, indent=2, sort_keys=True)
-            handle.write("\n")
 
 
 def build_hooks_table(
@@ -356,7 +420,7 @@ def build_outputs(
 
     prefix = _guess_prefix(graph_path)
     out_dir = lod_out_dir or graph_path.parent
-    build_lod_graphs(graph, out_dir, prefix)
+    build_lod_graphs(graph, out_dir, prefix, details_path)
 
 
 def main() -> None:

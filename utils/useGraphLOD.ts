@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Edge, GraphData, GraphLODData, LodMode, Node } from '../types';
 
-const LOD_THRESHOLDS = [0.45, 0.9, 1.8];
+const LOD_THRESHOLDS = [0.45, 0.9, 1.8, 3.0];
 const LOD_HYSTERESIS = 0.1;
 
-type LodLevel = 0 | 1 | 2 | 3;
+type LodLevel = 0 | 1 | 2 | 3 | 4;
+
+const CLUSTER_KINDS = new Set(['cluster', 'package', 'module', 'folder']);
 
 const nextLodLevel = (zoomLevel: number, current: LodLevel): LodLevel => {
   if (current === 0) {
@@ -18,15 +20,21 @@ const nextLodLevel = (zoomLevel: number, current: LodLevel): LodLevel => {
     if (zoomLevel < LOD_THRESHOLDS[1] - LOD_HYSTERESIS) return 1;
     return zoomLevel > LOD_THRESHOLDS[2] + LOD_HYSTERESIS ? 3 : 2;
   }
-  if (zoomLevel < LOD_THRESHOLDS[2] - LOD_HYSTERESIS) return 2;
-  return 3;
+  if (current === 3) {
+    if (zoomLevel < LOD_THRESHOLDS[2] - LOD_HYSTERESIS) return 2;
+    return zoomLevel > LOD_THRESHOLDS[3] + LOD_HYSTERESIS ? 4 : 3;
+  }
+  // Level 4
+  if (zoomLevel < LOD_THRESHOLDS[3] - LOD_HYSTERESIS) return 3;
+  return 4;
 };
 
 const getLodLevelForZoom = (zoomLevel: number): LodLevel => {
   if (zoomLevel < LOD_THRESHOLDS[0]) return 0;
   if (zoomLevel < LOD_THRESHOLDS[1]) return 1;
   if (zoomLevel < LOD_THRESHOLDS[2]) return 2;
-  return 3;
+  if (zoomLevel < LOD_THRESHOLDS[3]) return 3;
+  return 4;
 };
 
 const getLodData = (lodData: GraphLODData | null | undefined, level: LodLevel): GraphData | null => {
@@ -34,25 +42,31 @@ const getLodData = (lodData: GraphLODData | null | undefined, level: LodLevel): 
   if (level === 0) return lodData.lod0 || null;
   if (level === 1) return lodData.lod1 || null;
   if (level === 2) return lodData.lod2 || null;
-  return lodData.lod3 || null;
+  if (level === 3) return lodData.lod3 || null;
+  return lodData.lod4 || null; // Requires GraphLODData update in types.ts too? Yes.
 };
 
 const getManualBaseLevel = (lodData: GraphLODData | null | undefined): LodLevel => {
   if (lodData?.lod0) return 0;
   if (lodData?.lod1) return 1;
   if (lodData?.lod2) return 2;
-  return 3;
+  if (lodData?.lod3) return 3;
+  return 4;
 };
 
 const getClusterLevel = (node: Node): LodLevel | null => {
+  // Heuristic based on node types or paths
   if (node.type === 'package') return 0;
   if (node.type === 'module') return 1;
-  if (node.type === 'file') return 2;
+  if (node.kind === 'folder') return 2; // Explicit kind check
+  if (node.type === 'file') return 3;
+
   if (!node.cluster_path || !node.cluster_path.length) return null;
   const last = node.cluster_path[node.cluster_path.length - 1] || '';
   if (last.startsWith('package:')) return 0;
-  if (last.startsWith('module:') || last.startsWith('folder:')) return 1;
-  if (last.startsWith('file:')) return 2;
+  if (last.startsWith('module:')) return 1;
+  if (last.startsWith('folder:')) return 2;
+  if (last.startsWith('file:')) return 3;
   return null;
 };
 
@@ -61,7 +75,7 @@ const findChildLevel = (
   startLevel: LodLevel,
   lodData: GraphLODData | null | undefined
 ): LodLevel | null => {
-  for (let level = startLevel + 1; level <= 3; level += 1) {
+  for (let level = (startLevel + 1) as number; level <= 4; level += 1) {
     const data = getLodData(lodData, level as LodLevel);
     if (!data) continue;
     const hasChildren = data.nodes.some(node => node.cluster_path?.includes(clusterId));
@@ -76,8 +90,8 @@ const applyManualExpansions = (
   patchTargets: Set<string>
 ) => {
   let graph = baseGraph;
-  for (let pass = 0; pass < 3; pass += 1) {
-    const clusterNodes = graph.nodes.filter(node => node.kind === 'cluster');
+  for (let pass = 0; pass < 4; pass += 1) {
+    const clusterNodes = graph.nodes.filter(node => node.kind && CLUSTER_KINDS.has(node.kind));
     if (!clusterNodes.length) break;
 
     const expansionsByLevel = new Map<LodLevel, Set<string>>();
@@ -126,7 +140,7 @@ const filterEdgesToNodes = (graph: GraphData): GraphData => {
   const nodeIds = new Set(graph.nodes.map(node => node.id));
   const filteredEdges = graph.edges.filter(edge => nodeIds.has(edge.from) && nodeIds.has(edge.to));
   if (filteredEdges.length === graph.edges.length) return graph;
-  if (import.meta.env.DEV) {
+  if ((import.meta as any).env?.DEV) {
     const dropped = graph.edges.length - filteredEdges.length;
     console.warn(`[graph] Dropped ${dropped} edges with missing node references.`);
   }
@@ -154,7 +168,7 @@ const aggregateClusterEdges = (nodes: Node[], edges: Edge[]): Edge[] => {
     const sourceClusterNode = nodeIndex.get(sourceClusterId);
     const targetClusterNode = nodeIndex.get(targetClusterId);
 
-    if (sameCluster && (source?.kind !== 'cluster' || target?.kind !== 'cluster')) {
+    if (sameCluster && ((source?.kind && !CLUSTER_KINDS.has(source.kind)) || (target?.kind && !CLUSTER_KINDS.has(target.kind)))) {
       passthroughEdges.push(edge);
       return;
     }
@@ -210,8 +224,8 @@ const applyBackboneEdgeDensity = (nodes: Node[], edges: Edge[], density = 1) => 
   edges.forEach(edge => {
     const source = nodeIndex.get(edge.from);
     const target = nodeIndex.get(edge.to);
-    const isClusterEdge = (source?.kind === 'cluster' || source?.cluster_id)
-      && (target?.kind === 'cluster' || target?.cluster_id);
+    const isClusterEdge = (source?.kind && CLUSTER_KINDS.has(source.kind)) || source?.cluster_id
+      && ((target?.kind && CLUSTER_KINDS.has(target.kind)) || target?.cluster_id);
     if (isClusterEdge) {
       backboneEdges.push(edge);
     } else {
@@ -352,7 +366,7 @@ export const useGraphLOD = ({
       const childData = getLodData(lodData, Math.min(lodLevel + 1, 3) as LodLevel);
       const activeClusterIds = new Set(
         activeData.nodes
-          .filter(node => node.kind === 'cluster')
+          .filter(node => node.kind && CLUSTER_KINDS.has(node.kind))
           .map(node => node.cluster_id || node.id)
       );
       const patchClusters = new Set<string>();

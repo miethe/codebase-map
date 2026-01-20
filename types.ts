@@ -33,7 +33,12 @@ export interface Node {
   raw_method?: string;
   raw_path?: string;
   summary?: string;
-  // D3 simulation properties (added at runtime)
+  metrics?: {
+    pagerank?: number;
+    degree_centrality?: number;
+    community?: number;
+  };
+  // D3 simulation properties (added at runtime or pre-computed)
   x?: number;
   y?: number;
   z?: number;
@@ -85,6 +90,7 @@ export interface GraphLODData {
   lod1?: GraphData;
   lod2?: GraphData;
   lod3?: GraphData;
+  lod4?: GraphData;
 }
 
 export type CameraPresetId = 'default' | 'architecture' | 'backbone' | 'hotspots' | 'risk' | 'isometric' | 'top';
