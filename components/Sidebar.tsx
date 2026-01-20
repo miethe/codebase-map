@@ -1,7 +1,7 @@
 
 import React, { useContext, useMemo, useState } from 'react';
 import { GraphContext } from '../App';
-import { NODE_COLORS, EDGE_STYLES, Node, Edge, ExportPass, CameraPresetId, FocusMode, DrilldownContext } from '../types';
+import { NODE_COLORS, EDGE_STYLES, Node, Edge, ExportPass, CameraPresetId, FocusMode, DrilldownContext, ExpandDepthMode } from '../types';
 import {
     Search, Filter, Layers, Zap, Database, Globe, Box, Info,
     GitGraph, Grid, Server, Terminal, FileCode, GitBranch,
@@ -142,6 +142,8 @@ export const Sidebar: React.FC = () => {
         setFocusClusterId,
         drilldownContext,
         setDrilldownContext,
+        expandDepthMode,
+        setExpandDepthMode,
         viewMode,
         setViewMode,
         graphView,
@@ -432,6 +434,11 @@ export const Sidebar: React.FC = () => {
         { id: 'all', label: 'All', description: 'Keep full context around the focus.' },
         { id: 'same-layer', label: 'Same Layer', description: 'Show peers at the same depth.' },
         { id: 'cluster-only', label: 'Cluster Only', description: 'Isolate the focused cluster.' }
+    ];
+
+    const expandDepthOptions: Array<{ id: ExpandDepthMode; label: string; description: string }> = [
+        { id: 'step', label: 'Step', description: 'Expand the nearest available layer.' },
+        { id: 'deep', label: 'Deep', description: 'Jump to the deepest available layer.' }
     ];
 
     const exportPassOptions: Array<{ id: ExportPass; label: string }> = [
@@ -959,6 +966,28 @@ export const Sidebar: React.FC = () => {
                                     Applies when a cluster is focused.
                                 </p>
                             )}
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider block">Drill-Down Depth</label>
+                            <div className="grid grid-cols-2 gap-2">
+                                {expandDepthOptions.map(option => (
+                                    <button
+                                        key={option.id}
+                                        onClick={() => setExpandDepthMode(option.id)}
+                                        title={option.description}
+                                        className={`rounded border px-2 py-1 text-[11px] transition-colors ${expandDepthMode === option.id
+                                            ? 'border-indigo-400/60 bg-indigo-500/20 text-indigo-200'
+                                            : 'border-slate-700/70 bg-slate-900 text-slate-400 hover:text-slate-200'
+                                            }`}
+                                    >
+                                        {option.label}
+                                    </button>
+                                ))}
+                            </div>
+                            <p className="text-[10px] text-slate-500">
+                                Step expands the closest layer; Deep jumps to the deepest available nodes.
+                            </p>
                         </div>
                     </div>
                 </CollapsibleSection>

@@ -7,6 +7,7 @@ export type EdgeConfidence = 'static' | 'heuristic' | 'dynamic';
 export type FocusMode = 'off' | 'flow' | 'upstream' | 'downstream' | 'k-hop';
 export type LodMode = 'auto' | 'manual';
 export type DrilldownContext = 'all' | 'same-layer' | 'cluster-only';
+export type ExpandDepthMode = 'step' | 'deep';
 
 export const CLUSTER_KINDS = new Set(['cluster', 'package', 'module', 'folder']);
 
@@ -215,6 +216,8 @@ export interface GraphContextType {
   setFocusClusterId: (clusterId: string | null) => void;
   drilldownContext: DrilldownContext;
   setDrilldownContext: (context: DrilldownContext) => void;
+  expandDepthMode: ExpandDepthMode;
+  setExpandDepthMode: (mode: ExpandDepthMode) => void;
   viewMode: ViewMode;
   setViewMode: (mode: ViewMode) => void;
   graphView: GraphViewMode;

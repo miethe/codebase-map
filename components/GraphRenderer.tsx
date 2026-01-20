@@ -16,6 +16,7 @@ export const GraphRenderer: React.FC = () => {
     focusHopCount,
     focusClusterId,
     drilldownContext,
+    expandDepthMode,
     setFocusClusterId,
     viewMode,
     activeColorMode,
@@ -57,7 +58,8 @@ export const GraphRenderer: React.FC = () => {
     allowLod,
     lodMode,
     focusClusterId,
-    backboneEdgeDensity
+    backboneEdgeDensity,
+    expandDepthMode
   });
 
   const layoutCacheKey = useMemo(() => {
