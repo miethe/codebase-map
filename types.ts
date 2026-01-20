@@ -350,6 +350,7 @@ export interface GraphRendererViewState {
   focusHopCount: number;
   focusClusterId: string | null;
   drilldownContext: DrilldownContext;
+  expandedClusterIds: Set<string>;
   selectedNode: Node | null;
   activeColorMode: string;
   activeGroupingMode: string;

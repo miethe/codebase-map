@@ -62,6 +62,12 @@ export const GraphRenderer: React.FC = () => {
     expandDepthMode
   });
 
+  const getNodeDepth = (node: { lodDepth?: number; cluster_path?: string[] }) => {
+    if (typeof node.lodDepth === 'number') return Math.max(0, Math.round(node.lodDepth));
+    if (node.cluster_path?.length) return Math.max(0, node.cluster_path.length - 1);
+    return 0;
+  };
+
   const layoutCacheKey = useMemo(() => {
     if (!layoutCacheSeed) return null;
     const sourceTag = graphData.source || 'base';
@@ -76,6 +82,7 @@ export const GraphRenderer: React.FC = () => {
       focusHopCount,
       focusClusterId,
       drilldownContext,
+      expandedClusterIds: expandedClusters,
       selectedNode,
       activeColorMode,
       activeGroupingMode,
@@ -105,6 +112,7 @@ export const GraphRenderer: React.FC = () => {
         const isExpandable = Boolean(node?.canExpand ?? (node?.kind && CLUSTER_KINDS.has(node.kind)));
         if (!allowLod || !isExpandable) return;
         const clusterId = node.cluster_id || node.id;
+        const depth = getNodeDepth(node);
         const isExpanded = expandedClusters.has(clusterId);
         const isFocused = focusClusterId === clusterId;
         if (isFocused && isExpanded) {
@@ -112,7 +120,7 @@ export const GraphRenderer: React.FC = () => {
         } else {
           setFocusClusterId(clusterId);
         }
-        toggleCluster(clusterId);
+        toggleCluster(clusterId, depth);
       },
       onNodeHover: setHoveredNode,
       onBackgroundClick: () => {
@@ -130,6 +138,7 @@ export const GraphRenderer: React.FC = () => {
     focusHopCount,
     focusClusterId,
     drilldownContext,
+    expandedClusters,
     selectedNode,
     activeColorMode,
     activeGroupingMode,
@@ -141,7 +150,6 @@ export const GraphRenderer: React.FC = () => {
     showLodPlanes,
     allowLod,
     toggleCluster,
-    expandedClusters,
     enableMotionOptimizations,
     enablePerformanceMode,
     zoomSpeed,

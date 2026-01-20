@@ -441,6 +441,7 @@ const createClusterGlyphSprite = (node: Node) => {
 
 const MULTI_MEMBERSHIP_RING_COLOR = '#e2e8f0';
 const MAX_MULTI_MEMBERSHIP_RINGS = 3;
+const EXPANDED_HALO_COLOR = '#facc15';
 
 const createMultiMembershipRingSprite = (radius: number, baseOpacity: number) => {
   const size = 128;
@@ -466,6 +467,31 @@ const createMultiMembershipRingSprite = (radius: number, baseOpacity: number) =>
   sprite.renderOrder = 1;
   sprite.userData.baseOpacity = baseOpacity;
   sprite.userData.hoverOpacity = Math.min(1, baseOpacity + 0.35);
+  return sprite;
+};
+
+const createExpandedHaloSprite = (radius: number) => {
+  const size = 128;
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const context = canvas.getContext('2d');
+  if (!context) return null;
+  const center = size / 2;
+  const ringRadius = size * 0.38;
+  context.strokeStyle = EXPANDED_HALO_COLOR;
+  context.lineWidth = 8;
+  context.beginPath();
+  context.arc(center, center, ringRadius, 0, Math.PI * 2);
+  context.stroke();
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.minFilter = THREE.LinearFilter;
+  const material = new THREE.SpriteMaterial({ map: texture, depthWrite: false, transparent: true });
+  material.opacity = 0.7;
+  const sprite = new THREE.Sprite(material);
+  sprite.scale.set(radius * 2.6, radius * 2.6, 1);
+  sprite.renderOrder = 0;
   return sprite;
 };
 
@@ -547,6 +573,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     focusHopCount,
     focusClusterId,
     drilldownContext,
+    expandedClusterIds,
     viewMode,
     activeColorMode,
     activeGroupingMode,
@@ -585,6 +612,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   const nodeObjectCache = useRef<Map<string, THREE.Object3D>>(new Map());
   const labelCache = useRef<Map<string, THREE.Sprite>>(new Map());
   const glyphCache = useRef<Map<string, THREE.Sprite>>(new Map());
+  const expandedHaloCache = useRef<Map<string, THREE.Sprite>>(new Map());
   const multiMembershipRingCache = useRef<Map<string, THREE.Sprite[]>>(new Map());
   const overlayGroupRef = useRef<THREE.Group | null>(null);
   const lodPlaneOverlayRef = useRef<THREE.Group | null>(null);
@@ -1049,6 +1077,9 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   const focusActive = Boolean(selectedNode && focusMode !== 'off' && highlightNodeIds);
   const layeringActive = layeredLodEnabled && viewMode !== 'structured';
   const effectiveLayerSpacing = clampLayerSpacing(layerSpacing);
+  const isExpandedNode = useCallback((node: Node) => {
+    return expandedClusterIds?.has(node.id) ?? false;
+  }, [expandedClusterIds]);
   const multiMembershipData = useMemo(() => {
     if (!groupingData) {
       return { map: new Map<string, string[]>(), activeSet: null };
@@ -2049,11 +2080,13 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       }
       labelCache.current.forEach(sprite => disposeSprite(sprite));
       glyphCache.current.forEach(sprite => disposeSprite(sprite));
+      expandedHaloCache.current.forEach(sprite => disposeSprite(sprite));
       multiMembershipRingCache.current.forEach(rings => {
         rings.forEach(sprite => disposeSprite(sprite));
       });
       labelCache.current.clear();
       glyphCache.current.clear();
+      expandedHaloCache.current.clear();
       multiMembershipRingCache.current.clear();
       nodeObjectCache.current.clear();
       nodePositions.current.clear();
@@ -2190,6 +2223,15 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       });
     }
 
+    if (layeringActive) {
+      nodes.forEach(node => {
+        const targetZ = -getNodeLodDepth(node) * effectiveLayerSpacing;
+        node.fz = targetZ;
+        if (node.z === undefined || Number.isNaN(node.z)) node.z = targetZ;
+        node.vz = 0;
+      });
+    }
+
     return {
       nodes,
       links: edges.map(e => ({
@@ -2198,7 +2240,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
         target: e.to
       }))
     };
-  }, [visibleData, viewMode, dimensions.width, dimensions.height, moduleCenters]);
+  }, [visibleData, viewMode, dimensions.width, dimensions.height, moduleCenters, layeringActive, effectiveLayerSpacing]);
 
   useEffect(() => {
     graphDataRef.current = graphData;
@@ -2430,11 +2472,13 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   useEffect(() => {
     labelCache.current.forEach(sprite => disposeSprite(sprite));
     glyphCache.current.forEach(sprite => disposeSprite(sprite));
+    expandedHaloCache.current.forEach(sprite => disposeSprite(sprite));
     multiMembershipRingCache.current.forEach(rings => {
       rings.forEach(sprite => disposeSprite(sprite));
     });
     labelCache.current.clear();
     glyphCache.current.clear();
+    expandedHaloCache.current.clear();
     multiMembershipRingCache.current.clear();
     nodeObjectCache.current.clear();
     graphRef.current?.refresh();
@@ -2490,11 +2534,17 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   const nodeColor = useCallback((node: Node) => {
     const colorMode = exportRenderState?.colorMode || activeColorMode;
     const base = getNodeColor(node, colorMode, groupingData, gitMetadata);
-    if (!selectedNode || focusMode !== 'off') return base;
-    if (selectedNode.kind === 'cluster') return base;
-    if (!highlightNodeIds) return base;
-    return highlightNodeIds.has(node.id) ? base : toRgba(base, 0.12);
-  }, [activeColorMode, groupingData, gitMetadata, selectedNode, focusMode, highlightNodeIds, exportRenderState]);
+    let alphaOverride: number | null = null;
+    if (selectedNode && focusMode === 'off' && selectedNode.kind !== 'cluster' && highlightNodeIds) {
+      if (!highlightNodeIds.has(node.id)) {
+        alphaOverride = 0.12;
+      }
+    }
+    if (isExpandedNode(node) && (!selectedNode || selectedNode.id !== node.id)) {
+      alphaOverride = alphaOverride === null ? 0.45 : Math.min(alphaOverride, 0.45);
+    }
+    return alphaOverride === null ? base : toRgba(base, alphaOverride);
+  }, [activeColorMode, groupingData, gitMetadata, selectedNode, focusMode, highlightNodeIds, exportRenderState, isExpandedNode]);
 
   const linkColor = useCallback((link: Edge) => {
     const base = EDGE_STYLES[link.type]?.stroke || EDGE_STYLES.default.stroke;
@@ -2529,6 +2579,19 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     if (cached) {
       const labelSprite = labelCache.current.get(node.id);
       if (labelSprite) labelSprite.visible = true;
+      const halo = expandedHaloCache.current.get(node.id);
+      const isExpanded = isExpandedNode(node);
+      if (halo) {
+        halo.visible = isExpanded;
+      } else if (isExpanded) {
+        const radius = getNodeRadius(node) + 10;
+        const haloSprite = createExpandedHaloSprite(radius);
+        if (haloSprite) {
+          haloSprite.visible = true;
+          expandedHaloCache.current.set(node.id, haloSprite);
+          (cached as THREE.Group).add(haloSprite);
+        }
+      }
       return cached;
     }
     const group = new THREE.Group();
@@ -2536,6 +2599,16 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     labelSprite.visible = true;
     labelCache.current.set(node.id, labelSprite);
     group.add(labelSprite);
+
+    if (isExpandedNode(node)) {
+      const radius = getNodeRadius(node) + 10;
+      const haloSprite = createExpandedHaloSprite(radius);
+      if (haloSprite) {
+        haloSprite.visible = true;
+        expandedHaloCache.current.set(node.id, haloSprite);
+        group.add(haloSprite);
+      }
+    }
 
     const showExpandGlyph = Boolean(node.canExpand ?? (node.kind && CLUSTER_KINDS.has(node.kind)));
     if (showExpandGlyph) {
@@ -2571,7 +2644,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
 
     nodeObjectCache.current.set(node.id, group);
     return group;
-  }, [multiMembershipActive, multiMembershipMap]);
+  }, [multiMembershipActive, multiMembershipMap, isExpandedNode]);
 
   const updateMultiMembershipHover = useCallback((nodeId: string, hovered: boolean) => {
     const rings = multiMembershipRingCache.current.get(nodeId);
@@ -2602,6 +2675,15 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     }
     previousHoveredNodeIdRef.current = hoveredNodeId;
   }, [hoveredNodeId, multiMembershipActive, updateMultiMembershipHover]);
+
+  useEffect(() => {
+    expandedHaloCache.current.forEach((sprite, nodeId) => {
+      sprite.visible = expandedClusterIds?.has(nodeId) ?? false;
+    });
+    if (animationPausedRef.current) {
+      graphRef.current?.refresh();
+    }
+  }, [expandedClusterIds]);
 
   const reducedDetail = enableMotionOptimizations && reduceDetail;
   const exporting = Boolean(exportRenderState);
@@ -2709,7 +2791,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
             const dragged = node as Node;
             dragged.fx = dragged.x;
             dragged.fy = dragged.y;
-            dragged.fz = dragged.z ?? 0;
+            dragged.fz = layeringActive ? -getNodeLodDepth(dragged) * effectiveLayerSpacing : (dragged.z ?? 0);
             requestReheat();
             registerInteraction(1.2);
           }}
@@ -2717,7 +2799,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
             const dragged = node as Node;
             dragged.fx = dragged.x;
             dragged.fy = dragged.y;
-            dragged.fz = dragged.z ?? 0;
+            dragged.fz = layeringActive ? -getNodeLodDepth(dragged) * effectiveLayerSpacing : (dragged.z ?? 0);
             requestReheat();
             registerInteraction(0.2);
           }}

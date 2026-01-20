@@ -184,6 +184,7 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
         focusHopCount,
         focusClusterId,
         drilldownContext,
+        expandedClusterIds,
         viewMode,
         groupingData,
         activeColorMode,
@@ -796,8 +797,13 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
         node.select(".node-circle")
             .attr("r", (d) => getNodeRadius(d))
             .attr("fill", (d) => getNodeColor(d, activeColorMode, groupingData, gitMetadata)) // Use latest color logic
-            .attr("stroke", (d) => d.kind === 'cluster' ? '#cbd5e1' : 'none')
-            .attr("stroke-width", (d) => d.kind === 'cluster' ? 1.5 : 0);
+            .attr("fill-opacity", (d) => expandedClusterIds?.has(d.id) ? 0.45 : 1)
+            .attr("stroke", (d) => {
+                if (expandedClusterIds?.has(d.id)) return '#facc15';
+                return d.kind === 'cluster' ? '#cbd5e1' : 'none';
+            })
+            .attr("stroke-width", (d) => expandedClusterIds?.has(d.id) ? 2.5 : (d.kind === 'cluster' ? 1.5 : 0))
+            .attr("stroke-opacity", (d) => expandedClusterIds?.has(d.id) ? 0.8 : 1);
 
         node.select(".cluster-glyph")
             .text((d) => {
@@ -986,7 +992,8 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
         registerInteraction,
         persistLayoutCache,
         multiMembershipMap,
-        multiMembershipLabel
+        multiMembershipLabel,
+        expandedClusterIds
     ]);
     // ^ Added dependencies so colors update when mode changes
 

@@ -343,8 +343,6 @@ const applyClusterExpansions = (
     if (targetDepth !== null) nextDepthByCluster.set(clusterId, targetDepth);
   });
 
-  const expandableClusters = new Set(nextDepthByCluster.keys());
-
   const childNodes = childGraph.nodes.filter(node => {
     if (!node.cluster_path) return false;
     const nodeDepth = getNodeDepth(node);
@@ -356,12 +354,10 @@ const applyClusterExpansions = (
   });
   const childNodeIds = new Set(childNodes.map(node => node.id));
 
-  const baseNodes = baseGraph.nodes.filter(node => {
-    const clusterId = getClusterId(node);
-    return !expandableClusters.has(clusterId);
-  });
+  const baseNodes = baseGraph.nodes;
   const baseNodeIds = new Set(baseNodes.map(node => node.id));
-  const mergedNodeIds = new Set([...baseNodeIds, ...childNodeIds]);
+  const filteredChildNodes = childNodes.filter(node => !baseNodeIds.has(node.id));
+  const mergedNodeIds = new Set([...baseNodeIds, ...filteredChildNodes.map(node => node.id)]);
   const baseEdges = baseGraph.edges.filter(edge => baseNodeIds.has(edge.from) && baseNodeIds.has(edge.to));
   const childEdges = childGraph.edges.filter(edge => {
     const fromInChild = childNodeIds.has(edge.from);
@@ -372,7 +368,7 @@ const applyClusterExpansions = (
 
   const mergedNodeMap = new Map<string, Node>();
   baseNodes.forEach(node => mergedNodeMap.set(node.id, node));
-  childNodes.forEach(node => mergedNodeMap.set(node.id, node));
+  filteredChildNodes.forEach(node => mergedNodeMap.set(node.id, node));
 
   return {
     ...baseGraph,
@@ -407,7 +403,8 @@ export const useGraphLOD = ({
     if (lodMode === 'manual') return getManualBaseLevel(lodData);
     return getLodLevelForZoom(zoomLevel);
   });
-  const [expandedClusters, setExpandedClusters] = useState<Set<string>>(new Set());
+  const [expandedByDepth, setExpandedByDepth] = useState<Map<number, string>>(new Map());
+  const expandedClusters = useMemo(() => new Set(expandedByDepth.values()), [expandedByDepth]);
   const lodLevelRef = useRef<LodLevel>(lodLevel);
   const descendantDepthMap = useMemo(() => {
     if (lodData && (lodData.lod0 || lodData.lod1 || lodData.lod2 || lodData.lod3 || lodData.lod4)) {
@@ -420,7 +417,7 @@ export const useGraphLOD = ({
     if (!allowLod) {
       setLodLevel(3);
       lodLevelRef.current = 3;
-      setExpandedClusters(new Set());
+      setExpandedByDepth(new Map());
       return;
     }
     if (lodMode === 'manual') {
@@ -428,7 +425,7 @@ export const useGraphLOD = ({
       if (lodLevelRef.current !== baseLevel) {
         lodLevelRef.current = baseLevel;
         setLodLevel(baseLevel);
-        setExpandedClusters(new Set());
+        setExpandedByDepth(new Map());
       }
       return;
     }
@@ -439,14 +436,34 @@ export const useGraphLOD = ({
     }
   }, [allowLod, zoomLevel, lodMode, lodData]);
 
-  const toggleCluster = useCallback((clusterId: string) => {
-    setExpandedClusters(prev => {
-      const next = new Set(prev);
-      if (next.has(clusterId)) {
-        next.delete(clusterId);
-      } else {
-        next.add(clusterId);
+  const toggleCluster = useCallback((clusterId: string, depth?: number | null) => {
+    setExpandedByDepth(prev => {
+      const next = new Map(prev);
+      const depthKey = typeof depth === 'number' ? depth : null;
+      const existingAtDepth = depthKey !== null ? prev.get(depthKey) : null;
+
+      if (depthKey !== null && existingAtDepth === clusterId) {
+        next.delete(depthKey);
+        // Collapse deeper expansions once the anchor is removed.
+        Array.from(next.keys()).forEach(key => {
+          if (key > depthKey) next.delete(key);
+        });
+        return next;
       }
+
+      // Remove any stale entries for this cluster id.
+      Array.from(next.entries()).forEach(([key, id]) => {
+        if (id === clusterId) next.delete(key);
+      });
+
+      if (depthKey !== null) {
+        next.set(depthKey, clusterId);
+        // Enforce a single expansion per depth and collapse deeper levels.
+        Array.from(next.keys()).forEach(key => {
+          if (key > depthKey) next.delete(key);
+        });
+      }
+
       return next;
     });
   }, []);
