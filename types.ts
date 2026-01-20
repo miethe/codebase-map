@@ -6,6 +6,7 @@ export type EdgeDistanceClass = 'local' | 'cross-folder' | 'cross-module' | 'cro
 export type EdgeConfidence = 'static' | 'heuristic' | 'dynamic';
 export type FocusMode = 'off' | 'flow' | 'upstream' | 'downstream' | 'k-hop';
 export type LodMode = 'auto' | 'manual';
+export type DrilldownContext = 'all' | 'same-layer' | 'cluster-only';
 
 export const CLUSTER_KINDS = new Set(['cluster', 'package', 'module', 'folder']);
 
@@ -211,6 +212,8 @@ export interface GraphContextType {
   setFocusHopCount: (count: number) => void;
   focusClusterId: string | null;
   setFocusClusterId: (clusterId: string | null) => void;
+  drilldownContext: DrilldownContext;
+  setDrilldownContext: (context: DrilldownContext) => void;
   viewMode: ViewMode;
   setViewMode: (mode: ViewMode) => void;
   graphView: GraphViewMode;
@@ -340,6 +343,7 @@ export interface GraphRendererViewState {
   focusMode: FocusMode;
   focusHopCount: number;
   focusClusterId: string | null;
+  drilldownContext: DrilldownContext;
   selectedNode: Node | null;
   activeColorMode: string;
   groupingData: GroupingData | null;

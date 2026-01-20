@@ -1,7 +1,7 @@
 
 import React, { useContext, useMemo, useState } from 'react';
 import { GraphContext } from '../App';
-import { NODE_COLORS, EDGE_STYLES, Node, Edge, ExportPass, CameraPresetId, FocusMode } from '../types';
+import { NODE_COLORS, EDGE_STYLES, Node, Edge, ExportPass, CameraPresetId, FocusMode, DrilldownContext } from '../types';
 import {
     Search, Filter, Layers, Zap, Database, Globe, Box, Info,
     GitGraph, Grid, Server, Terminal, FileCode, GitBranch,
@@ -138,7 +138,10 @@ export const Sidebar: React.FC = () => {
         setFocusMode,
         focusHopCount,
         setFocusHopCount,
+        focusClusterId,
         setFocusClusterId,
+        drilldownContext,
+        setDrilldownContext,
         viewMode,
         setViewMode,
         graphView,
@@ -417,6 +420,12 @@ export const Sidebar: React.FC = () => {
         { id: 'upstream', label: 'Upstream', description: 'Only dependencies feeding in.' },
         { id: 'downstream', label: 'Downstream', description: 'Only dependents flowing out.' },
         { id: 'k-hop', label: 'K-Hop', description: 'Neighborhood around selection.' }
+    ];
+
+    const drilldownContextOptions: Array<{ id: DrilldownContext; label: string; description: string }> = [
+        { id: 'all', label: 'All', description: 'Keep full context around the focus.' },
+        { id: 'same-layer', label: 'Same Layer', description: 'Show peers at the same depth.' },
+        { id: 'cluster-only', label: 'Cluster Only', description: 'Isolate the focused cluster.' }
     ];
 
     const exportPassOptions: Array<{ id: ExportPass; label: string }> = [
@@ -898,6 +907,30 @@ export const Sidebar: React.FC = () => {
                                     className="rounded border-slate-600 bg-slate-700 text-indigo-500 focus:ring-offset-slate-900 accent-indigo-500"
                                 />
                             </label>
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider block">Drill-Down Context</label>
+                            <div className="grid grid-cols-3 gap-2">
+                                {drilldownContextOptions.map(option => (
+                                    <button
+                                        key={option.id}
+                                        onClick={() => setDrilldownContext(option.id)}
+                                        title={option.description}
+                                        className={`rounded border px-2 py-1 text-[11px] transition-colors ${drilldownContext === option.id
+                                            ? 'border-indigo-400/60 bg-indigo-500/20 text-indigo-200'
+                                            : 'border-slate-700/70 bg-slate-900 text-slate-400 hover:text-slate-200'
+                                            }`}
+                                    >
+                                        {option.label}
+                                    </button>
+                                ))}
+                            </div>
+                            {!focusClusterId && (
+                                <p className="text-[10px] text-slate-500">
+                                    Applies when a cluster is focused.
+                                </p>
+                            )}
                         </div>
                     </div>
                 </CollapsibleSection>

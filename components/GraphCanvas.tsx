@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import * as d3 from 'd3';
-import { Node, Edge, NODE_SIZE_CONFIG, EDGE_STYLES, GraphRendererProps } from '../types';
+import { Node, Edge, NODE_SIZE_CONFIG, EDGE_STYLES, GraphRendererProps, DrilldownContext } from '../types';
 import { getNodeColor } from '../utils/colorMapping';
 import { computeClusterLayout } from '../utils/clusterLayout';
 import { getFocusNodeIds } from '../utils/focusModes';
@@ -131,6 +131,50 @@ const getLinkTooltip = (edge: Edge) => {
     return `${edge.type} (${count} edges)\n${preview}${suffix}`.trim();
 };
 
+const getNodeLodDepth = (node: Node) => {
+    if (typeof node.lodDepth === 'number') return Math.max(0, Math.round(node.lodDepth));
+    if (node.cluster_path?.length) return Math.max(0, node.cluster_path.length - 1);
+    return 0;
+};
+
+const isNodeInCluster = (node: Node, clusterId: string | null) => {
+    if (!clusterId) return false;
+    if (node.id === clusterId) return true;
+    if (node.cluster_id === clusterId) return true;
+    return node.cluster_path?.includes(clusterId) ?? false;
+};
+
+const getFocusClusterDepth = (nodes: Node[], clusterId: string) => {
+    const direct = nodes.find(node => node.id === clusterId || node.cluster_id === clusterId);
+    if (direct) return getNodeLodDepth(direct);
+    for (const node of nodes) {
+        if (!node.cluster_path) continue;
+        const index = node.cluster_path.indexOf(clusterId);
+        if (index >= 0) return index;
+    }
+    return null;
+};
+
+const buildDrilldownContextNodeIds = (
+    nodes: Node[],
+    focusClusterId: string | null,
+    mode: DrilldownContext
+) => {
+    if (!focusClusterId || mode === 'all') return null;
+    const clusterNodeIds = new Set<string>();
+    nodes.forEach(node => {
+        if (isNodeInCluster(node, focusClusterId)) clusterNodeIds.add(node.id);
+    });
+    if (!clusterNodeIds.size) return null;
+    if (mode === 'cluster-only') return clusterNodeIds;
+    const focusDepth = getFocusClusterDepth(nodes, focusClusterId);
+    if (focusDepth === null) return clusterNodeIds;
+    nodes.forEach(node => {
+        if (getNodeLodDepth(node) === focusDepth) clusterNodeIds.add(node.id);
+    });
+    return clusterNodeIds;
+};
+
 export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, handlers }) => {
     const svgRef = useRef<SVGSVGElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -138,6 +182,8 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
         selectedNode,
         focusMode,
         focusHopCount,
+        focusClusterId,
+        drilldownContext,
         viewMode,
         groupingData,
         activeColorMode,
@@ -332,8 +378,14 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
             edges = edges.filter(e => nodeSet.has(e.from) && nodeSet.has(e.to));
         }
 
+        const drilldownNodeIds = buildDrilldownContextNodeIds(nodes, focusClusterId, drilldownContext);
+        if (drilldownNodeIds) {
+            nodes = nodes.filter(node => drilldownNodeIds.has(node.id));
+            edges = edges.filter(edge => drilldownNodeIds.has(edge.from) && drilldownNodeIds.has(edge.to));
+        }
+
         return { visibleNodes: nodes, visibleEdges: edges };
-    }, [data, focusMode, focusActive, viewMode, selectedNode?.id, highlightNodeIds, layoutCacheVersion]);
+    }, [data, focusMode, focusActive, viewMode, selectedNode?.id, highlightNodeIds, layoutCacheVersion, focusClusterId, drilldownContext]);
 
     const labelVisibleIds = useMemo(() => {
         if (!visibleNodes.length) return new Set<string>();

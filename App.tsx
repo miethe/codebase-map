@@ -3,7 +3,7 @@ import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { GraphRenderer } from './components/GraphRenderer';
 import { Sidebar } from './components/Sidebar';
 import { Breadcrumbs } from './components/Breadcrumbs';
-import { GraphData, GraphLODData, Node, GraphContextType, ViewMode, GraphViewMode, EDGE_STYLES, DetailsData, GitMetadata, DependencyGraph, ExportRequest, ExportStatus, CameraPresetRequest, CameraJumpRequest, FocusMode, LodMode } from './types';
+import { GraphData, GraphLODData, Node, GraphContextType, ViewMode, GraphViewMode, EDGE_STYLES, DetailsData, GitMetadata, DependencyGraph, ExportRequest, ExportStatus, CameraPresetRequest, CameraJumpRequest, FocusMode, LodMode, DrilldownContext } from './types';
 import { Layout, Loader2, AlertCircle, ChevronDown, ChevronUp, GitBranch, MoreVertical } from 'lucide-react';
 
 import { deriveModulePath, getDisplayModule, buildNodePathMap } from './utils/moduleGrouping';
@@ -42,6 +42,8 @@ export const GraphContext = React.createContext<GraphContextType>({
   setFocusHopCount: () => { },
   focusClusterId: null,
   setFocusClusterId: () => { },
+  drilldownContext: 'all',
+  setDrilldownContext: () => { },
   viewMode: 'force',
   setViewMode: () => { },
   graphView: 'unified',
@@ -110,6 +112,7 @@ const App: React.FC = () => {
   const [focusMode, setFocusMode] = useState<FocusMode>('off');
   const [focusHopCount, setFocusHopCount] = useState(2);
   const [focusClusterId, setFocusClusterId] = useState<string | null>(null);
+  const [drilldownContext, setDrilldownContext] = useState<DrilldownContext>('all');
   const [viewMode, setViewMode] = useState<ViewMode>('force');
   const [graphView, setGraphView] = useState<GraphViewMode>('unified');
   const [activeModule, setActiveModule] = useState<string | null>(null);
@@ -583,6 +586,8 @@ const App: React.FC = () => {
     setFocusHopCount,
     focusClusterId,
     setFocusClusterId,
+    drilldownContext,
+    setDrilldownContext,
     viewMode,
     setViewMode,
     graphView,
