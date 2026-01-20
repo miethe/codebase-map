@@ -187,6 +187,7 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
         viewMode,
         groupingData,
         activeColorMode,
+        activeGroupingMode,
         gitMetadata,
         enableMotionOptimizations,
         zoomSpeed,
@@ -333,6 +334,33 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
         return getFocusNodeIds(highlightMode, selectedNode.id, data.edges, focusHopCount);
     }, [selectedNode?.id, data.edges, highlightMode, focusHopCount]);
     const focusActive = Boolean(selectedNode && focusMode !== 'off' && highlightNodeIds);
+    const multiMembershipData = useMemo(() => {
+        if (!groupingData) {
+            return { map: new Map<string, string[]>(), activeSet: null };
+        }
+        const activeSet = groupingData.group_sets?.find((set: any) => set.id === activeGroupingMode) || null;
+        if (!activeSet?.multi_membership) {
+            return { map: new Map<string, string[]>(), activeSet };
+        }
+        const map = new Map<string, string[]>();
+        groupingData.groups
+            .filter(group => group.group_set === activeGroupingMode)
+            .forEach(group => {
+                group.nodes.forEach(nodeId => {
+                    const existing = map.get(nodeId);
+                    if (existing) {
+                        if (!existing.includes(group.label)) {
+                            existing.push(group.label);
+                        }
+                    } else {
+                        map.set(nodeId, [group.label]);
+                    }
+                });
+            });
+        return { map, activeSet };
+    }, [groupingData, activeGroupingMode]);
+    const multiMembershipMap = multiMembershipData.map;
+    const multiMembershipLabel = multiMembershipData.activeSet?.label || 'Groups';
 
     const canUseLayoutCache = Boolean(layoutCacheKey) && !focusActive;
     const persistLayoutCache = useCallback((force = false) => {
@@ -776,7 +804,14 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
             .style("display", (d) => d.kind === 'cluster' ? null : 'none');
 
         node.select("title")
-            .text(d => `Type: ${d.type}\nID: ${d.id}\nVisible Connections: ${d.degree || 0}\nTotal Connections: ${d.totalDegree || 0}`);
+            .text(d => {
+                const base = `Type: ${d.type}\nID: ${d.id}\nVisible Connections: ${d.degree || 0}\nTotal Connections: ${d.totalDegree || 0}`;
+                const memberships = multiMembershipMap.get(d.id);
+                if (memberships && memberships.length > 1) {
+                    return `${base}\n${multiMembershipLabel}: ${memberships.join(', ')}`;
+                }
+                return base;
+            });
 
         node.select(".node-label")
             .text((d) => labelVisibleIds.has(d.id) ? getCleanLabel(d) : '')
@@ -931,7 +966,22 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
             registerInteraction(0.2);
         }
 
-    }, [visibleNodes, visibleEdges, labelVisibleIds, viewMode, clusterPositions, activeColorMode, groupingData, gitMetadata, zoomSpeed, handleZoomInteraction, registerInteraction, persistLayoutCache]);
+    }, [
+        visibleNodes,
+        visibleEdges,
+        labelVisibleIds,
+        viewMode,
+        clusterPositions,
+        activeColorMode,
+        groupingData,
+        gitMetadata,
+        zoomSpeed,
+        handleZoomInteraction,
+        registerInteraction,
+        persistLayoutCache,
+        multiMembershipMap,
+        multiMembershipLabel
+    ]);
     // ^ Added dependencies so colors update when mode changes
 
     // EFFECT: Reduced Detail Mode while Interacting

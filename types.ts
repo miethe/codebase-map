@@ -227,6 +227,8 @@ export interface GraphContextType {
   // Visualization Support
   activeColorMode: string;
   setActiveColorMode: (mode: string) => void;
+  showMultiMembership: boolean;
+  setShowMultiMembership: (enabled: boolean) => void;
   layeredLodEnabled: boolean;
   setLayeredLodEnabled: (enabled: boolean) => void;
   layerSpacing: number;
@@ -346,8 +348,10 @@ export interface GraphRendererViewState {
   drilldownContext: DrilldownContext;
   selectedNode: Node | null;
   activeColorMode: string;
+  activeGroupingMode: string;
   groupingData: GroupingData | null;
   gitMetadata: GitMetadata | null;
+  showMultiMembership: boolean;
   layeredLodEnabled: boolean;
   layerSpacing: number;
   showLodPlanes: boolean;

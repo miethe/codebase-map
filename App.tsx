@@ -55,6 +55,8 @@ export const GraphContext = React.createContext<GraphContextType>({
   setActiveGroupingMode: () => { },
   activeColorMode: 'type',
   setActiveColorMode: () => { },
+  showMultiMembership: true,
+  setShowMultiMembership: () => { },
   layeredLodEnabled: false,
   setLayeredLodEnabled: () => { },
   layerSpacing: 160,
@@ -95,6 +97,7 @@ const App: React.FC = () => {
   const [lodData, setLodData] = useState<GraphLODData | null>(null);
   const [activeGroupingMode, setActiveGroupingMode] = useState<string>('structure');
   const [activeColorMode, setActiveColorMode] = useState<string>('type');
+  const [showMultiMembership, setShowMultiMembership] = useState(true);
   const [layeredLodEnabled, setLayeredLodEnabled] = useState(false);
   const [layerSpacing, setLayerSpacing] = useState(160);
   const [showLodPlanes, setShowLodPlanes] = useState(true);
@@ -599,6 +602,8 @@ const App: React.FC = () => {
     setActiveGroupingMode,
     activeColorMode,
     setActiveColorMode,
+    showMultiMembership,
+    setShowMultiMembership,
     layeredLodEnabled,
     setLayeredLodEnabled,
     layerSpacing,

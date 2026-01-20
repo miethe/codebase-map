@@ -153,6 +153,8 @@ export const Sidebar: React.FC = () => {
         setActiveGroupingMode,
         activeColorMode,
         setActiveColorMode,
+        showMultiMembership,
+        setShowMultiMembership,
         layeredLodEnabled,
         setLayeredLodEnabled,
         layerSpacing,
@@ -178,6 +180,10 @@ export const Sidebar: React.FC = () => {
     const [exportSeededLayout, setExportSeededLayout] = useState(true);
     const [exportSeed, setExportSeed] = useState('v1');
     const [exportPasses, setExportPasses] = useState<ExportPass[]>(['nodes', 'edges', 'labels', 'highlights', 'heatmap']);
+    const activeGroupingSet = useMemo(() => {
+        return groupingData?.group_sets?.find((set: any) => set.id === activeGroupingMode) || null;
+    }, [groupingData, activeGroupingMode]);
+    const multiMembershipAvailable = Boolean(activeGroupingSet?.multi_membership);
     const normalizedSearchTerm = searchTerm.trim().toLowerCase();
     const searchResults = useMemo(() => {
         if (!normalizedSearchTerm) return [];
@@ -861,6 +867,28 @@ export const Sidebar: React.FC = () => {
                                 </select>
                                 <ChevronDown size={12} className="absolute right-2.5 top-2.5 text-slate-500 pointer-events-none" />
                             </div>
+                        </div>
+
+                        <div className="space-y-1.5">
+                            <label className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider block">Multi-Membership</label>
+                            <label className={`flex items-center justify-between p-2 rounded bg-slate-800/40 border border-slate-700/50 ${multiMembershipAvailable ? '' : 'opacity-50'}`}>
+                                <div className="flex flex-col">
+                                    <span className="text-xs font-medium text-slate-300">Show multi-membership</span>
+                                    <span className="text-[10px] text-slate-500">
+                                        {multiMembershipAvailable ? 'Highlights nodes in multiple groups.' : 'Available for multi-membership grouping sets.'}
+                                    </span>
+                                </div>
+                                <input
+                                    type="checkbox"
+                                    checked={showMultiMembership}
+                                    onChange={(event) => setShowMultiMembership(event.target.checked)}
+                                    disabled={!multiMembershipAvailable}
+                                    className="rounded border-slate-600 bg-slate-700 text-indigo-500 focus:ring-offset-slate-900 accent-indigo-500"
+                                />
+                            </label>
+                            {multiMembershipAvailable && activeGroupingSet?.label && (
+                                <div className="text-[10px] text-slate-500">Active set: {activeGroupingSet.label}</div>
+                            )}
                         </div>
 
                         {/* Layered LOD Controls */}
