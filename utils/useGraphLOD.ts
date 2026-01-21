@@ -468,6 +468,17 @@ export const useGraphLOD = ({
     });
   }, []);
 
+  const popExpansion = useCallback(() => {
+    setExpandedByDepth(prev => {
+      if (!prev.size) return prev;
+      const depths = Array.from(prev.keys()).sort((a, b) => a - b);
+      const deepest = depths[depths.length - 1];
+      const next = new Map(prev);
+      next.delete(deepest);
+      return next;
+    });
+  }, []);
+
   const graphData = useMemo(() => {
     if (!allowLod) {
       const baseGraph = attachTotalDegree(filterEdgesToNodes(baseData));
@@ -567,6 +578,8 @@ export const useGraphLOD = ({
     graphData,
     lodLevel,
     expandedClusters,
-    toggleCluster
+    expandedByDepth,
+    toggleCluster,
+    popExpansion
   };
 };

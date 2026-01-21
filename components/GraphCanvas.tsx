@@ -204,7 +204,8 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
         onBackgroundClick,
         onZoomChange,
         onExportStatus,
-        onExportRequestHandled
+        onExportRequestHandled,
+        onEscape
     } = handlers;
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -324,6 +325,20 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
     }, []);
 
     useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                if (onEscape) {
+                    onEscape();
+                } else {
+                    onNodeSelect(null);
+                }
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [onEscape, onNodeSelect]);
+
+    useEffect(() => {
         if (!enableMotionOptimizations) {
             setReduceDetail(false);
         }
@@ -407,10 +422,12 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
             edges = edges.filter(e => nodeSet.has(e.from) && nodeSet.has(e.to));
         }
 
-        const drilldownNodeIds = buildDrilldownContextNodeIds(nodes, focusClusterId, drilldownContext);
-        if (drilldownNodeIds) {
-            nodes = nodes.filter(node => drilldownNodeIds.has(node.id));
-            edges = edges.filter(edge => drilldownNodeIds.has(edge.from) && drilldownNodeIds.has(edge.to));
+        if (!focusActive) {
+            const drilldownNodeIds = buildDrilldownContextNodeIds(nodes, focusClusterId, drilldownContext);
+            if (drilldownNodeIds) {
+                nodes = nodes.filter(node => drilldownNodeIds.has(node.id));
+                edges = edges.filter(edge => drilldownNodeIds.has(edge.from) && drilldownNodeIds.has(edge.to));
+            }
         }
 
         return { visibleNodes: nodes, visibleEdges: edges };

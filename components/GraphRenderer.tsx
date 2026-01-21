@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from 'react';
+import React, { useContext, useMemo, useCallback } from 'react';
 import { GraphContext } from '../App';
 import { GraphCanvas } from './GraphCanvas';
 import { GraphCanvasWebGL } from './GraphCanvasWebGL';
@@ -17,6 +17,7 @@ export const GraphRenderer: React.FC = () => {
     focusClusterId,
     drilldownContext,
     expandDepthMode,
+    setFocusMode,
     setFocusClusterId,
     viewMode,
     activeColorMode,
@@ -51,7 +52,7 @@ export const GraphRenderer: React.FC = () => {
   const useWebglRenderer = rendererMode === 'webgl';
 
   const allowLod = Boolean(lodData) && graphView === 'unified' && !activeModule;
-  const { graphData, toggleCluster, expandedClusters, lodLevel } = useGraphLOD({
+  const { graphData, toggleCluster, expandedClusters, expandedByDepth, popExpansion, lodLevel } = useGraphLOD({
     baseData: data,
     lodData,
     zoomLevel,
@@ -73,6 +74,24 @@ export const GraphRenderer: React.FC = () => {
     const sourceTag = graphData.source || 'base';
     return buildLayoutCacheKey([layoutCacheSeed, sourceTag, `lod:${lodLevel}`]);
   }, [layoutCacheSeed, graphData.source, lodLevel]);
+
+  const handleEscape = useCallback(() => {
+    if (focusMode !== 'off') {
+      setFocusMode('off');
+      return;
+    }
+    if (expandedClusters.size > 0) {
+      const depths = Array.from(expandedByDepth.keys()).sort((a, b) => a - b);
+      const nextFocusDepth = depths.length > 1 ? depths[depths.length - 2] : null;
+      const nextFocusId = nextFocusDepth !== null ? expandedByDepth.get(nextFocusDepth) : null;
+      setFocusClusterId(nextFocusId || null);
+      popExpansion();
+      return;
+    }
+    if (selectedNode) {
+      setSelectedNode(null);
+    }
+  }, [expandedByDepth, expandedClusters.size, focusMode, popExpansion, selectedNode, setFocusClusterId, setFocusMode, setSelectedNode]);
 
   const rendererProps = useMemo<GraphRendererProps>(() => ({
     data: graphData,
@@ -129,7 +148,8 @@ export const GraphRenderer: React.FC = () => {
       },
       onZoomChange: setZoomLevel,
       onExportStatus: setExportStatus,
-      onExportRequestHandled: () => setExportRequest(null)
+      onExportRequestHandled: () => setExportRequest(null),
+      onEscape: handleEscape
     }
   }), [
     graphData,
@@ -139,6 +159,7 @@ export const GraphRenderer: React.FC = () => {
     focusClusterId,
     drilldownContext,
     expandedClusters,
+    expandedByDepth,
     selectedNode,
     activeColorMode,
     activeGroupingMode,
@@ -164,9 +185,12 @@ export const GraphRenderer: React.FC = () => {
     setSelectedNode,
     setHoveredNode,
     setFocusClusterId,
+    setFocusMode,
     setZoomLevel,
     setExportRequest,
-    setExportStatus
+    setExportStatus,
+    handleEscape,
+    popExpansion
   ]);
 
   return useWebglRenderer ? (

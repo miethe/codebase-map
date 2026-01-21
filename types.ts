@@ -381,6 +381,7 @@ export interface GraphRendererHandlers {
   onZoomChange?: (zoomLevel: number) => void;
   onExportStatus?: (status: ExportStatus) => void;
   onExportRequestHandled?: (requestId: string) => void;
+  onEscape?: () => void;
 }
 
 export interface GraphRendererProps {
