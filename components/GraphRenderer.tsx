@@ -51,7 +51,10 @@ export const GraphRenderer: React.FC = () => {
   const rendererMode = (import.meta.env.VITE_GRAPH_RENDERER || 'svg').toLowerCase();
   const useWebglRenderer = rendererMode === 'webgl';
 
-  const allowLod = Boolean(lodData) && graphView === 'unified' && !activeModule;
+  const allowLod = Boolean(lodData)
+    && graphView === 'unified'
+    && !activeModule
+    && viewMode !== 'hierarchical';
   const { graphData, toggleCluster, expandedClusters, expandedByDepth, popExpansion, lodLevel } = useGraphLOD({
     baseData: data,
     lodData,
