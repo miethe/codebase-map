@@ -6,6 +6,8 @@ export type EdgeDistanceClass = 'local' | 'cross-folder' | 'cross-module' | 'cro
 export type EdgeConfidence = 'static' | 'heuristic' | 'dynamic';
 export type FocusMode = 'off' | 'flow' | 'upstream' | 'downstream' | 'k-hop';
 export type LodMode = 'auto' | 'manual';
+export type DrilldownContext = 'all' | 'same-layer' | 'cluster-only';
+export type ExpandDepthMode = 'step' | 'deep';
 
 export const CLUSTER_KINDS = new Set(['cluster', 'package', 'module', 'folder']);
 
@@ -16,6 +18,7 @@ export interface Node {
   layer?: NodeLayer;
   cluster_id?: string;
   cluster_path?: string[];
+  lodDepth?: number;
   importance?: number;
   size?: number;
   hotness?: number;
@@ -56,6 +59,7 @@ export interface Node {
   totalDegree?: number; // Number of TOTAL connections in raw graph (for visual sizing)
   module?: string; // The architectural cluster this node belongs to
   modulePath?: string[]; // Hierarchical path for drill-down (e.g. ['Frontend', 'Features', 'Maketplace'])
+  canExpand?: boolean; // Indicates a drill-down target with children at deeper levels.
   details?: { // For external dependencies
     version?: string;
     deptype?: string;
@@ -210,6 +214,10 @@ export interface GraphContextType {
   setFocusHopCount: (count: number) => void;
   focusClusterId: string | null;
   setFocusClusterId: (clusterId: string | null) => void;
+  drilldownContext: DrilldownContext;
+  setDrilldownContext: (context: DrilldownContext) => void;
+  expandDepthMode: ExpandDepthMode;
+  setExpandDepthMode: (mode: ExpandDepthMode) => void;
   viewMode: ViewMode;
   setViewMode: (mode: ViewMode) => void;
   graphView: GraphViewMode;
@@ -223,6 +231,14 @@ export interface GraphContextType {
   // Visualization Support
   activeColorMode: string;
   setActiveColorMode: (mode: string) => void;
+  showMultiMembership: boolean;
+  setShowMultiMembership: (enabled: boolean) => void;
+  layeredLodEnabled: boolean;
+  setLayeredLodEnabled: (enabled: boolean) => void;
+  layerSpacing: number;
+  setLayerSpacing: (value: number) => void;
+  showLodPlanes: boolean;
+  setShowLodPlanes: (enabled: boolean) => void;
   enableMotionOptimizations: boolean;
   setEnableMotionOptimizations: (enabled: boolean) => void;
   enablePerformanceMode: boolean;
@@ -333,10 +349,17 @@ export interface GraphRendererViewState {
   focusMode: FocusMode;
   focusHopCount: number;
   focusClusterId: string | null;
+  drilldownContext: DrilldownContext;
+  expandedClusterIds: Set<string>;
   selectedNode: Node | null;
   activeColorMode: string;
+  activeGroupingMode: string;
   groupingData: GroupingData | null;
   gitMetadata: GitMetadata | null;
+  showMultiMembership: boolean;
+  layeredLodEnabled: boolean;
+  layerSpacing: number;
+  showLodPlanes: boolean;
   enableMotionOptimizations: boolean;
   enablePerformanceMode: boolean;
   zoomSpeed: number;
@@ -358,6 +381,7 @@ export interface GraphRendererHandlers {
   onZoomChange?: (zoomLevel: number) => void;
   onExportStatus?: (status: ExportStatus) => void;
   onExportRequestHandled?: (requestId: string) => void;
+  onEscape?: () => void;
 }
 
 export interface GraphRendererProps {

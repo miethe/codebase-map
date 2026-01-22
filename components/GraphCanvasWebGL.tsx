@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three';
 import ForceGraph3D, { ForceGraphMethods } from 'react-force-graph-3d';
 import { forceCollide, forceZ } from 'd3-force-3d';
-import { Node as GraphNode, Edge, GraphRendererProps, NODE_SIZE_CONFIG, EDGE_STYLES, ExportPass, CameraPresetId, ExportRequest } from '../types';
+import { Node as GraphNode, Edge, GraphRendererProps, NODE_SIZE_CONFIG, EDGE_STYLES, ExportPass, CameraPresetId, ExportRequest, DrilldownContext, CLUSTER_KINDS } from '../types';
 
 // Fix for global Node type collision
 type Node = GraphNode;
@@ -48,6 +48,8 @@ const ARCHITECTURE_FLOW: Record<string, number> = {
   migration: 0.95,
   type: 0.5
 };
+
+const LOD_PLANE_COLORS = ['#0f172a', '#1e293b', '#243244', '#334155', '#475569'];
 
 // Helper: Calculate Node Radius using Logarithmic Scale
 const getNodeRadius = (node: Node) => {
@@ -176,6 +178,54 @@ const getBalloonRadius = (node: Node, maxRadius: number) => {
   // Pre-computed layouts might mean we don't even need this force, but keeping it for dynamic modes
   return minRadius + (maxRadius - minRadius) * layer;
 };
+
+const getNodeLodDepth = (node: Node) => {
+  if (typeof node.lodDepth === 'number') return Math.max(0, Math.round(node.lodDepth));
+  if (node.cluster_path?.length) return Math.max(0, node.cluster_path.length - 1);
+  return 0;
+};
+
+const isNodeInCluster = (node: Node, clusterId: string | null) => {
+  if (!clusterId) return false;
+  if (node.id === clusterId) return true;
+  if (node.cluster_id === clusterId) return true;
+  return node.cluster_path?.includes(clusterId) ?? false;
+};
+
+const getFocusClusterDepth = (nodes: Node[], clusterId: string) => {
+  const direct = nodes.find(node => node.id === clusterId || node.cluster_id === clusterId);
+  if (direct) return getNodeLodDepth(direct);
+  for (const node of nodes) {
+    if (!node.cluster_path) continue;
+    const index = node.cluster_path.indexOf(clusterId);
+    if (index >= 0) return index;
+  }
+  return null;
+};
+
+const buildDrilldownContextNodeIds = (
+  nodes: Node[],
+  focusClusterId: string | null,
+  mode: DrilldownContext
+) => {
+  if (!focusClusterId || mode === 'all') return null;
+  const clusterNodeIds = new Set<string>();
+  nodes.forEach(node => {
+    if (isNodeInCluster(node, focusClusterId)) clusterNodeIds.add(node.id);
+  });
+  if (!clusterNodeIds.size) return null;
+  if (mode === 'cluster-only') return clusterNodeIds;
+  const focusDepth = getFocusClusterDepth(nodes, focusClusterId);
+  if (focusDepth === null) return clusterNodeIds;
+  nodes.forEach(node => {
+    if (getNodeLodDepth(node) === focusDepth) clusterNodeIds.add(node.id);
+  });
+  return clusterNodeIds;
+};
+
+const getLodPlaneColor = (depth: number) => LOD_PLANE_COLORS[depth % LOD_PLANE_COLORS.length];
+
+const clampLayerSpacing = (value: number) => Math.min(400, Math.max(80, value));
 
 const getChargeStrength = (node: Node, mode: string) => {
   const degree = node.degree || 0;
@@ -311,13 +361,23 @@ const createModuleLabelSprite = (text: string) => createTextSprite(text, {
 });
 
 const createClusterLabelSprite = (text: string, focused: boolean) => createTextSprite(text, {
-  fontSize: 18,
-  fontWeight: 600,
-  padding: 6,
-  textColor: focused ? '#e0f2fe' : '#cbd5f5',
-  backgroundColor: focused ? 'rgba(14, 165, 233, 0.25)' : 'rgba(15, 23, 42, 0.55)',
+  fontSize: 22,
+  fontWeight: 700,
+  padding: 8,
+  textColor: focused ? '#e0f2fe' : '#d1d5f5',
+  backgroundColor: focused ? 'rgba(14, 165, 233, 0.35)' : 'rgba(15, 23, 42, 0.65)',
   fontFamily: '"Inter", sans-serif',
-  scale: 0.14
+  scale: 0.18
+});
+
+const createLodPlaneLabelSprite = (text: string, color: string) => createTextSprite(text, {
+  fontSize: 18,
+  fontWeight: 700,
+  padding: 6,
+  textColor: '#e2e8f0',
+  backgroundColor: toRgba(color, 0.45),
+  fontFamily: '"Inter", sans-serif',
+  scale: 0.16
 });
 
 const getGlyphIntensity = (node: Node) => {
@@ -376,6 +436,62 @@ const createClusterGlyphSprite = (node: Node) => {
   sprite.scale.set(size * scale, size * scale, 1);
   sprite.position.set(0, -8, 0);
   sprite.renderOrder = 1;
+  return sprite;
+};
+
+const MULTI_MEMBERSHIP_RING_COLOR = '#e2e8f0';
+const MAX_MULTI_MEMBERSHIP_RINGS = 3;
+const EXPANDED_HALO_COLOR = '#facc15';
+
+const createMultiMembershipRingSprite = (radius: number, baseOpacity: number) => {
+  const size = 128;
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const context = canvas.getContext('2d');
+  if (!context) return null;
+  const center = size / 2;
+  const ringRadius = size * 0.35;
+  context.strokeStyle = MULTI_MEMBERSHIP_RING_COLOR;
+  context.lineWidth = 6;
+  context.beginPath();
+  context.arc(center, center, ringRadius, 0, Math.PI * 2);
+  context.stroke();
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.minFilter = THREE.LinearFilter;
+  const material = new THREE.SpriteMaterial({ map: texture, depthWrite: false, transparent: true });
+  material.opacity = baseOpacity;
+  const sprite = new THREE.Sprite(material);
+  sprite.scale.set(radius * 2, radius * 2, 1);
+  sprite.renderOrder = 1;
+  sprite.userData.baseOpacity = baseOpacity;
+  sprite.userData.hoverOpacity = Math.min(1, baseOpacity + 0.35);
+  return sprite;
+};
+
+const createExpandedHaloSprite = (radius: number) => {
+  const size = 128;
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const context = canvas.getContext('2d');
+  if (!context) return null;
+  const center = size / 2;
+  const ringRadius = size * 0.38;
+  context.strokeStyle = EXPANDED_HALO_COLOR;
+  context.lineWidth = 8;
+  context.beginPath();
+  context.arc(center, center, ringRadius, 0, Math.PI * 2);
+  context.stroke();
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.minFilter = THREE.LinearFilter;
+  const material = new THREE.SpriteMaterial({ map: texture, depthWrite: false, transparent: true });
+  material.opacity = 0.7;
+  const sprite = new THREE.Sprite(material);
+  sprite.scale.set(radius * 2.6, radius * 2.6, 1);
+  sprite.renderOrder = 0;
   return sprite;
 };
 
@@ -456,10 +572,17 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     focusMode,
     focusHopCount,
     focusClusterId,
+    drilldownContext,
+    expandedClusterIds,
     viewMode,
     activeColorMode,
+    activeGroupingMode,
     groupingData,
     gitMetadata,
+    showMultiMembership,
+    layeredLodEnabled,
+    layerSpacing,
+    showLodPlanes,
     enableMotionOptimizations,
     enablePerformanceMode,
     zoomSpeed,
@@ -478,7 +601,8 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     onBackgroundClick,
     onZoomChange,
     onExportStatus,
-    onExportRequestHandled
+    onExportRequestHandled,
+    onEscape
   } = handlers;
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -489,13 +613,18 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   const nodeObjectCache = useRef<Map<string, THREE.Object3D>>(new Map());
   const labelCache = useRef<Map<string, THREE.Sprite>>(new Map());
   const glyphCache = useRef<Map<string, THREE.Sprite>>(new Map());
+  const expandedHaloCache = useRef<Map<string, THREE.Sprite>>(new Map());
+  const multiMembershipRingCache = useRef<Map<string, THREE.Sprite[]>>(new Map());
   const overlayGroupRef = useRef<THREE.Group | null>(null);
+  const lodPlaneOverlayRef = useRef<THREE.Group | null>(null);
   const clusterOverlayRef = useRef<THREE.Group | null>(null);
   const moduleOverlayRef = useRef<THREE.Group | null>(null);
   const headerOverlayRef = useRef<THREE.Group | null>(null);
-  const clusterOverlayCache = useRef<Map<string, { box: THREE.LineLoop; label: THREE.Sprite; focused: boolean }>>(new Map());
+  const lodPlaneOverlayCache = useRef<Map<number, { plane: THREE.Mesh; label: THREE.Sprite }>>(new Map());
+  const clusterOverlayCache = useRef<Map<string, { box: THREE.LineSegments; label: THREE.Sprite; focused: boolean }>>(new Map());
   const moduleOverlayCache = useRef<Map<string, { box: THREE.LineLoop; label: THREE.Sprite }>>(new Map());
   const headerLabelCache = useRef<THREE.Sprite[]>([]);
+  const lodPlaneTickRef = useRef<number>(0);
   const clusterOverlayTickRef = useRef<number>(0);
   const overlayTickRef = useRef<number>(0);
   const interactionTimeoutRef = useRef<number | null>(null);
@@ -529,6 +658,8 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   const [labelBucket, setLabelBucket] = useState(() => getLabelBucketForZoom(zoomLevel));
   const labelBucketRef = useRef(labelBucket);
   const [hoveredEdge, setHoveredEdge] = useState<Edge | null>(null);
+  const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
+  const previousHoveredNodeIdRef = useRef<string | null>(null);
   const [pointerPosition, setPointerPosition] = useState({ x: 0, y: 0 });
   const [layoutCacheVersion, setLayoutCacheVersion] = useState(0);
   const lastLayoutCacheKeyRef = useRef<string | null>(null);
@@ -556,6 +687,11 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       y: event.clientY - bounds.top
     });
   }, []);
+
+  const handleNodeHover = useCallback((node: Node | null) => {
+    setHoveredNodeId(node?.id ?? null);
+    onNodeHover(node);
+  }, [onNodeHover]);
 
   useEffect(() => {
     exportRenderStateRef.current = exportRenderState;
@@ -940,6 +1076,39 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     return getFocusNodeIds(highlightMode, selectedNode.id, data.edges, focusHopCount);
   }, [selectedNode?.id, data.edges, highlightMode, focusHopCount]);
   const focusActive = Boolean(selectedNode && focusMode !== 'off' && highlightNodeIds);
+  const layeringActive = layeredLodEnabled && viewMode !== 'structured';
+  const effectiveLayerSpacing = clampLayerSpacing(layerSpacing);
+  const isExpandedNode = useCallback((node: Node) => {
+    return expandedClusterIds?.has(node.id) ?? false;
+  }, [expandedClusterIds]);
+  const multiMembershipData = useMemo(() => {
+    if (!groupingData) {
+      return { map: new Map<string, string[]>(), activeSet: null };
+    }
+    const activeSet = groupingData.group_sets?.find(set => set.id === activeGroupingMode) || null;
+    if (!activeSet?.multi_membership) {
+      return { map: new Map<string, string[]>(), activeSet };
+    }
+    const map = new Map<string, string[]>();
+    groupingData.groups
+      .filter(group => group.group_set === activeGroupingMode)
+      .forEach(group => {
+        group.nodes.forEach(nodeId => {
+          const existing = map.get(nodeId);
+          if (existing) {
+            if (!existing.includes(group.label)) {
+              existing.push(group.label);
+            }
+          } else {
+            map.set(nodeId, [group.label]);
+          }
+        });
+      });
+    return { map, activeSet };
+  }, [groupingData, activeGroupingMode]);
+  const multiMembershipMap = multiMembershipData.map;
+  const multiMembershipActive = Boolean(showMultiMembership && multiMembershipData.activeSet?.multi_membership);
+  const multiMembershipLabel = multiMembershipData.activeSet?.label || 'Groups';
 
   const canUseLayoutCache = Boolean(layoutCacheKey) && !focusActive;
   const persistLayoutCache = useCallback((force = false) => {
@@ -1325,21 +1494,33 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   const ensureOverlayGroups = useCallback(() => {
     const graph = graphRef.current;
     if (!graph) return null;
-    if (overlayGroupRef.current) return overlayGroupRef.current;
+    if (overlayGroupRef.current) {
+      if (!lodPlaneOverlayRef.current) {
+        const lodPlaneGroup = new THREE.Group();
+        lodPlaneGroup.name = 'lod-plane-overlays';
+        overlayGroupRef.current.add(lodPlaneGroup);
+        lodPlaneOverlayRef.current = lodPlaneGroup;
+      }
+      return overlayGroupRef.current;
+    }
     const scene = graph.scene();
     const overlayGroup = new THREE.Group();
     overlayGroup.name = 'graph-overlays';
+    const lodPlaneGroup = new THREE.Group();
+    lodPlaneGroup.name = 'lod-plane-overlays';
     const clusterGroup = new THREE.Group();
     clusterGroup.name = 'cluster-overlays';
     const moduleGroup = new THREE.Group();
     moduleGroup.name = 'module-overlays';
     const headerGroup = new THREE.Group();
     headerGroup.name = 'header-overlays';
+    overlayGroup.add(lodPlaneGroup);
     overlayGroup.add(clusterGroup);
     overlayGroup.add(moduleGroup);
     overlayGroup.add(headerGroup);
     scene.add(overlayGroup);
     overlayGroupRef.current = overlayGroup;
+    lodPlaneOverlayRef.current = lodPlaneGroup;
     clusterOverlayRef.current = clusterGroup;
     moduleOverlayRef.current = moduleGroup;
     headerOverlayRef.current = headerGroup;
@@ -1352,10 +1533,24 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     material.dispose();
   };
 
-  const disposeLine = (line: THREE.LineLoop) => {
+  const disposeLine = (line: THREE.Line) => {
     line.geometry.dispose();
-    const material = line.material as THREE.Material;
-    material.dispose();
+    const material = line.material;
+    if (Array.isArray(material)) {
+      material.forEach(item => item.dispose());
+    } else {
+      material.dispose();
+    }
+  };
+
+  const disposeMesh = (mesh: THREE.Mesh) => {
+    mesh.geometry.dispose();
+    const material = mesh.material;
+    if (Array.isArray(material)) {
+      material.forEach(item => item.dispose());
+    } else {
+      material.dispose();
+    }
   };
 
   const updateStructuredHeaders = useCallback(() => {
@@ -1386,6 +1581,94 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       graphRef.current?.refresh();
     }
   }, [dimensions.width, dimensions.height, ensureOverlayGroups, viewMode]);
+
+  const updateLodPlanes = useCallback(() => {
+    ensureOverlayGroups();
+    const planeGroup = lodPlaneOverlayRef.current;
+    if (!planeGroup) return;
+    const shouldShow = layeringActive && showLodPlanes;
+    planeGroup.visible = shouldShow;
+    if (!shouldShow) return;
+    const dataSnapshot = graphDataRef.current;
+    if (!dataSnapshot) return;
+
+    const depthSet = new Set<number>();
+    dataSnapshot.nodes.forEach(node => {
+      depthSet.add(getNodeLodDepth(node));
+    });
+    const depths = Array.from(depthSet).sort((a, b) => a - b);
+    if (!depths.length) {
+      planeGroup.visible = false;
+      return;
+    }
+
+    const bounds = getGraphBounds();
+    if (!bounds) return;
+    const padding = Math.max(140, Math.min(bounds.size.x, bounds.size.y) * 0.25);
+    const width = Math.max(200, bounds.size.x + padding);
+    const height = Math.max(200, bounds.size.y + padding);
+
+    const activeDepths = new Set(depths);
+    lodPlaneOverlayCache.current.forEach((entry, depth) => {
+      if (activeDepths.has(depth)) return;
+      planeGroup.remove(entry.plane);
+      planeGroup.remove(entry.label);
+      disposeMesh(entry.plane);
+      disposeSprite(entry.label);
+      lodPlaneOverlayCache.current.delete(depth);
+    });
+
+    depths.forEach(depth => {
+      const planeColor = getLodPlaneColor(depth);
+      const labelText = `LOD${depth}`;
+      let entry = lodPlaneOverlayCache.current.get(depth);
+      if (!entry) {
+        const geometry = new THREE.PlaneGeometry(1, 1);
+        const material = new THREE.MeshBasicMaterial({
+          color: new THREE.Color(planeColor),
+          transparent: true,
+          opacity: 0.08,
+          depthWrite: false,
+          side: THREE.DoubleSide
+        });
+        const plane = new THREE.Mesh(geometry, material);
+        plane.renderOrder = -1;
+        const label = createLodPlaneLabelSprite(labelText, planeColor);
+        label.renderOrder = 2;
+        label.userData.text = labelText;
+        label.userData.color = planeColor;
+        planeGroup.add(plane);
+        planeGroup.add(label);
+        entry = { plane, label };
+        lodPlaneOverlayCache.current.set(depth, entry);
+      } else if (entry.label.userData.text !== labelText || entry.label.userData.color !== planeColor) {
+        planeGroup.remove(entry.label);
+        disposeSprite(entry.label);
+        const label = createLodPlaneLabelSprite(labelText, planeColor);
+        label.renderOrder = 2;
+        label.userData.text = labelText;
+        label.userData.color = planeColor;
+        planeGroup.add(label);
+        entry.label = label;
+      }
+
+      const material = entry.plane.material as THREE.MeshBasicMaterial;
+      material.color.set(planeColor);
+      material.opacity = 0.08;
+
+      const planeZ = -depth * effectiveLayerSpacing;
+      entry.plane.position.set(bounds.center.x, bounds.center.y, planeZ);
+      entry.plane.scale.set(width, height, 1);
+      const labelOffsetX = -(width * 0.5) + 24;
+      const labelOffsetY = (height * 0.5) - 24;
+      entry.label.position.set(bounds.center.x + labelOffsetX, bounds.center.y + labelOffsetY, planeZ + 8);
+      entry.label.material.opacity = 0.9;
+    });
+
+    if (animationPausedRef.current) {
+      graphRef.current?.refresh();
+    }
+  }, [ensureOverlayGroups, effectiveLayerSpacing, getGraphBounds, layeringActive, showLodPlanes]);
 
   const updateClusterOverlays = useCallback(() => {
     ensureOverlayGroups();
@@ -1429,32 +1712,54 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     clusterIds.forEach(clusterId => {
       const clusterNode = clusterNodeMap.get(clusterId);
       const members = membersByCluster.get(clusterId) || [];
+      if (members.length === 0) {
+        const existing = clusterOverlayCache.current.get(clusterId);
+        if (existing) {
+          clusterGroup.remove(existing.box);
+          clusterGroup.remove(existing.label);
+          disposeLine(existing.box);
+          disposeSprite(existing.label);
+          clusterOverlayCache.current.delete(clusterId);
+        }
+        return;
+      }
       let minX = Infinity;
       let minY = Infinity;
+      let minZ = Infinity;
       let maxX = -Infinity;
       let maxY = -Infinity;
+      let maxZ = -Infinity;
       members.forEach(node => {
         if (node.x === undefined || node.y === undefined) return;
+        const z = node.z ?? 0;
         minX = Math.min(minX, node.x);
         minY = Math.min(minY, node.y);
+        minZ = Math.min(minZ, z);
         maxX = Math.max(maxX, node.x);
         maxY = Math.max(maxY, node.y);
+        maxZ = Math.max(maxZ, z);
       });
 
       const memberCount = (clusterNode?.member_count ?? members.length) || 1;
       const pad = 24 + Math.min(120, Math.log1p(memberCount) * 14);
+      const padZ = Math.max(18, Math.min(80, pad * 0.6));
 
       if (minX === Infinity || minY === Infinity || maxX === -Infinity || maxY === -Infinity) {
         if (clusterNode?.x === undefined || clusterNode?.y === undefined) return;
+        const fallbackZ = clusterNode.z ?? 0;
         minX = clusterNode.x - pad;
         maxX = clusterNode.x + pad;
         minY = clusterNode.y - pad;
         maxY = clusterNode.y + pad;
+        minZ = fallbackZ - padZ;
+        maxZ = fallbackZ + padZ;
       } else {
         minX -= pad;
         minY -= pad;
         maxX += pad;
         maxY += pad;
+        minZ -= padZ;
+        maxZ += padZ;
       }
 
       const focused = focusClusterId === clusterId;
@@ -1470,17 +1775,18 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       let entry = clusterOverlayCache.current.get(clusterId);
       if (!entry) {
         const geometry = new THREE.BufferGeometry();
-        const positions = new Float32Array(15);
+        const positions = new Float32Array(72);
         geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
         const material = new THREE.LineBasicMaterial({
           color: strokeColor,
           transparent: true,
-          opacity: lineOpacity
+          opacity: lineOpacity,
+          depthWrite: false
         });
-        const box = new THREE.LineLoop(geometry, material);
+        const box = new THREE.LineSegments(geometry, material);
         box.renderOrder = 1;
         const label = createClusterLabelSprite(labelText, focused);
-        label.renderOrder = 2;
+        label.renderOrder = 3;
         label.userData.text = labelText;
         clusterGroup.add(box);
         clusterGroup.add(label);
@@ -1505,16 +1811,25 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       const geometry = entry.box.geometry as THREE.BufferGeometry;
       const attr = geometry.getAttribute('position') as THREE.BufferAttribute;
       const array = attr.array as Float32Array;
-      array[0] = minX; array[1] = minY; array[2] = 0;
-      array[3] = maxX; array[4] = minY; array[5] = 0;
-      array[6] = maxX; array[7] = maxY; array[8] = 0;
-      array[9] = minX; array[10] = maxY; array[11] = 0;
-      array[12] = minX; array[13] = minY; array[14] = 0;
+      array.set([
+        minX, minY, minZ, maxX, minY, minZ,
+        maxX, minY, minZ, maxX, maxY, minZ,
+        maxX, maxY, minZ, minX, maxY, minZ,
+        minX, maxY, minZ, minX, minY, minZ,
+        minX, minY, maxZ, maxX, minY, maxZ,
+        maxX, minY, maxZ, maxX, maxY, maxZ,
+        maxX, maxY, maxZ, minX, maxY, maxZ,
+        minX, maxY, maxZ, minX, minY, maxZ,
+        minX, minY, minZ, minX, minY, maxZ,
+        maxX, minY, minZ, maxX, minY, maxZ,
+        maxX, maxY, minZ, maxX, maxY, maxZ,
+        minX, maxY, minZ, minX, maxY, maxZ
+      ]);
       attr.needsUpdate = true;
       geometry.computeBoundingSphere();
 
       entry.label.material.opacity = labelOpacity;
-      entry.label.position.set(minX + 12, minY + 14, 0);
+      entry.label.position.set(minX + 12, maxY + 16, maxZ + 10);
     });
 
     if (animationPausedRef.current) {
@@ -1632,6 +1947,10 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       labelTickRef.current = now;
       scheduleLabelVisibilityUpdate();
     }
+    if (now - lodPlaneTickRef.current > 480) {
+      lodPlaneTickRef.current = now;
+      updateLodPlanes();
+    }
     if (now - clusterOverlayTickRef.current > 240) {
       clusterOverlayTickRef.current = now;
       updateClusterOverlays();
@@ -1657,7 +1976,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       });
       persistLayoutCache();
     }
-  }, [persistLayoutCache, scheduleLabelVisibilityUpdate, updateClusterOverlays, updateModuleOverlays, viewMode]);
+  }, [persistLayoutCache, scheduleLabelVisibilityUpdate, updateClusterOverlays, updateLodPlanes, updateModuleOverlays, viewMode]);
 
   const handleEngineStop = useCallback(() => {
     scheduleLabelVisibilityUpdate();
@@ -1678,9 +1997,10 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     if (viewMode === 'hierarchical') {
       updateModuleOverlays();
     }
+    updateLodPlanes();
     updateClusterOverlays();
     pauseAnimation();
-  }, [pauseAnimation, persistLayoutCache, scheduleLabelVisibilityUpdate, updateClusterOverlays, updateModuleOverlays, viewMode]);
+  }, [pauseAnimation, persistLayoutCache, scheduleLabelVisibilityUpdate, updateClusterOverlays, updateLodPlanes, updateModuleOverlays, viewMode]);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -1730,6 +2050,11 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       if (overlayGroupRef.current) {
         graph.scene().remove(overlayGroupRef.current);
       }
+      lodPlaneOverlayCache.current.forEach(entry => {
+        disposeMesh(entry.plane);
+        disposeSprite(entry.label);
+      });
+      lodPlaneOverlayCache.current.clear();
       clusterOverlayCache.current.forEach(entry => {
         disposeLine(entry.box);
         disposeSprite(entry.label);
@@ -1745,6 +2070,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       });
       headerLabelCache.current = [];
       overlayGroupRef.current = null;
+      lodPlaneOverlayRef.current = null;
       clusterOverlayRef.current = null;
       moduleOverlayRef.current = null;
       headerOverlayRef.current = null;
@@ -1755,8 +2081,14 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       }
       labelCache.current.forEach(sprite => disposeSprite(sprite));
       glyphCache.current.forEach(sprite => disposeSprite(sprite));
+      expandedHaloCache.current.forEach(sprite => disposeSprite(sprite));
+      multiMembershipRingCache.current.forEach(rings => {
+        rings.forEach(sprite => disposeSprite(sprite));
+      });
       labelCache.current.clear();
       glyphCache.current.clear();
+      expandedHaloCache.current.clear();
+      multiMembershipRingCache.current.clear();
       nodeObjectCache.current.clear();
       nodePositions.current.clear();
     };
@@ -1788,12 +2120,16 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        onNodeSelect(null);
+        if (onEscape) {
+          onEscape();
+        } else {
+          onNodeSelect(null);
+        }
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [onNodeSelect]);
+  }, [onEscape, onNodeSelect]);
 
   const visibleData = useMemo(() => {
     let nodes = data.nodes.map(n => {
@@ -1827,8 +2163,16 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       edges = edges.filter(e => nodeSet.has(e.from) && nodeSet.has(e.to));
     }
 
+    if (!focusActive) {
+      const drilldownNodeIds = buildDrilldownContextNodeIds(nodes, focusClusterId, drilldownContext);
+      if (drilldownNodeIds) {
+        nodes = nodes.filter(node => drilldownNodeIds.has(node.id));
+        edges = edges.filter(edge => drilldownNodeIds.has(edge.from) && drilldownNodeIds.has(edge.to));
+      }
+    }
+
     return { nodes, edges };
-  }, [data, focusMode, focusActive, selectedNode?.id, highlightNodeIds, layoutCacheVersion]);
+  }, [data, focusMode, focusActive, selectedNode?.id, highlightNodeIds, layoutCacheVersion, focusClusterId, drilldownContext]);
 
   const moduleCenters = useMemo(() => {
     if (viewMode !== 'hierarchical') return null;
@@ -1886,6 +2230,15 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       });
     }
 
+    if (layeringActive) {
+      nodes.forEach(node => {
+        const targetZ = -getNodeLodDepth(node) * effectiveLayerSpacing;
+        node.fz = targetZ;
+        if (node.z === undefined || Number.isNaN(node.z)) node.z = targetZ;
+        node.vz = 0;
+      });
+    }
+
     return {
       nodes,
       links: edges.map(e => ({
@@ -1894,11 +2247,15 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
         target: e.to
       }))
     };
-  }, [visibleData, viewMode, dimensions.width, dimensions.height, moduleCenters]);
+  }, [visibleData, viewMode, dimensions.width, dimensions.height, moduleCenters, layeringActive, effectiveLayerSpacing]);
 
   useEffect(() => {
     graphDataRef.current = graphData;
   }, [graphData]);
+
+  useEffect(() => {
+    updateLodPlanes();
+  }, [graphData.nodes.length, graphData.links.length, updateLodPlanes]);
 
   useEffect(() => {
     setHoveredEdge(null);
@@ -2025,14 +2382,26 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
         graph.d3Force('balloon', null);
         graph.d3Force('x', null);
         graph.d3Force('y', null);
-        graph.d3Force('z', forceZ<Node>().z(0).strength(0.05));
+        if (layeringActive) {
+          graph.d3Force('z', forceZ<Node>()
+            .z((node: Node) => -getNodeLodDepth(node) * effectiveLayerSpacing)
+            .strength(0.08));
+        } else {
+          graph.d3Force('z', forceZ<Node>().z(0).strength(0.05));
+        }
       } else if (viewMode === 'force' && dimensions.width && dimensions.height) {
         graph.d3Force('module', null);
         const maxRadius = Math.min(dimensions.width, dimensions.height) * 0.45;
         graph.d3Force('balloon', createBalloonForce(maxRadius, 0.12));
         graph.d3Force('x', null);
         graph.d3Force('y', null);
-        graph.d3Force('z', null);
+        if (layeringActive) {
+          graph.d3Force('z', forceZ<Node>()
+            .z((node: Node) => -getNodeLodDepth(node) * effectiveLayerSpacing)
+            .strength(0.06));
+        } else {
+          graph.d3Force('z', null);
+        }
       } else {
         graph.d3Force('module', null);
         graph.d3Force('balloon', null);
@@ -2056,6 +2425,8 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     dimensions.height,
     graphData.nodes.length,
     graphData.links.length,
+    layeringActive,
+    effectiveLayerSpacing,
     requestReheat
   ]);
 
@@ -2108,21 +2479,56 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   useEffect(() => {
     labelCache.current.forEach(sprite => disposeSprite(sprite));
     glyphCache.current.forEach(sprite => disposeSprite(sprite));
+    expandedHaloCache.current.forEach(sprite => disposeSprite(sprite));
+    multiMembershipRingCache.current.forEach(rings => {
+      rings.forEach(sprite => disposeSprite(sprite));
+    });
     labelCache.current.clear();
     glyphCache.current.clear();
+    expandedHaloCache.current.clear();
+    multiMembershipRingCache.current.clear();
     nodeObjectCache.current.clear();
     graphRef.current?.refresh();
     scheduleLabelVisibilityUpdate();
-  }, [graphData.nodes.length, enablePerformanceMode, scheduleLabelVisibilityUpdate]);
+  }, [
+    graphData.nodes.length,
+    enablePerformanceMode,
+    scheduleLabelVisibilityUpdate,
+    activeGroupingMode,
+    multiMembershipActive,
+    groupingData?.groups?.length
+  ]);
 
   const nodeVal = useCallback((node: Node) => {
     const base = getNodeRadius(node);
     return selectedNode?.id === node.id ? base + 3 : base;
   }, [selectedNode?.id]);
 
-  const nodeTooltip = useCallback((node: Node) => (
-    `Type: ${node.type}\nID: ${node.id}\nVisible Connections: ${node.degree || 0}\nTotal Connections: ${node.totalDegree || 0}`
-  ), []);
+  const nodeDepthMap = useMemo(() => {
+    const map = new Map<string, number>();
+    graphData.nodes.forEach(node => {
+      map.set(node.id, getNodeLodDepth(node));
+    });
+    return map;
+  }, [graphData.nodes]);
+
+  const isCrossLayerEdge = useCallback((link: Edge) => {
+    if (!layeringActive) return false;
+    const srcId = getLinkEndpointId(link.source) || link.from;
+    const tgtId = getLinkEndpointId(link.target) || link.to;
+    const srcDepth = nodeDepthMap.get(srcId || '') ?? 0;
+    const tgtDepth = nodeDepthMap.get(tgtId || '') ?? 0;
+    return srcDepth !== tgtDepth;
+  }, [layeringActive, nodeDepthMap]);
+
+  const nodeTooltip = useCallback((node: Node) => {
+    const base = `Type: ${node.type}\nID: ${node.id}\nVisible Connections: ${node.degree || 0}\nTotal Connections: ${node.totalDegree || 0}`;
+    const memberships = multiMembershipMap.get(node.id);
+    if (memberships && memberships.length > 1) {
+      return `${base}\n${multiMembershipLabel}: ${memberships.join(', ')}`;
+    }
+    return base;
+  }, [multiMembershipLabel, multiMembershipMap]);
 
   const linkTooltip = useCallback((link: Edge) => {
     if (link.aggregated) {
@@ -2135,33 +2541,64 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   const nodeColor = useCallback((node: Node) => {
     const colorMode = exportRenderState?.colorMode || activeColorMode;
     const base = getNodeColor(node, colorMode, groupingData, gitMetadata);
-    if (!selectedNode || focusMode !== 'off') return base;
-    if (selectedNode.kind === 'cluster') return base;
-    if (!highlightNodeIds) return base;
-    return highlightNodeIds.has(node.id) ? base : toRgba(base, 0.12);
-  }, [activeColorMode, groupingData, gitMetadata, selectedNode, focusMode, highlightNodeIds, exportRenderState]);
+    let alphaOverride: number | null = null;
+    if (selectedNode && focusMode === 'off' && selectedNode.kind !== 'cluster' && highlightNodeIds) {
+      if (!highlightNodeIds.has(node.id)) {
+        alphaOverride = 0.12;
+      }
+    }
+    if (isExpandedNode(node) && (!selectedNode || selectedNode.id !== node.id)) {
+      alphaOverride = alphaOverride === null ? 0.45 : Math.min(alphaOverride, 0.45);
+    }
+    return alphaOverride === null ? base : toRgba(base, alphaOverride);
+  }, [activeColorMode, groupingData, gitMetadata, selectedNode, focusMode, highlightNodeIds, exportRenderState, isExpandedNode]);
 
   const linkColor = useCallback((link: Edge) => {
     const base = EDGE_STYLES[link.type]?.stroke || EDGE_STYLES.default.stroke;
+    let alpha = 0.4;
     if (exportRenderState?.showLinks && !exportRenderState.highlightOnly) {
-      return toRgba(base, 0.75);
+      alpha = 0.75;
+    } else if (!selectedNode) {
+      alpha = 0.4;
+    } else if (focusMode !== 'off') {
+      alpha = 0.85;
+    } else if (selectedNode.kind === 'cluster') {
+      alpha = 0.4;
+    } else {
+      const srcId = getLinkEndpointId(link.source);
+      const tgtId = getLinkEndpointId(link.target);
+      if (highlightNodeIds?.has(srcId || '') && highlightNodeIds?.has(tgtId || '')) {
+        alpha = 0.85;
+      } else {
+        alpha = 0.05;
+      }
     }
-    if (!selectedNode) return toRgba(base, 0.4);
-    if (focusMode !== 'off') return toRgba(base, 0.85);
-    if (selectedNode.kind === 'cluster') return toRgba(base, 0.4);
-    const srcId = getLinkEndpointId(link.source);
-    const tgtId = getLinkEndpointId(link.target);
-    if (highlightNodeIds?.has(srcId || '') && highlightNodeIds?.has(tgtId || '')) {
-      return toRgba(base, 0.85);
+
+    if (isCrossLayerEdge(link)) {
+      alpha = Math.min(1, alpha + 0.2);
     }
-    return toRgba(base, 0.05);
-  }, [selectedNode, focusMode, highlightNodeIds, exportRenderState]);
+
+    return toRgba(base, alpha);
+  }, [selectedNode, focusMode, highlightNodeIds, exportRenderState, isCrossLayerEdge]);
 
   const nodeThreeObject = useCallback((node: Node) => {
     const cached = nodeObjectCache.current.get(node.id);
     if (cached) {
       const labelSprite = labelCache.current.get(node.id);
       if (labelSprite) labelSprite.visible = true;
+      const halo = expandedHaloCache.current.get(node.id);
+      const isExpanded = isExpandedNode(node);
+      if (halo) {
+        halo.visible = isExpanded;
+      } else if (isExpanded) {
+        const radius = getNodeRadius(node) + 10;
+        const haloSprite = createExpandedHaloSprite(radius);
+        if (haloSprite) {
+          haloSprite.visible = true;
+          expandedHaloCache.current.set(node.id, haloSprite);
+          (cached as THREE.Group).add(haloSprite);
+        }
+      }
       return cached;
     }
     const group = new THREE.Group();
@@ -2170,7 +2607,18 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     labelCache.current.set(node.id, labelSprite);
     group.add(labelSprite);
 
-    if (node.kind === 'cluster') {
+    if (isExpandedNode(node)) {
+      const radius = getNodeRadius(node) + 10;
+      const haloSprite = createExpandedHaloSprite(radius);
+      if (haloSprite) {
+        haloSprite.visible = true;
+        expandedHaloCache.current.set(node.id, haloSprite);
+        group.add(haloSprite);
+      }
+    }
+
+    const showExpandGlyph = Boolean(node.canExpand ?? (node.kind && CLUSTER_KINDS.has(node.kind)));
+    if (showExpandGlyph) {
       const glyphSprite = createClusterGlyphSprite(node);
       if (glyphSprite) {
         glyphSprite.visible = true;
@@ -2179,9 +2627,70 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       }
     }
 
+    if (multiMembershipActive) {
+      const memberships = multiMembershipMap.get(node.id);
+      if (memberships && memberships.length > 1) {
+        const ringCount = Math.min(MAX_MULTI_MEMBERSHIP_RINGS, memberships.length);
+        const baseRadius = getNodeRadius(node);
+        const ringStart = baseRadius + 6;
+        const ringStep = 3.5;
+        const rings: THREE.Sprite[] = [];
+        for (let i = 0; i < ringCount; i += 1) {
+          const radius = ringStart + (i * ringStep);
+          const opacity = Math.max(0.12, 0.24 - (i * 0.04));
+          const ringSprite = createMultiMembershipRingSprite(radius, opacity);
+          if (!ringSprite) continue;
+          rings.push(ringSprite);
+          group.add(ringSprite);
+        }
+        if (rings.length) {
+          multiMembershipRingCache.current.set(node.id, rings);
+        }
+      }
+    }
+
     nodeObjectCache.current.set(node.id, group);
     return group;
+  }, [multiMembershipActive, multiMembershipMap, isExpandedNode]);
+
+  const updateMultiMembershipHover = useCallback((nodeId: string, hovered: boolean) => {
+    const rings = multiMembershipRingCache.current.get(nodeId);
+    if (!rings || !rings.length) return;
+    rings.forEach(sprite => {
+      const material = sprite.material as THREE.SpriteMaterial;
+      const baseOpacity = sprite.userData.baseOpacity ?? material.opacity ?? 1;
+      const hoverOpacity = sprite.userData.hoverOpacity ?? Math.min(1, baseOpacity + 0.35);
+      material.opacity = hovered ? hoverOpacity : baseOpacity;
+      material.needsUpdate = true;
+    });
+    if (animationPausedRef.current) {
+      graphRef.current?.refresh();
+    }
   }, []);
+
+  useEffect(() => {
+    if (!multiMembershipActive) {
+      previousHoveredNodeIdRef.current = null;
+      return;
+    }
+    const prev = previousHoveredNodeIdRef.current;
+    if (prev && prev !== hoveredNodeId) {
+      updateMultiMembershipHover(prev, false);
+    }
+    if (hoveredNodeId) {
+      updateMultiMembershipHover(hoveredNodeId, true);
+    }
+    previousHoveredNodeIdRef.current = hoveredNodeId;
+  }, [hoveredNodeId, multiMembershipActive, updateMultiMembershipHover]);
+
+  useEffect(() => {
+    expandedHaloCache.current.forEach((sprite, nodeId) => {
+      sprite.visible = expandedClusterIds?.has(nodeId) ?? false;
+    });
+    if (animationPausedRef.current) {
+      graphRef.current?.refresh();
+    }
+  }, [expandedClusterIds]);
 
   const reducedDetail = enableMotionOptimizations && reduceDetail;
   const exporting = Boolean(exportRenderState);
@@ -2212,8 +2721,9 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     const dashScale = isDashedLink(link) ? 0.6 : 1;
     const weight = link.weight || 1;
     const weightScale = Math.min(3, 1 + Math.log1p(weight) * 0.6);
-    return base * linkWidthScale * dashScale * weightScale;
-  }, [linkWidthScale]);
+    const crossLayerBoost = isCrossLayerEdge(link) ? 1.3 : 1;
+    return base * linkWidthScale * dashScale * weightScale * crossLayerBoost;
+  }, [linkWidthScale, isCrossLayerEdge]);
   const linkDirectionalParticles = useCallback((link: Edge) => {
     if (aggressiveDetail) return 0;
     if (!isDashedLink(link)) return 0;
@@ -2227,12 +2737,20 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   }, [aggressiveDetail, reducedDetail]);
   const arrowLength = aggressiveDetail ? 0 : reducedDetail ? 1.5 : 3;
   const isHierarchical = viewMode === 'hierarchical';
+  const useTwoDimensional = viewMode === 'hierarchical' && !layeringActive;
   const cooldownTicks = isHierarchical ? 180 : enablePerformanceMode ? 140 : undefined;
   const cooldownTime = isHierarchical ? 8000 : enablePerformanceMode ? 6000 : undefined;
   const alphaDecay = isHierarchical ? 0.05 : enablePerformanceMode ? 0.035 : 0.0228;
   const velocityDecay = isHierarchical ? 0.6 : enablePerformanceMode ? 0.5 : 0.4;
   const alphaMin = isHierarchical ? 0.02 : enablePerformanceMode ? 0.004 : 0;
-  const linkCurvature = aggressiveDetail ? 0 : viewMode === 'hierarchical' ? 0.25 : 0;
+  const linkCurvature = useCallback((link: Edge) => {
+    if (aggressiveDetail) return 0;
+    const base = viewMode === 'hierarchical' ? 0.25 : 0;
+    if (isCrossLayerEdge(link)) {
+      return Math.min(0.45, base + 0.12);
+    }
+    return base;
+  }, [aggressiveDetail, viewMode, isCrossLayerEdge]);
 
   const hasRenderableData = graphData.nodes.length > 0 || graphData.links.length > 0;
 
@@ -2280,7 +2798,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
             const dragged = node as Node;
             dragged.fx = dragged.x;
             dragged.fy = dragged.y;
-            dragged.fz = dragged.z ?? 0;
+            dragged.fz = layeringActive ? -getNodeLodDepth(dragged) * effectiveLayerSpacing : (dragged.z ?? 0);
             requestReheat();
             registerInteraction(1.2);
           }}
@@ -2288,11 +2806,11 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
             const dragged = node as Node;
             dragged.fx = dragged.x;
             dragged.fy = dragged.y;
-            dragged.fz = dragged.z ?? 0;
+            dragged.fz = layeringActive ? -getNodeLodDepth(dragged) * effectiveLayerSpacing : (dragged.z ?? 0);
             requestReheat();
             registerInteraction(0.2);
           }}
-          onNodeHover={node => onNodeHover((node as Node) || null)}
+          onNodeHover={node => handleNodeHover((node as Node) || null)}
           onNodeClick={(node) => {
             const clicked = node as Node;
             const now = performance.now();
@@ -2323,7 +2841,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
             if (onBackgroundClick) onBackgroundClick();
             else onNodeSelect(null);
           }}
-          numDimensions={viewMode === 'hierarchical' ? 2 : 3}
+          numDimensions={useTwoDimensional ? 2 : 3}
         />
       )}
       {edgePreview && edgePreviewPosition && (

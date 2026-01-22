@@ -1,7 +1,7 @@
 
 import React, { useContext, useMemo, useState } from 'react';
 import { GraphContext } from '../App';
-import { NODE_COLORS, EDGE_STYLES, Node, Edge, ExportPass, CameraPresetId, FocusMode } from '../types';
+import { NODE_COLORS, EDGE_STYLES, Node, Edge, ExportPass, CameraPresetId, FocusMode, DrilldownContext, ExpandDepthMode } from '../types';
 import {
     Search, Filter, Layers, Zap, Database, Globe, Box, Info,
     GitGraph, Grid, Server, Terminal, FileCode, GitBranch,
@@ -138,7 +138,12 @@ export const Sidebar: React.FC = () => {
         setFocusMode,
         focusHopCount,
         setFocusHopCount,
+        focusClusterId,
         setFocusClusterId,
+        drilldownContext,
+        setDrilldownContext,
+        expandDepthMode,
+        setExpandDepthMode,
         viewMode,
         setViewMode,
         graphView,
@@ -150,6 +155,14 @@ export const Sidebar: React.FC = () => {
         setActiveGroupingMode,
         activeColorMode,
         setActiveColorMode,
+        showMultiMembership,
+        setShowMultiMembership,
+        layeredLodEnabled,
+        setLayeredLodEnabled,
+        layerSpacing,
+        setLayerSpacing,
+        showLodPlanes,
+        setShowLodPlanes,
         gitMetadata,
         backboneEdgeDensity,
         setBackboneEdgeDensity,
@@ -169,6 +182,10 @@ export const Sidebar: React.FC = () => {
     const [exportSeededLayout, setExportSeededLayout] = useState(true);
     const [exportSeed, setExportSeed] = useState('v1');
     const [exportPasses, setExportPasses] = useState<ExportPass[]>(['nodes', 'edges', 'labels', 'highlights', 'heatmap']);
+    const activeGroupingSet = useMemo(() => {
+        return groupingData?.group_sets?.find((set: any) => set.id === activeGroupingMode) || null;
+    }, [groupingData, activeGroupingMode]);
+    const multiMembershipAvailable = Boolean(activeGroupingSet?.multi_membership);
     const normalizedSearchTerm = searchTerm.trim().toLowerCase();
     const searchResults = useMemo(() => {
         if (!normalizedSearchTerm) return [];
@@ -411,6 +428,17 @@ export const Sidebar: React.FC = () => {
         { id: 'upstream', label: 'Upstream', description: 'Only dependencies feeding in.' },
         { id: 'downstream', label: 'Downstream', description: 'Only dependents flowing out.' },
         { id: 'k-hop', label: 'K-Hop', description: 'Neighborhood around selection.' }
+    ];
+
+    const drilldownContextOptions: Array<{ id: DrilldownContext; label: string; description: string }> = [
+        { id: 'all', label: 'All', description: 'Keep full context around the focus.' },
+        { id: 'same-layer', label: 'Same Layer', description: 'Show peers at the same depth.' },
+        { id: 'cluster-only', label: 'Cluster Only', description: 'Isolate the focused cluster.' }
+    ];
+
+    const expandDepthOptions: Array<{ id: ExpandDepthMode; label: string; description: string }> = [
+        { id: 'step', label: 'Step', description: 'Expand the nearest available layer.' },
+        { id: 'deep', label: 'Deep', description: 'Jump to the deepest available layer.' }
     ];
 
     const exportPassOptions: Array<{ id: ExportPass; label: string }> = [
@@ -846,6 +874,120 @@ export const Sidebar: React.FC = () => {
                                 </select>
                                 <ChevronDown size={12} className="absolute right-2.5 top-2.5 text-slate-500 pointer-events-none" />
                             </div>
+                        </div>
+
+                        <div className="space-y-1.5">
+                            <label className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider block">Multi-Membership</label>
+                            <label className={`flex items-center justify-between p-2 rounded bg-slate-800/40 border border-slate-700/50 ${multiMembershipAvailable ? '' : 'opacity-50'}`}>
+                                <div className="flex flex-col">
+                                    <span className="text-xs font-medium text-slate-300">Show multi-membership</span>
+                                    <span className="text-[10px] text-slate-500">
+                                        {multiMembershipAvailable ? 'Highlights nodes in multiple groups.' : 'Available for multi-membership grouping sets.'}
+                                    </span>
+                                </div>
+                                <input
+                                    type="checkbox"
+                                    checked={showMultiMembership}
+                                    onChange={(event) => setShowMultiMembership(event.target.checked)}
+                                    disabled={!multiMembershipAvailable}
+                                    className="rounded border-slate-600 bg-slate-700 text-indigo-500 focus:ring-offset-slate-900 accent-indigo-500"
+                                />
+                            </label>
+                            {multiMembershipAvailable && activeGroupingSet?.label && (
+                                <div className="text-[10px] text-slate-500">Active set: {activeGroupingSet.label}</div>
+                            )}
+                        </div>
+
+                        {/* Layered LOD Controls */}
+                        <div className="space-y-2">
+                            <label className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider block">Layered LOD</label>
+                            <label className="flex items-center justify-between p-2 rounded bg-slate-800/40 border border-slate-700/50">
+                                <div className="flex flex-col">
+                                    <span className="text-xs font-medium text-slate-300">Enable depth stacking</span>
+                                    <span className="text-[10px] text-slate-500">Separates LODs into stacked planes.</span>
+                                </div>
+                                <input
+                                    type="checkbox"
+                                    checked={layeredLodEnabled}
+                                    onChange={(event) => setLayeredLodEnabled(event.target.checked)}
+                                    className="rounded border-slate-600 bg-slate-700 text-indigo-500 focus:ring-offset-slate-900 accent-indigo-500"
+                                />
+                            </label>
+                            <div className={`space-y-1 ${layeredLodEnabled ? '' : 'opacity-50'}`}>
+                                <div className="flex items-center justify-between text-[11px] text-slate-300">
+                                    <span>Layer spacing</span>
+                                    <span className="text-[10px] text-slate-500">{Math.round(layerSpacing)} units</span>
+                                </div>
+                                <input
+                                    type="range"
+                                    min="80"
+                                    max="400"
+                                    step="10"
+                                    value={layerSpacing}
+                                    onChange={(event) => setLayerSpacing(Number(event.target.value))}
+                                    disabled={!layeredLodEnabled}
+                                    className="w-full accent-indigo-500"
+                                />
+                            </div>
+                            <label className={`flex items-center justify-between p-2 rounded bg-slate-800/40 border border-slate-700/50 ${layeredLodEnabled ? '' : 'opacity-50'}`}>
+                                <div className="flex flex-col">
+                                    <span className="text-xs font-medium text-slate-300">Show LOD planes</span>
+                                    <span className="text-[10px] text-slate-500">Translucent depth guides + labels.</span>
+                                </div>
+                                <input
+                                    type="checkbox"
+                                    checked={showLodPlanes}
+                                    onChange={(event) => setShowLodPlanes(event.target.checked)}
+                                    disabled={!layeredLodEnabled}
+                                    className="rounded border-slate-600 bg-slate-700 text-indigo-500 focus:ring-offset-slate-900 accent-indigo-500"
+                                />
+                            </label>
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider block">Drill-Down Context</label>
+                            <div className="grid grid-cols-3 gap-2">
+                                {drilldownContextOptions.map(option => (
+                                    <button
+                                        key={option.id}
+                                        onClick={() => setDrilldownContext(option.id)}
+                                        title={option.description}
+                                        className={`rounded border px-2 py-1 text-[11px] transition-colors ${drilldownContext === option.id
+                                            ? 'border-indigo-400/60 bg-indigo-500/20 text-indigo-200'
+                                            : 'border-slate-700/70 bg-slate-900 text-slate-400 hover:text-slate-200'
+                                            }`}
+                                    >
+                                        {option.label}
+                                    </button>
+                                ))}
+                            </div>
+                            {!focusClusterId && (
+                                <p className="text-[10px] text-slate-500">
+                                    Applies when a cluster is focused.
+                                </p>
+                            )}
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider block">Drill-Down Depth</label>
+                            <div className="grid grid-cols-2 gap-2">
+                                {expandDepthOptions.map(option => (
+                                    <button
+                                        key={option.id}
+                                        onClick={() => setExpandDepthMode(option.id)}
+                                        title={option.description}
+                                        className={`rounded border px-2 py-1 text-[11px] transition-colors ${expandDepthMode === option.id
+                                            ? 'border-indigo-400/60 bg-indigo-500/20 text-indigo-200'
+                                            : 'border-slate-700/70 bg-slate-900 text-slate-400 hover:text-slate-200'
+                                            }`}
+                                    >
+                                        {option.label}
+                                    </button>
+                                ))}
+                            </div>
+                            <p className="text-[10px] text-slate-500">
+                                Step expands the closest layer; Deep jumps to the deepest available nodes.
+                            </p>
                         </div>
                     </div>
                 </CollapsibleSection>

@@ -1,0 +1,189 @@
+{
+  "version": 1,
+  "overrides": [
+    {
+      "fingerprint": "sha1:014cd77f4d0543e851121cfa14f6eee8517c7d7a",
+      "id": "component:014cd77f4d",
+      "label": "Cache Schema & Models (6)",
+      "path": ["Cache", "Schema & Models"],
+      "confidence": 0.9,
+      "notes": "Cache DB models plus initial schema migration"
+    },
+    {
+      "fingerprint": "sha1:01a603b86dd875c29efb7f691d6ec7fef0a5a4ef",
+      "id": "component:01a603b86d",
+      "label": "Tags Service (2)",
+      "path": ["Tags", "Service"],
+      "confidence": 0.78,
+      "notes": "Tag service plus repository"
+    },
+    {
+      "fingerprint": "sha1:0409780a2905389399b77a81d41603d23e92a96e",
+      "id": "component:0409780a29",
+      "label": "Project Templates (3)",
+      "path": ["Cache", "Project Templates"],
+      "confidence": 0.86,
+      "notes": "Project template models and migration"
+    },
+    {
+      "fingerprint": "sha1:059d726e9812361873b32dd5ced58f8dc1b02e46",
+      "id": "component:059d726e98",
+      "label": "Marketplace Auto Tags (10)",
+      "path": ["Marketplace", "Auto Tags"],
+      "confidence": 0.9,
+      "notes": "Auto-tag API endpoints and web hooks"
+    },
+    {
+      "fingerprint": "sha1:08bdf5ff0681f4d63ae9aaf2c2d45a55447b722f",
+      "id": "component:08bdf5ff06",
+      "label": "GitHub Token Settings (22)",
+      "path": ["Settings", "GitHub Integration"],
+      "confidence": 0.92,
+      "notes": "GitHub token settings API and client"
+    },
+    {
+      "fingerprint": "sha1:121037801ad2176ee2936586ac24f55444ec6a90",
+      "id": "component:121037801a",
+      "label": "Ratings API (14)",
+      "path": ["Ratings", "API"],
+      "confidence": 0.9,
+      "notes": "Ratings endpoints and handlers"
+    },
+    {
+      "fingerprint": "sha1:13e1c8d9e45c6a5f29e883e1db8ab6ea79f7bdbe",
+      "id": "component:13e1c8d9e4",
+      "label": "Platform Core (1562)",
+      "path": ["Platform", "API & Web Core"],
+      "confidence": 0.62,
+      "notes": "Large shared API/web cluster across marketplace and core"
+    },
+    {
+      "fingerprint": "sha1:19e14b2d09b1d8d5eb5d5376d474302727472c8b",
+      "id": "component:19e14b2d09",
+      "label": "Ratings Models (4)",
+      "path": ["Cache", "Ratings Models"],
+      "confidence": 0.88,
+      "notes": "Rating-related cache models and migration"
+    },
+    {
+      "fingerprint": "sha1:301d79e881a042be60184eece67ed00659fb3caf",
+      "id": "component:301d79e881",
+      "label": "Marketplace Catalog Cache (2)",
+      "path": ["Cache", "Marketplace Catalog"],
+      "confidence": 0.82,
+      "notes": "Marketplace catalog entry model and repository"
+    },
+    {
+      "fingerprint": "sha1:40f6e9a79906d0247cf1f4bc4a3972e43b02f43b",
+      "id": "component:40f6e9a799",
+      "label": "Web Providers & Context (4)",
+      "path": ["Web UI", "Providers & Context"],
+      "confidence": 0.84,
+      "notes": "UI providers, notifications, and collection context"
+    },
+    {
+      "fingerprint": "sha1:52cc96952b922aa6f7e4b504d4683fdd572cd1ee",
+      "id": "component:52cc96952b",
+      "label": "Marketplace Sources Cache (2)",
+      "path": ["Cache", "Marketplace Sources"],
+      "confidence": 0.82,
+      "notes": "Marketplace source model and repository"
+    },
+    {
+      "fingerprint": "sha1:6c5a508bd04be813afce92681436b583c485f890",
+      "id": "component:6c5a508bd0",
+      "label": "Marketplace Path Tags (7)",
+      "path": ["Marketplace", "Path Tags"],
+      "confidence": 0.9,
+      "notes": "Path-tag endpoints and web hooks"
+    },
+    {
+      "fingerprint": "sha1:7c9983913fc679a1a5e00d4b827939aefd9fa44d",
+      "id": "component:7c9983913f",
+      "label": "Artifact Versions (2)",
+      "path": ["Cache", "Artifact Versions"],
+      "confidence": 0.86,
+      "notes": "Artifact version model and migration"
+    },
+    {
+      "fingerprint": "sha1:8e4712facb69df7a77a0bd608a996c8ac4fb02ea",
+      "id": "component:8e4712facb",
+      "label": "Catalog File Access (8)",
+      "path": ["Marketplace", "Catalog Files"],
+      "confidence": 0.88,
+      "notes": "Catalog file tree/content endpoints"
+    },
+    {
+      "fingerprint": "sha1:8f1f06e8ed0a6ed07d3efb815b62a39e4c86036b",
+      "id": "component:8f1f06e8ed",
+      "label": "Discovery UI (4)",
+      "path": ["Discovery", "Web UI"],
+      "confidence": 0.84,
+      "notes": "Discovery pages and bulk import UI"
+    },
+    {
+      "fingerprint": "sha1:93e3f476b9868aa4052013f1d9b4bb89371a95f5",
+      "id": "component:93e3f476b9",
+      "label": "Context Sync (34)",
+      "path": ["Sync", "Context Sync"],
+      "confidence": 0.9,
+      "notes": "Context sync API and client"
+    },
+    {
+      "fingerprint": "sha1:a429ad0b5932d0b379a94b9e52287e8dec5d5d1f",
+      "id": "component:a429ad0b59",
+      "label": "Cache API (37)",
+      "path": ["Cache", "API"],
+      "confidence": 0.9,
+      "notes": "Cache status/search endpoints"
+    },
+    {
+      "fingerprint": "sha1:af330da7b19413328096377061c323cb7bbe15e0",
+      "id": "component:af330da7b1",
+      "label": "Tags Models (4)",
+      "path": ["Cache", "Tags Models"],
+      "confidence": 0.86,
+      "notes": "Tag models, repository, and migration"
+    },
+    {
+      "fingerprint": "sha1:b6c6a62a37f1de92610fd4cd76d4ad4e3899eef9",
+      "id": "component:b6c6a62a37",
+      "label": "Health Checks (9)",
+      "path": ["Operations", "Health Checks"],
+      "confidence": 0.9,
+      "notes": "Health endpoints and handlers"
+    },
+    {
+      "fingerprint": "sha1:ba3cff4c137725ca8724546112c50d70ef948a0a",
+      "id": "component:ba3cff4c13",
+      "label": "Deployments API (2)",
+      "path": ["Deployments", "API"],
+      "confidence": 0.82,
+      "notes": "Deployment removal endpoint"
+    },
+    {
+      "fingerprint": "sha1:c14512d193f5cc8f6367ede5080bf638f3477a4f",
+      "id": "component:c14512d193",
+      "label": "Collections Models (5)",
+      "path": ["Collections", "Cache Models"],
+      "confidence": 0.86,
+      "notes": "Collection/group cache models and migration"
+    },
+    {
+      "fingerprint": "sha1:c504ef6253d9214aef2521583859f679ca799689",
+      "id": "component:c504ef6253",
+      "label": "Directory Map UI (2)",
+      "path": ["Marketplace", "Directory Map UI"],
+      "confidence": 0.8,
+      "notes": "Directory map modal component"
+    },
+    {
+      "fingerprint": "sha1:e427c387786c8be178590002b15d809de40ce375",
+      "id": "component:e427c38778",
+      "label": "API Server Core (3)",
+      "path": ["API", "Server Core"],
+      "confidence": 0.88,
+      "notes": "Root/version endpoints and server entry"
+    }
+  ]
+}

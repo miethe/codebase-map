@@ -3,10 +3,10 @@ import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { GraphRenderer } from './components/GraphRenderer';
 import { Sidebar } from './components/Sidebar';
 import { Breadcrumbs } from './components/Breadcrumbs';
-import { GraphData, GraphLODData, Node, GraphContextType, ViewMode, GraphViewMode, EDGE_STYLES, DetailsData, GitMetadata, DependencyGraph, ExportRequest, ExportStatus, CameraPresetRequest, CameraJumpRequest, FocusMode, LodMode } from './types';
+import { GraphData, GraphLODData, Node, GraphContextType, ViewMode, GraphViewMode, EDGE_STYLES, DetailsData, GitMetadata, DependencyGraph, ExportRequest, ExportStatus, CameraPresetRequest, CameraJumpRequest, FocusMode, LodMode, DrilldownContext, ExpandDepthMode } from './types';
 import { Layout, Loader2, AlertCircle, ChevronDown, ChevronUp, GitBranch, MoreVertical } from 'lucide-react';
 
-import { deriveModulePath, getDisplayModule, buildNodePathMap } from './utils/moduleGrouping';
+import { deriveModulePath, getDisplayModule, buildNodePathMap, buildComputedNodePathMap, enhanceComputedGroupingData } from './utils/moduleGrouping';
 import { getNodeLegendItems } from './utils/colorMapping';
 
 const FRONTEND_TYPES = new Set(['route', 'page', 'component', 'hook', 'api_client', 'query_key']);
@@ -42,6 +42,10 @@ export const GraphContext = React.createContext<GraphContextType>({
   setFocusHopCount: () => { },
   focusClusterId: null,
   setFocusClusterId: () => { },
+  drilldownContext: 'all',
+  setDrilldownContext: () => { },
+  expandDepthMode: 'step',
+  setExpandDepthMode: () => { },
   viewMode: 'force',
   setViewMode: () => { },
   graphView: 'unified',
@@ -53,6 +57,14 @@ export const GraphContext = React.createContext<GraphContextType>({
   setActiveGroupingMode: () => { },
   activeColorMode: 'type',
   setActiveColorMode: () => { },
+  showMultiMembership: true,
+  setShowMultiMembership: () => { },
+  layeredLodEnabled: false,
+  setLayeredLodEnabled: () => { },
+  layerSpacing: 160,
+  setLayerSpacing: () => { },
+  showLodPlanes: true,
+  setShowLodPlanes: () => { },
   enableMotionOptimizations: true,
   setEnableMotionOptimizations: () => { },
   enablePerformanceMode: false,
@@ -87,6 +99,10 @@ const App: React.FC = () => {
   const [lodData, setLodData] = useState<GraphLODData | null>(null);
   const [activeGroupingMode, setActiveGroupingMode] = useState<string>('structure');
   const [activeColorMode, setActiveColorMode] = useState<string>('type');
+  const [showMultiMembership, setShowMultiMembership] = useState(true);
+  const [layeredLodEnabled, setLayeredLodEnabled] = useState(false);
+  const [layerSpacing, setLayerSpacing] = useState(160);
+  const [showLodPlanes, setShowLodPlanes] = useState(true);
 
   const [gitMetadata, setGitMetadata] = useState<GitMetadata | null>(null);
   const [dependencyData, setDependencyData] = useState<DependencyGraph | null>(null);
@@ -101,6 +117,8 @@ const App: React.FC = () => {
   const [focusMode, setFocusMode] = useState<FocusMode>('off');
   const [focusHopCount, setFocusHopCount] = useState(2);
   const [focusClusterId, setFocusClusterId] = useState<string | null>(null);
+  const [drilldownContext, setDrilldownContext] = useState<DrilldownContext>('all');
+  const [expandDepthMode, setExpandDepthMode] = useState<ExpandDepthMode>('step');
   const [viewMode, setViewMode] = useState<ViewMode>('force');
   const [graphView, setGraphView] = useState<GraphViewMode>('unified');
   const [activeModule, setActiveModule] = useState<string | null>(null);
@@ -188,7 +206,15 @@ const App: React.FC = () => {
           const groupRes = await fetch('./codebase-graph.groupings.json');
           if (groupRes.ok) {
             const groupJson = await groupRes.json();
-            setGroupingData(groupJson);
+            const enhancedGroupings = enhanceComputedGroupingData(groupJson, data.nodes);
+            setGroupingData(enhancedGroupings);
+            const availableGroupSets = enhancedGroupings?.group_sets?.map((set: any) => set.id) || [];
+            if (availableGroupSets.length && !availableGroupSets.includes(activeGroupingMode)) {
+              setActiveGroupingMode(availableGroupSets[0]);
+            }
+            if (availableGroupSets.length === 1 && availableGroupSets[0] === 'computed') {
+              setViewMode('hierarchical');
+            }
           }
         } catch (e) {
           console.warn("Failed to load groupings", e);
@@ -252,7 +278,11 @@ const App: React.FC = () => {
   useEffect(() => {
     if (!rawData.nodes.length) return;
 
-    const nodePathMap = groupingData ? buildNodePathMap(groupingData, activeGroupingMode) : null;
+    const nodePathMap = groupingData
+      ? (activeGroupingMode === 'computed'
+        ? buildComputedNodePathMap(groupingData, rawData.nodes)
+        : buildNodePathMap(groupingData, activeGroupingMode))
+      : null;
     const shouldUseLegacy = activeGroupingMode === 'structure' && (!nodePathMap || nodePathMap.size === 0);
 
     setRawData(prev => {
@@ -574,6 +604,10 @@ const App: React.FC = () => {
     setFocusHopCount,
     focusClusterId,
     setFocusClusterId,
+    drilldownContext,
+    setDrilldownContext,
+    expandDepthMode,
+    setExpandDepthMode,
     viewMode,
     setViewMode,
     graphView,
@@ -585,6 +619,14 @@ const App: React.FC = () => {
     setActiveGroupingMode,
     activeColorMode,
     setActiveColorMode,
+    showMultiMembership,
+    setShowMultiMembership,
+    layeredLodEnabled,
+    setLayeredLodEnabled,
+    layerSpacing,
+    setLayerSpacing,
+    showLodPlanes,
+    setShowLodPlanes,
     enableMotionOptimizations,
     setEnableMotionOptimizations,
     enablePerformanceMode,

@@ -27,6 +27,32 @@ Interactive, multi-LOD visualization of a repository’s architecture and depend
 3. Run the app:
    `npm run dev`
 
+## Commands
+
+**App (frontend)**
+- `npm run dev` starts the Vite dev server.
+- `npm run build` builds the production bundle into `dist/`.
+- `npm run preview` serves the production build locally.
+
+**Semantic groupings pipeline (this repo)**
+- `npm run groupings:base` generates `codebase-graph.groupings.base.json` and `codebase-graph.groupings.summary.json`.
+- `npm run groupings:merge` merges base + overrides into `codebase-graph.groupings.json`.
+- `npm run groupings:all` runs base then merge.
+
+**Supplemental data generation (this repo)**
+- `node scripts/extract_git_metadata.js` regenerates `codebase-graph.git-metadata.json`.
+- `node scripts/scan_dependencies.js` regenerates `codebase-graph.dependencies.json`.
+
+**Full graph extraction (target codebase)**
+- `python -m code_map` runs the full scrape pipeline (see `code_map/README.md`).
+- `python -m code_map --skip-coverage` skips the coverage summary step.
+
+## Data Flow Notes
+
+- The end-to-end Python pipeline (`python -m code_map`) scrapes a target repo and writes graph outputs under `docs/architecture/codebase-graph/` by default.
+- The UI loads graph JSON files from the repo root (e.g., `codebase-graph.unified.json`). Copy or symlink the outputs into the root, or customize the Python script `--out` paths.
+- The semantic groupings scripts are separate from the Python pipeline. Run `npm run groupings:all` after `codebase-graph.unified.json` is available in the repo root to generate the merged `codebase-graph.groupings.json` used by the app.
+
 ## Notes
 - LOD datasets are loaded automatically when `codebase-graph.lod*.json` files are present.
 - To use the WebGL renderer, set `VITE_GRAPH_RENDERER=webgl` before running the dev server.

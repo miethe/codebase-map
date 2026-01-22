@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import * as d3 from 'd3';
-import { Node, Edge, NODE_SIZE_CONFIG, EDGE_STYLES, GraphRendererProps } from '../types';
+import { Node, Edge, NODE_SIZE_CONFIG, EDGE_STYLES, GraphRendererProps, DrilldownContext, CLUSTER_KINDS } from '../types';
 import { getNodeColor } from '../utils/colorMapping';
 import { computeClusterLayout } from '../utils/clusterLayout';
 import { getFocusNodeIds } from '../utils/focusModes';
@@ -131,6 +131,50 @@ const getLinkTooltip = (edge: Edge) => {
     return `${edge.type} (${count} edges)\n${preview}${suffix}`.trim();
 };
 
+const getNodeLodDepth = (node: Node) => {
+    if (typeof node.lodDepth === 'number') return Math.max(0, Math.round(node.lodDepth));
+    if (node.cluster_path?.length) return Math.max(0, node.cluster_path.length - 1);
+    return 0;
+};
+
+const isNodeInCluster = (node: Node, clusterId: string | null) => {
+    if (!clusterId) return false;
+    if (node.id === clusterId) return true;
+    if (node.cluster_id === clusterId) return true;
+    return node.cluster_path?.includes(clusterId) ?? false;
+};
+
+const getFocusClusterDepth = (nodes: Node[], clusterId: string) => {
+    const direct = nodes.find(node => node.id === clusterId || node.cluster_id === clusterId);
+    if (direct) return getNodeLodDepth(direct);
+    for (const node of nodes) {
+        if (!node.cluster_path) continue;
+        const index = node.cluster_path.indexOf(clusterId);
+        if (index >= 0) return index;
+    }
+    return null;
+};
+
+const buildDrilldownContextNodeIds = (
+    nodes: Node[],
+    focusClusterId: string | null,
+    mode: DrilldownContext
+) => {
+    if (!focusClusterId || mode === 'all') return null;
+    const clusterNodeIds = new Set<string>();
+    nodes.forEach(node => {
+        if (isNodeInCluster(node, focusClusterId)) clusterNodeIds.add(node.id);
+    });
+    if (!clusterNodeIds.size) return null;
+    if (mode === 'cluster-only') return clusterNodeIds;
+    const focusDepth = getFocusClusterDepth(nodes, focusClusterId);
+    if (focusDepth === null) return clusterNodeIds;
+    nodes.forEach(node => {
+        if (getNodeLodDepth(node) === focusDepth) clusterNodeIds.add(node.id);
+    });
+    return clusterNodeIds;
+};
+
 export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, handlers }) => {
     const svgRef = useRef<SVGSVGElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -138,9 +182,13 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
         selectedNode,
         focusMode,
         focusHopCount,
+        focusClusterId,
+        drilldownContext,
+        expandedClusterIds,
         viewMode,
         groupingData,
         activeColorMode,
+        activeGroupingMode,
         gitMetadata,
         enableMotionOptimizations,
         zoomSpeed,
@@ -156,7 +204,8 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
         onBackgroundClick,
         onZoomChange,
         onExportStatus,
-        onExportRequestHandled
+        onExportRequestHandled,
+        onEscape
     } = handlers;
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -276,6 +325,20 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
     }, []);
 
     useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                if (onEscape) {
+                    onEscape();
+                } else {
+                    onNodeSelect(null);
+                }
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [onEscape, onNodeSelect]);
+
+    useEffect(() => {
         if (!enableMotionOptimizations) {
             setReduceDetail(false);
         }
@@ -287,6 +350,33 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
         return getFocusNodeIds(highlightMode, selectedNode.id, data.edges, focusHopCount);
     }, [selectedNode?.id, data.edges, highlightMode, focusHopCount]);
     const focusActive = Boolean(selectedNode && focusMode !== 'off' && highlightNodeIds);
+    const multiMembershipData = useMemo(() => {
+        if (!groupingData) {
+            return { map: new Map<string, string[]>(), activeSet: null };
+        }
+        const activeSet = groupingData.group_sets?.find((set: any) => set.id === activeGroupingMode) || null;
+        if (!activeSet?.multi_membership) {
+            return { map: new Map<string, string[]>(), activeSet };
+        }
+        const map = new Map<string, string[]>();
+        groupingData.groups
+            .filter(group => group.group_set === activeGroupingMode)
+            .forEach(group => {
+                group.nodes.forEach(nodeId => {
+                    const existing = map.get(nodeId);
+                    if (existing) {
+                        if (!existing.includes(group.label)) {
+                            existing.push(group.label);
+                        }
+                    } else {
+                        map.set(nodeId, [group.label]);
+                    }
+                });
+            });
+        return { map, activeSet };
+    }, [groupingData, activeGroupingMode]);
+    const multiMembershipMap = multiMembershipData.map;
+    const multiMembershipLabel = multiMembershipData.activeSet?.label || 'Groups';
 
     const canUseLayoutCache = Boolean(layoutCacheKey) && !focusActive;
     const persistLayoutCache = useCallback((force = false) => {
@@ -332,8 +422,16 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
             edges = edges.filter(e => nodeSet.has(e.from) && nodeSet.has(e.to));
         }
 
+        if (!focusActive) {
+            const drilldownNodeIds = buildDrilldownContextNodeIds(nodes, focusClusterId, drilldownContext);
+            if (drilldownNodeIds) {
+                nodes = nodes.filter(node => drilldownNodeIds.has(node.id));
+                edges = edges.filter(edge => drilldownNodeIds.has(edge.from) && drilldownNodeIds.has(edge.to));
+            }
+        }
+
         return { visibleNodes: nodes, visibleEdges: edges };
-    }, [data, focusMode, focusActive, viewMode, selectedNode?.id, highlightNodeIds, layoutCacheVersion]);
+    }, [data, focusMode, focusActive, viewMode, selectedNode?.id, highlightNodeIds, layoutCacheVersion, focusClusterId, drilldownContext]);
 
     const labelVisibleIds = useMemo(() => {
         if (!visibleNodes.length) return new Set<string>();
@@ -716,15 +814,33 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
         node.select(".node-circle")
             .attr("r", (d) => getNodeRadius(d))
             .attr("fill", (d) => getNodeColor(d, activeColorMode, groupingData, gitMetadata)) // Use latest color logic
-            .attr("stroke", (d) => d.kind === 'cluster' ? '#cbd5e1' : 'none')
-            .attr("stroke-width", (d) => d.kind === 'cluster' ? 1.5 : 0);
+            .attr("fill-opacity", (d) => expandedClusterIds?.has(d.id) ? 0.45 : 1)
+            .attr("stroke", (d) => {
+                if (expandedClusterIds?.has(d.id)) return '#facc15';
+                return d.kind === 'cluster' ? '#cbd5e1' : 'none';
+            })
+            .attr("stroke-width", (d) => expandedClusterIds?.has(d.id) ? 2.5 : (d.kind === 'cluster' ? 1.5 : 0))
+            .attr("stroke-opacity", (d) => expandedClusterIds?.has(d.id) ? 0.8 : 1);
 
         node.select(".cluster-glyph")
-            .text((d) => d.kind === 'cluster' ? '+' : '')
-            .style("display", (d) => d.kind === 'cluster' ? null : 'none');
+            .text((d) => {
+                const showExpandGlyph = Boolean(d.canExpand ?? (d.kind && CLUSTER_KINDS.has(d.kind)));
+                return showExpandGlyph ? '+' : '';
+            })
+            .style("display", (d) => {
+                const showExpandGlyph = Boolean(d.canExpand ?? (d.kind && CLUSTER_KINDS.has(d.kind)));
+                return showExpandGlyph ? null : 'none';
+            });
 
         node.select("title")
-            .text(d => `Type: ${d.type}\nID: ${d.id}\nVisible Connections: ${d.degree || 0}\nTotal Connections: ${d.totalDegree || 0}`);
+            .text(d => {
+                const base = `Type: ${d.type}\nID: ${d.id}\nVisible Connections: ${d.degree || 0}\nTotal Connections: ${d.totalDegree || 0}`;
+                const memberships = multiMembershipMap.get(d.id);
+                if (memberships && memberships.length > 1) {
+                    return `${base}\n${multiMembershipLabel}: ${memberships.join(', ')}`;
+                }
+                return base;
+            });
 
         node.select(".node-label")
             .text((d) => labelVisibleIds.has(d.id) ? getCleanLabel(d) : '')
@@ -879,7 +995,23 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
             registerInteraction(0.2);
         }
 
-    }, [visibleNodes, visibleEdges, labelVisibleIds, viewMode, clusterPositions, activeColorMode, groupingData, gitMetadata, zoomSpeed, handleZoomInteraction, registerInteraction, persistLayoutCache]);
+    }, [
+        visibleNodes,
+        visibleEdges,
+        labelVisibleIds,
+        viewMode,
+        clusterPositions,
+        activeColorMode,
+        groupingData,
+        gitMetadata,
+        zoomSpeed,
+        handleZoomInteraction,
+        registerInteraction,
+        persistLayoutCache,
+        multiMembershipMap,
+        multiMembershipLabel,
+        expandedClusterIds
+    ]);
     // ^ Added dependencies so colors update when mode changes
 
     // EFFECT: Reduced Detail Mode while Interacting

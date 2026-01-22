@@ -3,12 +3,138 @@
   "nodes": [
     {
       "details": {
-        "deptype": "devDependencies",
-        "version": "^3.6.2"
+        "deptype": "dependencies",
+        "version": "^7.9.0"
       },
       "file": "package.json",
-      "id": "node_modules/shadcn",
-      "label": "shadcn",
+      "id": "node_modules/d3",
+      "label": "d3",
+      "modulePath": [
+        "External",
+        "Production"
+      ],
+      "type": "external_dependency"
+    },
+    {
+      "details": {
+        "deptype": "dependencies",
+        "version": "^19.2.3"
+      },
+      "file": "package.json",
+      "id": "node_modules/react",
+      "label": "react",
+      "modulePath": [
+        "External",
+        "Production"
+      ],
+      "type": "external_dependency"
+    },
+    {
+      "details": {
+        "deptype": "dependencies",
+        "version": "^0.562.0"
+      },
+      "file": "package.json",
+      "id": "node_modules/lucide-react",
+      "label": "lucide-react",
+      "modulePath": [
+        "External",
+        "Production"
+      ],
+      "type": "external_dependency"
+    },
+    {
+      "details": {
+        "deptype": "dependencies",
+        "version": "^19.2.3"
+      },
+      "file": "package.json",
+      "id": "node_modules/react-dom",
+      "label": "react-dom",
+      "modulePath": [
+        "External",
+        "Production"
+      ],
+      "type": "external_dependency"
+    },
+    {
+      "details": {
+        "deptype": "dependencies",
+        "version": "^1.0.0"
+      },
+      "file": "package.json",
+      "id": "node_modules/react-force-graph-3d",
+      "label": "react-force-graph-3d",
+      "modulePath": [
+        "External",
+        "Production"
+      ],
+      "type": "external_dependency"
+    },
+    {
+      "details": {
+        "deptype": "dependencies",
+        "version": "^0.173.0"
+      },
+      "file": "package.json",
+      "id": "node_modules/three",
+      "label": "three",
+      "modulePath": [
+        "External",
+        "Production"
+      ],
+      "type": "external_dependency"
+    },
+    {
+      "details": {
+        "deptype": "devDependencies",
+        "version": "^22.14.0"
+      },
+      "file": "package.json",
+      "id": "node_modules/@types/node",
+      "label": "@types/node",
+      "modulePath": [
+        "External",
+        "Dev"
+      ],
+      "type": "external_dependency"
+    },
+    {
+      "details": {
+        "deptype": "devDependencies",
+        "version": "^5.0.0"
+      },
+      "file": "package.json",
+      "id": "node_modules/@vitejs/plugin-react",
+      "label": "@vitejs/plugin-react",
+      "modulePath": [
+        "External",
+        "Dev"
+      ],
+      "type": "external_dependency"
+    },
+    {
+      "details": {
+        "deptype": "devDependencies",
+        "version": "~5.8.2"
+      },
+      "file": "package.json",
+      "id": "node_modules/typescript",
+      "label": "typescript",
+      "modulePath": [
+        "External",
+        "Dev"
+      ],
+      "type": "external_dependency"
+    },
+    {
+      "details": {
+        "deptype": "devDependencies",
+        "version": "^6.2.0"
+      },
+      "file": "package.json",
+      "id": "node_modules/vite",
+      "label": "vite",
       "modulePath": [
         "External",
         "Dev"

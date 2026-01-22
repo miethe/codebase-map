@@ -18,7 +18,7 @@
     {
       "group_set": "computed",
       "id": "component:014cd77f4d",
-      "label": "Cache Schema & Models (6)",
+      "label": "package:skillmeat.skillmeat (6)",
       "nodes": [
         "migration:skillmeat/cache/migrations/versions/001_initial_schema.py::001_initial_schema",
         "model:skillmeat/cache/models.py::Artifact",
@@ -28,56 +28,38 @@
         "model:skillmeat/cache/models.py::Project"
       ],
       "metadata": {
-        "size": 6,
-        "path": [
-          "Cache",
-          "Schema & Models"
-        ],
-        "confidence": 0.9,
-        "notes": "Cache DB models plus initial schema migration"
+        "size": 6
       }
     },
     {
       "group_set": "computed",
       "id": "component:01a603b86d",
-      "label": "Tags Service (2)",
+      "label": "package:skillmeat.skillmeat #2 (2)",
       "nodes": [
         "repository:skillmeat.cache.repositories::TagRepository",
         "service:skillmeat/core/services/tag_service.py::TagService"
       ],
       "metadata": {
-        "size": 2,
-        "path": [
-          "Tags",
-          "Service"
-        ],
-        "confidence": 0.78,
-        "notes": "Tag service plus repository"
+        "size": 2
       }
     },
     {
       "group_set": "computed",
       "id": "component:0409780a29",
-      "label": "Project Templates (3)",
+      "label": "package:skillmeat.skillmeat #3 (3)",
       "nodes": [
         "migration:skillmeat/cache/migrations/versions/20251215_1200_add_project_templates_and_template_entities.py::20251215_1200_add_project_templates_and_template_entities",
         "model:skillmeat/cache/models.py::ProjectTemplate",
         "model:skillmeat/cache/models.py::TemplateEntity"
       ],
       "metadata": {
-        "size": 3,
-        "path": [
-          "Cache",
-          "Project Templates"
-        ],
-        "confidence": 0.86,
-        "notes": "Project template models and migration"
+        "size": 3
       }
     },
     {
       "group_set": "computed",
       "id": "component:059d726e98",
-      "label": "Marketplace Auto Tags (10)",
+      "label": "package:skillmeat.skillmeat #4 (10)",
       "nodes": [
         "api_client:skillmeat/web/lib/api/marketplace.ts::getSourceAutoTags",
         "api_client:skillmeat/web/lib/api/marketplace.ts::updateSourceAutoTag",
@@ -91,19 +73,13 @@
         "type:skillmeat/web/types/marketplace.ts::UpdateAutoTagResponse"
       ],
       "metadata": {
-        "size": 10,
-        "path": [
-          "Marketplace",
-          "Auto Tags"
-        ],
-        "confidence": 0.9,
-        "notes": "Auto-tag API endpoints and web hooks"
+        "size": 10
       }
     },
     {
       "group_set": "computed",
       "id": "component:08bdf5ff06",
-      "label": "GitHub Token Settings (22)",
+      "label": "package:skillmeat.skillmeat #5 (22)",
       "nodes": [
         "api_client:skillmeat/web/lib/api/settings.ts::clearGitHubToken",
         "api_client:skillmeat/web/lib/api/settings.ts::getGitHubTokenStatus",
@@ -129,19 +105,13 @@
         "service:skillmeat.core.github_client::GitHubClientWrapper"
       ],
       "metadata": {
-        "size": 22,
-        "path": [
-          "Settings",
-          "GitHub Integration"
-        ],
-        "confidence": 0.92,
-        "notes": "GitHub token settings API and client"
+        "size": 22
       }
     },
     {
       "group_set": "computed",
       "id": "component:121037801a",
-      "label": "Ratings API (14)",
+      "label": "package:skillmeat.skillmeat #6 (14)",
       "nodes": [
         "api_endpoint:GET /api/v1/ratings/artifacts/{artifact_id}/ratings",
         "api_endpoint:GET /api/v1/ratings/artifacts/{artifact_id}/scores",
@@ -159,19 +129,13 @@
         "service:skillmeat.core.scoring::QualityScorer"
       ],
       "metadata": {
-        "size": 14,
-        "path": [
-          "Ratings",
-          "API"
-        ],
-        "confidence": 0.9,
-        "notes": "Ratings endpoints and handlers"
+        "size": 14
       }
     },
     {
       "group_set": "computed",
       "id": "component:13e1c8d9e4",
-      "label": "Platform Core (1562)",
+      "label": "package:skillmeat.skillmeat #7 (1562)",
       "nodes": [
         "api_client:skillmeat/web/hooks/use-artifact-groups.ts::artifactGroupKeys",
         "api_client:skillmeat/web/hooks/use-toast.tsx::useToast",
@@ -1737,19 +1701,13 @@
         "type:skillmeat/web/types/version.ts::VersionGraphNode"
       ],
       "metadata": {
-        "size": 1562,
-        "path": [
-          "Platform",
-          "API & Web Core"
-        ],
-        "confidence": 0.62,
-        "notes": "Large shared API/web cluster across marketplace and core"
+        "size": 1562
       }
     },
     {
       "group_set": "computed",
       "id": "component:19e14b2d09",
-      "label": "Ratings Models (4)",
+      "label": "package:skillmeat.skillmeat #8 (4)",
       "nodes": [
         "migration:skillmeat/cache/migrations/versions/20251222_152125_add_rating_tables.py::20251222_152125_add_rating_tables",
         "model:skillmeat/cache/models.py::CommunityScore",
@@ -1757,37 +1715,25 @@
         "model:skillmeat/cache/models.py::UserRating"
       ],
       "metadata": {
-        "size": 4,
-        "path": [
-          "Cache",
-          "Ratings Models"
-        ],
-        "confidence": 0.88,
-        "notes": "Rating-related cache models and migration"
+        "size": 4
       }
     },
     {
       "group_set": "computed",
       "id": "component:301d79e881",
-      "label": "Marketplace Catalog Cache (2)",
+      "label": "package:skillmeat.skillmeat #9 (2)",
       "nodes": [
         "model:skillmeat/cache/models.py::MarketplaceCatalogEntry",
         "repository:skillmeat/cache/repositories.py::MarketplaceCatalogRepository"
       ],
       "metadata": {
-        "size": 2,
-        "path": [
-          "Cache",
-          "Marketplace Catalog"
-        ],
-        "confidence": 0.82,
-        "notes": "Marketplace catalog entry model and repository"
+        "size": 2
       }
     },
     {
       "group_set": "computed",
       "id": "component:40f6e9a799",
-      "label": "Web Providers & Context (4)",
+      "label": "package:skillmeat.skillmeat #10 (4)",
       "nodes": [
         "component:skillmeat/web/components/providers.tsx::Providers",
         "component:skillmeat/web/components/ui/toaster.tsx::Toaster",
@@ -1795,37 +1741,25 @@
         "component:skillmeat/web/lib/notification-store.tsx::NotificationProvider"
       ],
       "metadata": {
-        "size": 4,
-        "path": [
-          "Web UI",
-          "Providers & Context"
-        ],
-        "confidence": 0.84,
-        "notes": "UI providers, notifications, and collection context"
+        "size": 4
       }
     },
     {
       "group_set": "computed",
       "id": "component:52cc96952b",
-      "label": "Marketplace Sources Cache (2)",
+      "label": "package:skillmeat.skillmeat #11 (2)",
       "nodes": [
         "model:skillmeat/cache/models.py::MarketplaceSource",
         "repository:skillmeat/cache/repositories.py::MarketplaceSourceRepository"
       ],
       "metadata": {
-        "size": 2,
-        "path": [
-          "Cache",
-          "Marketplace Sources"
-        ],
-        "confidence": 0.82,
-        "notes": "Marketplace source model and repository"
+        "size": 2
       }
     },
     {
       "group_set": "computed",
       "id": "component:6c5a508bd0",
-      "label": "Marketplace Path Tags (7)",
+      "label": "package:skillmeat.skillmeat #12 (7)",
       "nodes": [
         "api_client:skillmeat/web/lib/api/marketplace.ts::getPathTags",
         "api_client:skillmeat/web/lib/api/marketplace.ts::updatePathTagStatus",
@@ -1836,37 +1770,25 @@
         "type:skillmeat/web/types/path-tags.ts::PathSegmentsResponse"
       ],
       "metadata": {
-        "size": 7,
-        "path": [
-          "Marketplace",
-          "Path Tags"
-        ],
-        "confidence": 0.9,
-        "notes": "Path-tag endpoints and web hooks"
+        "size": 7
       }
     },
     {
       "group_set": "computed",
       "id": "component:7c9983913f",
-      "label": "Artifact Versions (2)",
+      "label": "package:skillmeat.skillmeat #13 (2)",
       "nodes": [
         "migration:skillmeat/cache/migrations/versions/20251217_1500_add_artifact_versions.py::20251217_1500_add_artifact_versions",
         "model:skillmeat/cache/models.py::ArtifactVersion"
       ],
       "metadata": {
-        "size": 2,
-        "path": [
-          "Cache",
-          "Artifact Versions"
-        ],
-        "confidence": 0.86,
-        "notes": "Artifact version model and migration"
+        "size": 2
       }
     },
     {
       "group_set": "computed",
       "id": "component:8e4712facb",
-      "label": "Catalog File Access (8)",
+      "label": "package:skillmeat.skillmeat #14 (8)",
       "nodes": [
         "api_client:skillmeat/web/lib/api/catalog.ts::fetchCatalogFileContent",
         "api_client:skillmeat/web/lib/api/catalog.ts::fetchCatalogFileTree",
@@ -1878,19 +1800,13 @@
         "hook:skillmeat/web/hooks/use-catalog-files.ts::useCatalogFileTree"
       ],
       "metadata": {
-        "size": 8,
-        "path": [
-          "Marketplace",
-          "Catalog Files"
-        ],
-        "confidence": 0.88,
-        "notes": "Catalog file tree/content endpoints"
+        "size": 8
       }
     },
     {
       "group_set": "computed",
       "id": "component:8f1f06e8ed",
-      "label": "Discovery UI (4)",
+      "label": "package:skillmeat.skillmeat #15 (4)",
       "nodes": [
         "component:skillmeat/web/components/discovery/index.ts::AutoPopulationForm",
         "component:skillmeat/web/components/discovery/index.ts::BulkImportModal",
@@ -1898,19 +1814,13 @@
         "component:skillmeat/web/components/discovery/index.ts::ManagePage"
       ],
       "metadata": {
-        "size": 4,
-        "path": [
-          "Discovery",
-          "Web UI"
-        ],
-        "confidence": 0.84,
-        "notes": "Discovery pages and bulk import UI"
+        "size": 4
       }
     },
     {
       "group_set": "computed",
       "id": "component:93e3f476b9",
-      "label": "Context Sync (34)",
+      "label": "package:skillmeat.skillmeat #16 (34)",
       "nodes": [
         "api_client:skillmeat/web/lib/api/context-sync.ts::getSyncStatus",
         "api_client:skillmeat/web/lib/api/context-sync.ts::pullChanges",
@@ -1948,19 +1858,13 @@
         "schema:skillmeat/api/schemas/context_sync.py::SyncStatusResponse"
       ],
       "metadata": {
-        "size": 34,
-        "path": [
-          "Sync",
-          "Context Sync"
-        ],
-        "confidence": 0.9,
-        "notes": "Context sync API and client"
+        "size": 34
       }
     },
     {
       "group_set": "computed",
       "id": "component:a429ad0b59",
-      "label": "Cache API (37)",
+      "label": "package:skillmeat.skillmeat #17 (37)",
       "nodes": [
         "api_endpoint:GET /api/v1/cache/artifacts",
         "api_endpoint:GET /api/v1/cache/marketplace",
@@ -2001,19 +1905,13 @@
         "schema:skillmeat/api/schemas/cache.py::StaleArtifactsListResponse"
       ],
       "metadata": {
-        "size": 37,
-        "path": [
-          "Cache",
-          "API"
-        ],
-        "confidence": 0.9,
-        "notes": "Cache status/search endpoints"
+        "size": 37
       }
     },
     {
       "group_set": "computed",
       "id": "component:af330da7b1",
-      "label": "Tags Models (4)",
+      "label": "package:skillmeat.skillmeat #18 (4)",
       "nodes": [
         "migration:skillmeat/cache/migrations/versions/20251218_0001_add_tags_schema.py::20251218_0001_add_tags_schema",
         "model:skillmeat/cache/models.py::ArtifactTag",
@@ -2021,19 +1919,13 @@
         "repository:skillmeat/cache/repositories.py::TagRepository"
       ],
       "metadata": {
-        "size": 4,
-        "path": [
-          "Cache",
-          "Tags Models"
-        ],
-        "confidence": 0.86,
-        "notes": "Tag models, repository, and migration"
+        "size": 4
       }
     },
     {
       "group_set": "computed",
       "id": "component:b6c6a62a37",
-      "label": "Health Checks (9)",
+      "label": "package:skillmeat.skillmeat #19 (9)",
       "nodes": [
         "api_endpoint:GET /health",
         "api_endpoint:GET /health/detailed",
@@ -2046,37 +1938,25 @@
         "router:skillmeat/api/routers/health.py::router"
       ],
       "metadata": {
-        "size": 9,
-        "path": [
-          "Operations",
-          "Health Checks"
-        ],
-        "confidence": 0.9,
-        "notes": "Health endpoints and handlers"
+        "size": 9
       }
     },
     {
       "group_set": "computed",
       "id": "component:ba3cff4c13",
-      "label": "Deployments API (2)",
+      "label": "package:skillmeat.skillmeat #20 (2)",
       "nodes": [
         "api_client:skillmeat/web/lib/api/deployments.ts::removeProjectDeployment",
         "api_endpoint:DELETE /api/v1/projects/{projectId}/deployments/{artifactName}"
       ],
       "metadata": {
-        "size": 2,
-        "path": [
-          "Deployments",
-          "API"
-        ],
-        "confidence": 0.82,
-        "notes": "Deployment removal endpoint"
+        "size": 2
       }
     },
     {
       "group_set": "computed",
       "id": "component:c14512d193",
-      "label": "Collections Models (5)",
+      "label": "package:skillmeat.skillmeat #21 (5)",
       "nodes": [
         "migration:skillmeat/cache/migrations/versions/20251212_1600_create_collections_schema.py::20251212_1600_create_collections_schema",
         "model:skillmeat/cache/models.py::Collection",
@@ -2085,50 +1965,32 @@
         "model:skillmeat/cache/models.py::GroupArtifact"
       ],
       "metadata": {
-        "size": 5,
-        "path": [
-          "Collections",
-          "Cache Models"
-        ],
-        "confidence": 0.86,
-        "notes": "Collection/group cache models and migration"
+        "size": 5
       }
     },
     {
       "group_set": "computed",
       "id": "component:c504ef6253",
-      "label": "Directory Map UI (2)",
+      "label": "package:skillmeat.skillmeat #22 (2)",
       "nodes": [
         "component:skillmeat/web/components/marketplace/__tests__/../DirectoryMapModal.tsx::DirectoryMapModal",
         "component:skillmeat/web/components/marketplace/__tests__/DirectoryMapModal.test.tsx::DirectoryMapModal.test"
       ],
       "metadata": {
-        "size": 2,
-        "path": [
-          "Marketplace",
-          "Directory Map UI"
-        ],
-        "confidence": 0.8,
-        "notes": "Directory map modal component"
+        "size": 2
       }
     },
     {
       "group_set": "computed",
       "id": "component:e427c38778",
-      "label": "API Server Core (3)",
+      "label": "package:skillmeat.skillmeat #23 (3)",
       "nodes": [
         "api_endpoint:GET /",
         "api_endpoint:GET /api/v1/version",
         "handler:skillmeat/api/server.py::main"
       ],
       "metadata": {
-        "size": 3,
-        "path": [
-          "API",
-          "Server Core"
-        ],
-        "confidence": 0.88,
-        "notes": "Root/version endpoints and server entry"
+        "size": 3
       }
     }
   ]
