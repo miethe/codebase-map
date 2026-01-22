@@ -208,6 +208,10 @@ const App: React.FC = () => {
             const groupJson = await groupRes.json();
             const enhancedGroupings = enhanceComputedGroupingData(groupJson, data.nodes);
             setGroupingData(enhancedGroupings);
+            const availableGroupSets = enhancedGroupings?.group_sets?.map((set: any) => set.id) || [];
+            if (availableGroupSets.length && !availableGroupSets.includes(activeGroupingMode)) {
+              setActiveGroupingMode(availableGroupSets[0]);
+            }
           }
         } catch (e) {
           console.warn("Failed to load groupings", e);

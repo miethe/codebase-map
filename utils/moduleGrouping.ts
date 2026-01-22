@@ -328,6 +328,8 @@ export const enhanceComputedGroupingData = (groupings: GroupingData | null, node
 
     const groups = groupings.groups.map(group => {
         if (group.group_set !== 'computed') return group;
+        // Respect explicit semantic paths (e.g. overrides/taxonomy) and keep their labels intact.
+        if (normalizeMetadataPath(group.metadata)) return group;
         const computed = info.get(group.id);
         if (!computed || computed.label === group.label) return group;
         return { ...group, label: computed.label };
