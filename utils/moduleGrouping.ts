@@ -6,6 +6,26 @@ const COMPUTED_ROOT_MIN_SHARE = 0.6;
 const COMPUTED_MAX_DEPTH = 4;
 const FILE_EXT_RE = /\.[a-z0-9]+$/i;
 
+const normalizeMetadataPath = (metadata?: Record<string, any>): string[] | null => {
+    if (!metadata) return null;
+    const rawPath = metadata.path;
+    if (Array.isArray(rawPath)) {
+        const segments = rawPath
+            .filter((segment): segment is string => typeof segment === 'string')
+            .map(segment => segment.trim())
+            .filter(Boolean);
+        return segments.length ? segments : null;
+    }
+    if (typeof rawPath === 'string') {
+        const segments = rawPath
+            .split('/')
+            .map(segment => segment.trim())
+            .filter(Boolean);
+        return segments.length ? segments : null;
+    }
+    return null;
+};
+
 const getRepoRoot = (nodes: Node[]): string | null => {
     const counts = new Map<string, number>();
     nodes.forEach(node => {
@@ -269,8 +289,11 @@ export const buildNodePathMap = (groupings: GroupingData | null, mode: string): 
 
     for (const group of relevantGroups) {
         let path: string[] = [];
+        const metadataPath = normalizeMetadataPath(group.metadata);
 
-        if (mode === 'structure') {
+        if (metadataPath) {
+            path = metadataPath;
+        } else if (mode === 'structure') {
             const pkg = group.metadata.package || 'Root';
             const roughPkg = pkg.split('.').pop() || pkg; // "api", "web"
             const category = roughPkg === 'web' ? 'Frontend' : (roughPkg === 'api' ? 'Backend' : 'Shared');
@@ -329,6 +352,8 @@ export const buildComputedNodePathMap = (groupings: GroupingData | null, nodes: 
         if (!computed) return;
         const label = computed.label;
         const baseSegments = computed.baseSegments;
+        const metadataPath = normalizeMetadataPath(group.metadata);
+        const basePath = metadataPath?.length ? metadataPath : ['Computed', label];
 
         group.nodes.forEach(nodeId => {
             const node = nodeById.get(nodeId);
@@ -338,7 +363,7 @@ export const buildComputedNodePathMap = (groupings: GroupingData | null, nodes: 
                 ? segments.slice(baseSegments.length)
                 : segments;
             const trimmed = relative.slice(0, COMPUTED_MAX_DEPTH);
-            const modulePath = ['Computed', label, ...trimmed];
+            const modulePath = [...basePath, ...trimmed];
             map.set(nodeId, modulePath.filter(Boolean));
         });
     });

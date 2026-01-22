@@ -1,0 +1,591 @@
+{
+  "version": 1,
+  "generated_at": "2026-01-22T18:12:56Z",
+  "source_commit": "650c0188f00ff6afbb5d65c93214607df0314f04",
+  "groups": [
+    {
+      "id": "component:014cd77f4d",
+      "fingerprint": "sha1:014cd77f4d0543e851121cfa14f6eee8517c7d7a",
+      "size": 6,
+      "top_tokens": [
+        "skillmeat",
+        "cache",
+        "models",
+        "model",
+        "initial",
+        "schema",
+        "development",
+        "migrations"
+      ],
+      "top_paths": [
+        "skillmeat/cache",
+        "skillmeat/cache/migrations"
+      ],
+      "sample_nodes": [
+        "migration:skillmeat/cache/migrations/versions/001_initial_schema.py::001_initial_schema",
+        "model:skillmeat/cache/models.py::Artifact",
+        "model:skillmeat/cache/models.py::ArtifactMetadata",
+        "model:skillmeat/cache/models.py::CacheMetadata",
+        "model:skillmeat/cache/models.py::MarketplaceEntry",
+        "model:skillmeat/cache/models.py::Project"
+      ]
+    },
+    {
+      "id": "component:01a603b86d",
+      "fingerprint": "sha1:01a603b86dd875c29efb7f691d6ec7fef0a5a4ef",
+      "size": 2,
+      "top_tokens": [
+        "skillmeat",
+        "tag",
+        "service",
+        "core",
+        "services",
+        "repository",
+        "business",
+        "repo"
+      ],
+      "top_paths": [
+        "skillmeat/core/services"
+      ],
+      "sample_nodes": [
+        "repository:skillmeat.cache.repositories::TagRepository",
+        "service:skillmeat/core/services/tag_service.py::TagService"
+      ]
+    },
+    {
+      "id": "component:0409780a29",
+      "fingerprint": "sha1:0409780a2905389399b77a81d41603d23e92a96e",
+      "size": 3,
+      "top_tokens": [
+        "skillmeat",
+        "cache",
+        "template",
+        "project",
+        "models",
+        "entities",
+        "templates",
+        "add"
+      ],
+      "top_paths": [
+        "skillmeat/cache",
+        "skillmeat/cache/migrations"
+      ],
+      "sample_nodes": [
+        "migration:skillmeat/cache/migrations/versions/20251215_1200_add_project_templates_and_template_entities.py::20251215_1200_add_project_templates_and_template_entities",
+        "model:skillmeat/cache/models.py::ProjectTemplate",
+        "model:skillmeat/cache/models.py::TemplateEntity"
+      ]
+    },
+    {
+      "id": "component:059d726e98",
+      "fingerprint": "sha1:059d726e9812361873b32dd5ced58f8dc1b02e46",
+      "size": 10,
+      "top_tokens": [
+        "skillmeat",
+        "auto",
+        "web",
+        "marketplace",
+        "source",
+        "api",
+        "tags",
+        "tag"
+      ],
+      "top_paths": [
+        "skillmeat/web/lib",
+        "skillmeat/web/types",
+        "skillmeat/web/hooks"
+      ],
+      "sample_nodes": [
+        "api_client:skillmeat/web/lib/api/marketplace.ts::getSourceAutoTags",
+        "api_client:skillmeat/web/lib/api/marketplace.ts::updateSourceAutoTag",
+        "api_endpoint:GET /api/v1/marketplace/sources/{sourceId}/auto-tags",
+        "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}/auto-tags",
+        "hook:skillmeat/web/hooks/use-auto-tags.ts::useSourceAutoTags",
+        "hook:skillmeat/web/hooks/use-auto-tags.ts::useUpdateAutoTag"
+      ]
+    },
+    {
+      "id": "component:08bdf5ff06",
+      "fingerprint": "sha1:08bdf5ff0681f4d63ae9aaf2c2d45a55447b722f",
+      "size": 22,
+      "top_tokens": [
+        "skillmeat",
+        "api",
+        "settings",
+        "token",
+        "git",
+        "hub",
+        "routers",
+        "web"
+      ],
+      "top_paths": [
+        "skillmeat/api/routers",
+        "skillmeat/web/lib",
+        "skillmeat/api/schemas"
+      ],
+      "sample_nodes": [
+        "api_client:skillmeat/web/lib/api/settings.ts::clearGitHubToken",
+        "api_client:skillmeat/web/lib/api/settings.ts::getGitHubTokenStatus",
+        "api_client:skillmeat/web/lib/api/settings.ts::setGitHubToken",
+        "api_client:skillmeat/web/lib/api/settings.ts::validateGitHubToken",
+        "api_endpoint:DELETE /api/v1/settings/github-token",
+        "api_endpoint:GET /api/v1/settings/github-token/status"
+      ]
+    },
+    {
+      "id": "component:121037801a",
+      "fingerprint": "sha1:121037801ad2176ee2936586ac24f55444ec6a90",
+      "size": 14,
+      "top_tokens": [
+        "skillmeat",
+        "api",
+        "ratings",
+        "routers",
+        "artifact",
+        "rating",
+        "scoring",
+        "schema"
+      ],
+      "top_paths": [
+        "skillmeat/api/routers",
+        "skillmeat/api/schemas"
+      ],
+      "sample_nodes": [
+        "api_endpoint:GET /api/v1/ratings/artifacts/{artifact_id}/ratings",
+        "api_endpoint:GET /api/v1/ratings/artifacts/{artifact_id}/scores",
+        "api_endpoint:POST /api/v1/ratings/artifacts/{artifact_id}/ratings",
+        "handler:skillmeat/api/routers/ratings.py::get_artifact_scores",
+        "handler:skillmeat/api/routers/ratings.py::list_artifact_ratings",
+        "handler:skillmeat/api/routers/ratings.py::submit_rating"
+      ]
+    },
+    {
+      "id": "component:13e1c8d9e4",
+      "fingerprint": "sha1:13e1c8d9e45c6a5f29e883e1db8ab6ea79f7bdbe",
+      "size": 1562,
+      "top_tokens": [
+        "skillmeat",
+        "api",
+        "web",
+        "routers",
+        "use",
+        "repo",
+        "development",
+        "marketplace"
+      ],
+      "top_paths": [
+        "skillmeat/api/routers",
+        "skillmeat/web/components",
+        "skillmeat/web/types",
+        "skillmeat/api/schemas",
+        "skillmeat/web/hooks",
+        "skillmeat/web/lib"
+      ],
+      "sample_nodes": [
+        "api_client:skillmeat/web/hooks/use-artifact-groups.ts::artifactGroupKeys",
+        "api_client:skillmeat/web/hooks/use-toast.tsx::useToast",
+        "api_client:skillmeat/web/hooks/useMarketplaceSources.ts::sourceKeys",
+        "api_client:skillmeat/web/lib/api.ts::ApiError",
+        "api_client:skillmeat/web/lib/api.ts::apiConfig",
+        "api_client:skillmeat/web/lib/api.ts::apiRequest"
+      ]
+    },
+    {
+      "id": "component:19e14b2d09",
+      "fingerprint": "sha1:19e14b2d09b1d8d5eb5d5376d474302727472c8b",
+      "size": 4,
+      "top_tokens": [
+        "skillmeat",
+        "cache",
+        "models",
+        "rating",
+        "add",
+        "tables",
+        "migrations",
+        "model"
+      ],
+      "top_paths": [
+        "skillmeat/cache",
+        "skillmeat/cache/migrations"
+      ],
+      "sample_nodes": [
+        "migration:skillmeat/cache/migrations/versions/20251222_152125_add_rating_tables.py::20251222_152125_add_rating_tables",
+        "model:skillmeat/cache/models.py::CommunityScore",
+        "model:skillmeat/cache/models.py::MatchHistory",
+        "model:skillmeat/cache/models.py::UserRating"
+      ]
+    },
+    {
+      "id": "component:301d79e881",
+      "fingerprint": "sha1:301d79e881a042be60184eece67ed00659fb3caf",
+      "size": 2,
+      "top_tokens": [
+        "skillmeat",
+        "repository",
+        "cache",
+        "catalog",
+        "marketplace",
+        "entry",
+        "entries",
+        "list"
+      ],
+      "top_paths": [
+        "skillmeat/cache"
+      ],
+      "sample_nodes": [
+        "model:skillmeat/cache/models.py::MarketplaceCatalogEntry",
+        "repository:skillmeat/cache/repositories.py::MarketplaceCatalogRepository"
+      ]
+    },
+    {
+      "id": "component:40f6e9a799",
+      "fingerprint": "sha1:40f6e9a79906d0247cf1f4bc4a3972e43b02f43b",
+      "size": 4,
+      "top_tokens": [
+        "skillmeat",
+        "web",
+        "notification",
+        "context",
+        "provider",
+        "collection",
+        "providers",
+        "toaster"
+      ],
+      "top_paths": [
+        "skillmeat/web/components",
+        "skillmeat/web/context",
+        "skillmeat/web/lib"
+      ],
+      "sample_nodes": [
+        "component:skillmeat/web/components/providers.tsx::Providers",
+        "component:skillmeat/web/components/ui/toaster.tsx::Toaster",
+        "component:skillmeat/web/context/collection-context.tsx::CollectionProvider",
+        "component:skillmeat/web/lib/notification-store.tsx::NotificationProvider"
+      ]
+    },
+    {
+      "id": "component:52cc96952b",
+      "fingerprint": "sha1:52cc96952b922aa6f7e4b504d4683fdd572cd1ee",
+      "size": 2,
+      "top_tokens": [
+        "skillmeat",
+        "source",
+        "repo",
+        "repository",
+        "cache",
+        "marketplace",
+        "git",
+        "hub"
+      ],
+      "top_paths": [
+        "skillmeat/cache"
+      ],
+      "sample_nodes": [
+        "model:skillmeat/cache/models.py::MarketplaceSource",
+        "repository:skillmeat/cache/repositories.py::MarketplaceSourceRepository"
+      ]
+    },
+    {
+      "id": "component:6c5a508bd0",
+      "fingerprint": "sha1:6c5a508bd04be813afce92681436b583c485f890",
+      "size": 7,
+      "top_tokens": [
+        "skillmeat",
+        "path",
+        "web",
+        "api",
+        "tags",
+        "marketplace",
+        "use",
+        "id"
+      ],
+      "top_paths": [
+        "skillmeat/web/lib",
+        "skillmeat/web/hooks",
+        "skillmeat/web/types"
+      ],
+      "sample_nodes": [
+        "api_client:skillmeat/web/lib/api/marketplace.ts::getPathTags",
+        "api_client:skillmeat/web/lib/api/marketplace.ts::updatePathTagStatus",
+        "api_endpoint:GET /api/v1/marketplace/sources/{sourceId}/catalog/{entryId}/path-tags",
+        "api_endpoint:PATCH /api/v1/marketplace/sources/{sourceId}/catalog/{entryId}/path-tags",
+        "hook:skillmeat/web/hooks/use-path-tags.ts::usePathTags",
+        "hook:skillmeat/web/hooks/use-path-tags.ts::useUpdatePathTagStatus"
+      ]
+    },
+    {
+      "id": "component:7c9983913f",
+      "fingerprint": "sha1:7c9983913fc679a1a5e00d4b827939aefd9fa44d",
+      "size": 2,
+      "top_tokens": [
+        "skillmeat",
+        "versions",
+        "artifact",
+        "cache",
+        "add",
+        "migrations",
+        "models",
+        "migration"
+      ],
+      "top_paths": [
+        "skillmeat/cache",
+        "skillmeat/cache/migrations"
+      ],
+      "sample_nodes": [
+        "migration:skillmeat/cache/migrations/versions/20251217_1500_add_artifact_versions.py::20251217_1500_add_artifact_versions",
+        "model:skillmeat/cache/models.py::ArtifactVersion"
+      ]
+    },
+    {
+      "id": "component:8e4712facb",
+      "fingerprint": "sha1:8e4712facb69df7a77a0bd608a996c8ac4fb02ea",
+      "size": 8,
+      "top_tokens": [
+        "skillmeat",
+        "catalog",
+        "api",
+        "web",
+        "path",
+        "artifact",
+        "content",
+        "tree"
+      ],
+      "top_paths": [
+        "skillmeat/web/lib",
+        "skillmeat/web/hooks"
+      ],
+      "sample_nodes": [
+        "api_client:skillmeat/web/lib/api/catalog.ts::fetchCatalogFileContent",
+        "api_client:skillmeat/web/lib/api/catalog.ts::fetchCatalogFileTree",
+        "api_client:skillmeat/web/lib/api/catalog.ts::type FileContentResponse",
+        "api_client:skillmeat/web/lib/api/catalog.ts::type FileTreeResponse",
+        "api_endpoint:GET /api/v1/marketplace/sources/{sourceId}/artifacts/{encodedArtifactPath}/files/{encodedFilePath}",
+        "api_endpoint:GET /api/v1/marketplace/sources/{sourceId}/artifacts/{encodedPath}/files"
+      ]
+    },
+    {
+      "id": "component:8f1f06e8ed",
+      "fingerprint": "sha1:8f1f06e8ed0a6ed07d3efb815b62a39e4c86036b",
+      "size": 4,
+      "top_tokens": [
+        "skillmeat",
+        "discovery",
+        "web",
+        "development",
+        "manage",
+        "repo",
+        "symbol",
+        "auto"
+      ],
+      "top_paths": [
+        "skillmeat/web/components"
+      ],
+      "sample_nodes": [
+        "component:skillmeat/web/components/discovery/index.ts::AutoPopulationForm",
+        "component:skillmeat/web/components/discovery/index.ts::BulkImportModal",
+        "component:skillmeat/web/components/discovery/index.ts::DiscoveryBanner",
+        "component:skillmeat/web/components/discovery/index.ts::ManagePage"
+      ]
+    },
+    {
+      "id": "component:93e3f476b9",
+      "fingerprint": "sha1:93e3f476b9868aa4052013f1d9b4bb89371a95f5",
+      "size": 34,
+      "top_tokens": [
+        "skillmeat",
+        "sync",
+        "context",
+        "api",
+        "web",
+        "project",
+        "use",
+        "routers"
+      ],
+      "top_paths": [
+        "skillmeat/api/routers",
+        "skillmeat/web/lib",
+        "skillmeat/api/schemas",
+        "skillmeat/web/hooks"
+      ],
+      "sample_nodes": [
+        "api_client:skillmeat/web/lib/api/context-sync.ts::getSyncStatus",
+        "api_client:skillmeat/web/lib/api/context-sync.ts::pullChanges",
+        "api_client:skillmeat/web/lib/api/context-sync.ts::pushChanges",
+        "api_client:skillmeat/web/lib/api/context-sync.ts::resolveConflict",
+        "api_client:skillmeat/web/lib/api/context-sync.ts::type SyncResolution",
+        "api_client:skillmeat/web/lib/api/context-sync.ts::type SyncStatus"
+      ]
+    },
+    {
+      "id": "component:a429ad0b59",
+      "fingerprint": "sha1:a429ad0b5932d0b379a94b9e52287e8dec5d5d1f",
+      "size": 37,
+      "top_tokens": [
+        "skillmeat",
+        "cache",
+        "api",
+        "routers",
+        "schemas",
+        "list",
+        "response",
+        "schema"
+      ],
+      "top_paths": [
+        "skillmeat/api/routers",
+        "skillmeat/api/schemas"
+      ],
+      "sample_nodes": [
+        "api_endpoint:GET /api/v1/cache/artifacts",
+        "api_endpoint:GET /api/v1/cache/marketplace",
+        "api_endpoint:GET /api/v1/cache/projects",
+        "api_endpoint:GET /api/v1/cache/search",
+        "api_endpoint:GET /api/v1/cache/stale-artifacts",
+        "api_endpoint:GET /api/v1/cache/status"
+      ]
+    },
+    {
+      "id": "component:af330da7b1",
+      "fingerprint": "sha1:af330da7b19413328096377061c323cb7bbe15e0",
+      "size": 4,
+      "top_tokens": [
+        "skillmeat",
+        "tag",
+        "cache",
+        "tags",
+        "repository",
+        "add",
+        "models",
+        "repo"
+      ],
+      "top_paths": [
+        "skillmeat/cache",
+        "skillmeat/cache/migrations"
+      ],
+      "sample_nodes": [
+        "migration:skillmeat/cache/migrations/versions/20251218_0001_add_tags_schema.py::20251218_0001_add_tags_schema",
+        "model:skillmeat/cache/models.py::ArtifactTag",
+        "model:skillmeat/cache/models.py::Tag",
+        "repository:skillmeat/cache/repositories.py::TagRepository"
+      ]
+    },
+    {
+      "id": "component:b6c6a62a37",
+      "fingerprint": "sha1:b6c6a62a37f1de92610fd4cd76d4ad4e3899eef9",
+      "size": 9,
+      "top_tokens": [
+        "skillmeat",
+        "health",
+        "api",
+        "routers",
+        "check",
+        "handler",
+        "manager",
+        "detailed"
+      ],
+      "top_paths": [
+        "skillmeat/api/routers"
+      ],
+      "sample_nodes": [
+        "api_endpoint:GET /health",
+        "api_endpoint:GET /health/detailed",
+        "api_endpoint:GET /health/live",
+        "api_endpoint:GET /health/ready",
+        "handler:skillmeat/api/routers/health.py::detailed_health_check",
+        "handler:skillmeat/api/routers/health.py::health_check"
+      ]
+    },
+    {
+      "id": "component:ba3cff4c13",
+      "fingerprint": "sha1:ba3cff4c137725ca8724546112c50d70ef948a0a",
+      "size": 2,
+      "top_tokens": [
+        "skillmeat",
+        "api",
+        "deployments",
+        "project",
+        "artifact",
+        "remove",
+        "web",
+        "deployment"
+      ],
+      "top_paths": [
+        "skillmeat/web/lib"
+      ],
+      "sample_nodes": [
+        "api_client:skillmeat/web/lib/api/deployments.ts::removeProjectDeployment",
+        "api_endpoint:DELETE /api/v1/projects/{projectId}/deployments/{artifactName}"
+      ]
+    },
+    {
+      "id": "component:c14512d193",
+      "fingerprint": "sha1:c14512d193f5cc8f6367ede5080bf638f3477a4f",
+      "size": 5,
+      "top_tokens": [
+        "skillmeat",
+        "cache",
+        "models",
+        "collections",
+        "create",
+        "schema",
+        "model",
+        "migrations"
+      ],
+      "top_paths": [
+        "skillmeat/cache",
+        "skillmeat/cache/migrations"
+      ],
+      "sample_nodes": [
+        "migration:skillmeat/cache/migrations/versions/20251212_1600_create_collections_schema.py::20251212_1600_create_collections_schema",
+        "model:skillmeat/cache/models.py::Collection",
+        "model:skillmeat/cache/models.py::CollectionArtifact",
+        "model:skillmeat/cache/models.py::Group",
+        "model:skillmeat/cache/models.py::GroupArtifact"
+      ]
+    },
+    {
+      "id": "component:c504ef6253",
+      "fingerprint": "sha1:c504ef6253d9214aef2521583859f679ca799689",
+      "size": 2,
+      "top_tokens": [
+        "skillmeat",
+        "directory",
+        "modal",
+        "map",
+        "marketplace",
+        "web",
+        "open",
+        "repo"
+      ],
+      "top_paths": [
+        "skillmeat/web/components"
+      ],
+      "sample_nodes": [
+        "component:skillmeat/web/components/marketplace/__tests__/../DirectoryMapModal.tsx::DirectoryMapModal",
+        "component:skillmeat/web/components/marketplace/__tests__/DirectoryMapModal.test.tsx::DirectoryMapModal.test"
+      ]
+    },
+    {
+      "id": "component:e427c38778",
+      "fingerprint": "sha1:e427c387786c8be178590002b15d809de40ce375",
+      "size": 3,
+      "top_tokens": [
+        "skillmeat",
+        "api",
+        "server",
+        "openapi",
+        "endpoint",
+        "get",
+        "development",
+        "handler"
+      ],
+      "top_paths": [
+        "skillmeat/api"
+      ],
+      "sample_nodes": [
+        "api_endpoint:GET /",
+        "api_endpoint:GET /api/v1/version",
+        "handler:skillmeat/api/server.py::main"
+      ]
+    }
+  ]
+}
