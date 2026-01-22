@@ -212,6 +212,9 @@ const App: React.FC = () => {
             if (availableGroupSets.length && !availableGroupSets.includes(activeGroupingMode)) {
               setActiveGroupingMode(availableGroupSets[0]);
             }
+            if (availableGroupSets.length === 1 && availableGroupSets[0] === 'computed') {
+              setViewMode('hierarchical');
+            }
           }
         } catch (e) {
           console.warn("Failed to load groupings", e);
