@@ -9,6 +9,11 @@
 - Build output goes to `dist/`.
 - Data generation helpers live in `scripts/` (Node scripts that write JSON files).
 
+## Rendering Defaults
+- WebGL is the default renderer; enhancements and fixes should target `components/GraphCanvasWebGL.tsx` first.
+- SVG (`components/GraphCanvas.tsx`) is a fallback for compatibility only; touch it only when a fallback-specific change is needed.
+- Renderer selection lives in `components/GraphRenderer.tsx` (env-driven).
+
 ## Build, Test, and Development Commands
 - `npm install` installs dependencies.
 - `npm run dev` starts the Vite dev server.
@@ -28,6 +33,11 @@
 - No automated test runner is configured yet.
 - If you add tests, place them in `tests/` or `__tests__/` and add an `npm test` script.
 - Include basic smoke checks for graph rendering and data loading paths.
+
+## Token & Context Efficiency
+- Avoid loading large `codebase-graph.*.json` files unless strictly necessary; prefer `metadata.json` or narrow `rg` searches.
+- When inspecting data, sample small slices (e.g., `head`, `jq` filters) instead of full dumps.
+- Keep changes localized; don’t reformat unrelated code.
 
 ## Commit & Pull Request Guidelines
 - Commit messages follow Conventional Commits patterns like `feat: ...` and `fix: ...`.
