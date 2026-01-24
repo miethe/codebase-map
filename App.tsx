@@ -67,6 +67,8 @@ export const GraphContext = React.createContext<GraphContextType>({
   setLayerSpacing: () => { },
   showLodPlanes: true,
   setShowLodPlanes: () => { },
+  dimDrilldownLabels: true,
+  setDimDrilldownLabels: () => { },
   enableMotionOptimizations: true,
   setEnableMotionOptimizations: () => { },
   enablePerformanceMode: false,
@@ -105,6 +107,7 @@ const App: React.FC = () => {
   const [layeredLodEnabled, setLayeredLodEnabled] = useState(false);
   const [layerSpacing, setLayerSpacing] = useState(160);
   const [showLodPlanes, setShowLodPlanes] = useState(true);
+  const [dimDrilldownLabels, setDimDrilldownLabels] = useState(true);
 
   const [gitMetadata, setGitMetadata] = useState<GitMetadata | null>(null);
   const [dependencyData, setDependencyData] = useState<DependencyGraph | null>(null);
@@ -634,6 +637,8 @@ const App: React.FC = () => {
     setLayerSpacing,
     showLodPlanes,
     setShowLodPlanes,
+    dimDrilldownLabels,
+    setDimDrilldownLabels,
     enableMotionOptimizations,
     setEnableMotionOptimizations,
     enablePerformanceMode,
@@ -825,6 +830,15 @@ const App: React.FC = () => {
                         className="h-3 w-3 accent-indigo-500"
                         checked={enablePerformanceMode}
                         onChange={(event) => setEnablePerformanceMode(event.target.checked)}
+                      />
+                    </label>
+                    <label className="flex items-center justify-between text-xs text-slate-300">
+                      <span>Dim drilldown labels</span>
+                      <input
+                        type="checkbox"
+                        className="h-3 w-3 accent-indigo-500"
+                        checked={dimDrilldownLabels}
+                        onChange={(event) => setDimDrilldownLabels(event.target.checked)}
                       />
                     </label>
                     <div className="space-y-2">

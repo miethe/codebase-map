@@ -223,6 +223,75 @@ const buildDrilldownContextNodeIds = (
   return clusterNodeIds;
 };
 
+const getEdgeEndpoints = (edge: Edge) => {
+  const from = edge.from || (typeof edge.source === 'string' ? edge.source : edge.source?.id);
+  const to = edge.to || (typeof edge.target === 'string' ? edge.target : edge.target?.id);
+  if (!from || !to) return null;
+  return { from, to };
+};
+
+const buildUndirectedAdjacency = (edges: Edge[]) => {
+  const undirected = new Map<string, string[]>();
+  edges.forEach(edge => {
+    const endpoints = getEdgeEndpoints(edge);
+    if (!endpoints) return;
+    const { from, to } = endpoints;
+    if (!undirected.has(from)) undirected.set(from, []);
+    if (!undirected.has(to)) undirected.set(to, []);
+    undirected.get(from)!.push(to);
+    undirected.get(to)!.push(from);
+  });
+  return undirected;
+};
+
+const traverseUndirectedFromSeeds = (startIds: string[], adjacency: Map<string, string[]>) => {
+  const visited = new Set<string>();
+  const queue: string[] = [];
+  startIds.forEach(id => {
+    if (visited.has(id)) return;
+    visited.add(id);
+    queue.push(id);
+  });
+  while (queue.length > 0) {
+    const current = queue.shift()!;
+    const neighbors = adjacency.get(current) || [];
+    neighbors.forEach(next => {
+      if (visited.has(next)) return;
+      visited.add(next);
+      queue.push(next);
+    });
+  }
+  return visited;
+};
+
+const getClusterAncestorIds = (nodes: Node[], focusClusterId: string) => {
+  const direct = nodes.find(node => node.id === focusClusterId || node.cluster_id === focusClusterId);
+  if (direct?.cluster_path?.length) {
+    const index = direct.cluster_path.indexOf(focusClusterId);
+    if (index >= 0) return direct.cluster_path.slice(0, index + 1);
+    return direct.cluster_path;
+  }
+  for (const node of nodes) {
+    if (!node.cluster_path?.length) continue;
+    const index = node.cluster_path.indexOf(focusClusterId);
+    if (index >= 0) return node.cluster_path.slice(0, index + 1);
+  }
+  return [focusClusterId];
+};
+
+const buildDrilldownFocusNodeIds = (nodes: Node[], edges: Edge[], focusClusterId: string | null) => {
+  if (!focusClusterId) return null;
+  const seedIds = new Set<string>();
+  nodes.forEach(node => {
+    if (isNodeInCluster(node, focusClusterId)) seedIds.add(node.id);
+  });
+  if (!seedIds.size) return null;
+  const adjacency = buildUndirectedAdjacency(edges);
+  const connected = traverseUndirectedFromSeeds(Array.from(seedIds), adjacency);
+  getClusterAncestorIds(nodes, focusClusterId).forEach(id => connected.add(id));
+  return connected;
+};
+
 const getLodPlaneColor = (depth: number) => LOD_PLANE_COLORS[depth % LOD_PLANE_COLORS.length];
 
 const clampLayerSpacing = (value: number) => Math.min(400, Math.max(80, value));
@@ -579,6 +648,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     activeGroupingMode,
     groupingData,
     gitMetadata,
+    dimDrilldownLabels,
     showMultiMembership,
     layeredLodEnabled,
     layerSpacing,
@@ -1076,14 +1146,9 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     return getFocusNodeIds(highlightMode, selectedNode.id, data.edges, focusHopCount);
   }, [selectedNode?.id, data.edges, highlightMode, focusHopCount]);
   const focusActive = Boolean(selectedNode && focusMode !== 'off' && highlightNodeIds);
-  const clusterFocusNodeIds = useMemo(() => {
-    if (viewMode !== 'clusters' || !focusClusterId) return null;
-    const ids = new Set<string>();
-    data.nodes.forEach(node => {
-      if (isNodeInCluster(node, focusClusterId)) ids.add(node.id);
-    });
-    return ids.size ? ids : null;
-  }, [data.nodes, viewMode, focusClusterId]);
+  const drilldownFocusNodeIds = useMemo(() => {
+    return buildDrilldownFocusNodeIds(data.nodes, data.edges, focusClusterId);
+  }, [data.nodes, data.edges, focusClusterId]);
   const layeringActive = layeredLodEnabled && viewMode !== 'structured';
   const effectiveLayerSpacing = clampLayerSpacing(layerSpacing);
   const isExpandedNode = useCallback((node: Node) => {
@@ -1138,7 +1203,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     if (!dataSnapshot) return;
     const shouldShow = exportState ? exportState.showLabels : (!enableMotionOptimizations || !reduceDetail);
     const restrictToHighlight = Boolean(selectedNode && selectedNode.kind !== 'cluster' && focusMode === 'off' && highlightNodeIds);
-    const restrictToCluster = Boolean(clusterFocusNodeIds);
+    const restrictToCluster = Boolean(drilldownFocusNodeIds && dimDrilldownLabels);
     if (!shouldShow && labelVisibilityModeRef.current === 'hidden') return;
     camera.updateMatrixWorld();
     const projScreenMatrix = projScreenMatrixRef.current;
@@ -1170,7 +1235,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       if (!sprite) return;
       const allowLabel = shouldShow
         && (!restrictToHighlight || highlightNodeIds?.has(node.id))
-        && (!restrictToCluster || clusterFocusNodeIds?.has(node.id));
+        && (!restrictToCluster || drilldownFocusNodeIds?.has(node.id));
       if (!allowLabel) {
         if (sprite.visible) {
           sprite.visible = false;
@@ -1278,7 +1343,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     if (didChange) {
       graph.refresh();
     }
-  }, [enableMotionOptimizations, enablePerformanceMode, reduceDetail, selectedNode, focusMode, highlightNodeIds, clusterFocusNodeIds, zoomLevel, dimensions.width, dimensions.height, labelBucket]);
+  }, [enableMotionOptimizations, enablePerformanceMode, reduceDetail, selectedNode, focusMode, highlightNodeIds, drilldownFocusNodeIds, dimDrilldownLabels, zoomLevel, dimensions.width, dimensions.height, labelBucket]);
 
   const scheduleLabelVisibilityUpdate = useCallback(() => {
     const exportLabels = exportRenderStateRef.current?.showLabels;
@@ -2562,14 +2627,14 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
         alphaOverride = 0.12;
       }
     }
-    if (clusterFocusNodeIds && !clusterFocusNodeIds.has(node.id)) {
+    if (drilldownFocusNodeIds && !drilldownFocusNodeIds.has(node.id)) {
       alphaOverride = alphaOverride === null ? 0.12 : Math.min(alphaOverride, 0.12);
     }
     if (isExpandedNode(node) && (!selectedNode || selectedNode.id !== node.id)) {
       alphaOverride = alphaOverride === null ? 0.45 : Math.min(alphaOverride, 0.45);
     }
     return alphaOverride === null ? base : toRgba(base, alphaOverride);
-  }, [activeColorMode, groupingData, gitMetadata, selectedNode, focusMode, highlightNodeIds, clusterFocusNodeIds, exportRenderState, isExpandedNode]);
+  }, [activeColorMode, groupingData, gitMetadata, selectedNode, focusMode, highlightNodeIds, drilldownFocusNodeIds, exportRenderState, isExpandedNode]);
 
   const linkColor = useCallback((link: Edge) => {
     const base = EDGE_STYLES[link.type]?.stroke || EDGE_STYLES.default.stroke;
@@ -2592,10 +2657,10 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       }
     }
 
-    if (clusterFocusNodeIds) {
+    if (drilldownFocusNodeIds) {
       const srcId = getLinkEndpointId(link.source);
       const tgtId = getLinkEndpointId(link.target);
-      const inCluster = clusterFocusNodeIds.has(srcId || '') && clusterFocusNodeIds.has(tgtId || '');
+      const inCluster = drilldownFocusNodeIds.has(srcId || '') && drilldownFocusNodeIds.has(tgtId || '');
       if (!inCluster) {
         alpha = Math.min(alpha, 0.05);
       }
@@ -2606,7 +2671,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     }
 
     return toRgba(base, alpha);
-  }, [selectedNode, focusMode, highlightNodeIds, clusterFocusNodeIds, exportRenderState, isCrossLayerEdge]);
+  }, [selectedNode, focusMode, highlightNodeIds, drilldownFocusNodeIds, exportRenderState, isCrossLayerEdge]);
 
   const nodeThreeObject = useCallback((node: Node) => {
     const cached = nodeObjectCache.current.get(node.id);

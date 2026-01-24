@@ -240,6 +240,8 @@ export interface GraphContextType {
   setLayerSpacing: (value: number) => void;
   showLodPlanes: boolean;
   setShowLodPlanes: (enabled: boolean) => void;
+  dimDrilldownLabels: boolean;
+  setDimDrilldownLabels: (enabled: boolean) => void;
   enableMotionOptimizations: boolean;
   setEnableMotionOptimizations: (enabled: boolean) => void;
   enablePerformanceMode: boolean;
@@ -361,6 +363,7 @@ export interface GraphRendererViewState {
   layeredLodEnabled: boolean;
   layerSpacing: number;
   showLodPlanes: boolean;
+  dimDrilldownLabels: boolean;
   enableMotionOptimizations: boolean;
   enablePerformanceMode: boolean;
   zoomSpeed: number;
