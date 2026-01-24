@@ -506,6 +506,14 @@ export const Sidebar: React.FC = () => {
                         Systems
                     </button>
                     <button
+                        onClick={() => setViewMode('clusters')}
+                        className={`flex-1 flex items-center justify-center gap-2 py-1.5 px-2 rounded text-xs font-medium transition-colors ${viewMode === 'clusters' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-700'}`}
+                        title="Cluster LOD Drilldown"
+                    >
+                        <Layers size={14} />
+                        Clusters
+                    </button>
+                    <button
                         onClick={() => setViewMode('structured')}
                         className={`flex-1 flex items-center justify-center gap-2 py-1.5 px-2 rounded text-xs font-medium transition-colors ${viewMode === 'structured' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-700'}`}
                         title="Structured Columns Layout"
@@ -514,6 +522,11 @@ export const Sidebar: React.FC = () => {
                         Stacked
                     </button>
                 </div>
+                {viewMode === 'clusters' && (
+                    <div className="mt-2 text-[10px] text-slate-500">
+                        Double-click clusters to drill down.
+                    </div>
+                )}
 
                 {/* Graph Scope Views */}
                 <div className="space-y-1">

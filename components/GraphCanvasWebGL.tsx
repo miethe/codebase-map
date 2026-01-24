@@ -361,23 +361,23 @@ const createModuleLabelSprite = (text: string) => createTextSprite(text, {
 });
 
 const createClusterLabelSprite = (text: string, focused: boolean) => createTextSprite(text, {
-  fontSize: 22,
+  fontSize: 32,
   fontWeight: 700,
-  padding: 8,
-  textColor: focused ? '#e0f2fe' : '#d1d5f5',
-  backgroundColor: focused ? 'rgba(14, 165, 233, 0.35)' : 'rgba(15, 23, 42, 0.65)',
+  padding: 12,
+  textColor: focused ? '#e0f2fe' : '#f3e8ff',
+  backgroundColor: focused ? 'rgba(14, 165, 233, 0.75)' : 'rgba(88, 28, 135, 0.75)',
   fontFamily: '"Inter", sans-serif',
-  scale: 0.18
+  scale: 0.36
 });
 
 const createLodPlaneLabelSprite = (text: string, color: string) => createTextSprite(text, {
-  fontSize: 18,
+  fontSize: 28,
   fontWeight: 700,
-  padding: 6,
-  textColor: '#e2e8f0',
-  backgroundColor: toRgba(color, 0.45),
+  padding: 10,
+  textColor: '#ccfbf1',
+  backgroundColor: 'rgba(17, 94, 89, 0.85)',
   fontFamily: '"Inter", sans-serif',
-  scale: 0.16
+  scale: 0.32
 });
 
 const getGlyphIntensity = (node: Node) => {
@@ -1076,6 +1076,14 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     return getFocusNodeIds(highlightMode, selectedNode.id, data.edges, focusHopCount);
   }, [selectedNode?.id, data.edges, highlightMode, focusHopCount]);
   const focusActive = Boolean(selectedNode && focusMode !== 'off' && highlightNodeIds);
+  const clusterFocusNodeIds = useMemo(() => {
+    if (viewMode !== 'clusters' || !focusClusterId) return null;
+    const ids = new Set<string>();
+    data.nodes.forEach(node => {
+      if (isNodeInCluster(node, focusClusterId)) ids.add(node.id);
+    });
+    return ids.size ? ids : null;
+  }, [data.nodes, viewMode, focusClusterId]);
   const layeringActive = layeredLodEnabled && viewMode !== 'structured';
   const effectiveLayerSpacing = clampLayerSpacing(layerSpacing);
   const isExpandedNode = useCallback((node: Node) => {
@@ -1130,6 +1138,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     if (!dataSnapshot) return;
     const shouldShow = exportState ? exportState.showLabels : (!enableMotionOptimizations || !reduceDetail);
     const restrictToHighlight = Boolean(selectedNode && selectedNode.kind !== 'cluster' && focusMode === 'off' && highlightNodeIds);
+    const restrictToCluster = Boolean(clusterFocusNodeIds);
     if (!shouldShow && labelVisibilityModeRef.current === 'hidden') return;
     camera.updateMatrixWorld();
     const projScreenMatrix = projScreenMatrixRef.current;
@@ -1159,7 +1168,9 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     dataSnapshot.nodes.forEach(node => {
       const sprite = labelCache.current.get(node.id);
       if (!sprite) return;
-      const allowLabel = shouldShow && (!restrictToHighlight || highlightNodeIds?.has(node.id));
+      const allowLabel = shouldShow
+        && (!restrictToHighlight || highlightNodeIds?.has(node.id))
+        && (!restrictToCluster || clusterFocusNodeIds?.has(node.id));
       if (!allowLabel) {
         if (sprite.visible) {
           sprite.visible = false;
@@ -1267,7 +1278,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     if (didChange) {
       graph.refresh();
     }
-  }, [enableMotionOptimizations, enablePerformanceMode, reduceDetail, selectedNode, focusMode, highlightNodeIds, zoomLevel, dimensions.width, dimensions.height, labelBucket]);
+  }, [enableMotionOptimizations, enablePerformanceMode, reduceDetail, selectedNode, focusMode, highlightNodeIds, clusterFocusNodeIds, zoomLevel, dimensions.width, dimensions.height, labelBucket]);
 
   const scheduleLabelVisibilityUpdate = useCallback(() => {
     const exportLabels = exportRenderStateRef.current?.showLabels;
@@ -1741,8 +1752,8 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       });
 
       const memberCount = (clusterNode?.member_count ?? members.length) || 1;
-      const pad = 24 + Math.min(120, Math.log1p(memberCount) * 14);
-      const padZ = Math.max(18, Math.min(80, pad * 0.6));
+      const pad = 48 + Math.min(240, Math.log1p(memberCount) * 28);
+      const padZ = Math.max(36, Math.min(160, pad * 1.2));
 
       if (minX === Infinity || minY === Infinity || maxX === -Infinity || maxY === -Infinity) {
         if (clusterNode?.x === undefined || clusterNode?.y === undefined) return;
@@ -2453,6 +2464,10 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       controls.rotateSpeed = rotateSpeed;
       controls.screenSpacePanning = true;
 
+      // Allow closer zoom and more pan range
+      controls.minDistance = 10;
+      controls.maxDistance = 10000;
+
       // Lock rotation in hierarchical (Systems) view
       controls.enableRotate = viewMode !== 'hierarchical';
 
@@ -2547,11 +2562,14 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
         alphaOverride = 0.12;
       }
     }
+    if (clusterFocusNodeIds && !clusterFocusNodeIds.has(node.id)) {
+      alphaOverride = alphaOverride === null ? 0.12 : Math.min(alphaOverride, 0.12);
+    }
     if (isExpandedNode(node) && (!selectedNode || selectedNode.id !== node.id)) {
       alphaOverride = alphaOverride === null ? 0.45 : Math.min(alphaOverride, 0.45);
     }
     return alphaOverride === null ? base : toRgba(base, alphaOverride);
-  }, [activeColorMode, groupingData, gitMetadata, selectedNode, focusMode, highlightNodeIds, exportRenderState, isExpandedNode]);
+  }, [activeColorMode, groupingData, gitMetadata, selectedNode, focusMode, highlightNodeIds, clusterFocusNodeIds, exportRenderState, isExpandedNode]);
 
   const linkColor = useCallback((link: Edge) => {
     const base = EDGE_STYLES[link.type]?.stroke || EDGE_STYLES.default.stroke;
@@ -2574,12 +2592,21 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       }
     }
 
+    if (clusterFocusNodeIds) {
+      const srcId = getLinkEndpointId(link.source);
+      const tgtId = getLinkEndpointId(link.target);
+      const inCluster = clusterFocusNodeIds.has(srcId || '') && clusterFocusNodeIds.has(tgtId || '');
+      if (!inCluster) {
+        alpha = Math.min(alpha, 0.05);
+      }
+    }
+
     if (isCrossLayerEdge(link)) {
       alpha = Math.min(1, alpha + 0.2);
     }
 
     return toRgba(base, alpha);
-  }, [selectedNode, focusMode, highlightNodeIds, exportRenderState, isCrossLayerEdge]);
+  }, [selectedNode, focusMode, highlightNodeIds, clusterFocusNodeIds, exportRenderState, isCrossLayerEdge]);
 
   const nodeThreeObject = useCallback((node: Node) => {
     const cached = nodeObjectCache.current.get(node.id);

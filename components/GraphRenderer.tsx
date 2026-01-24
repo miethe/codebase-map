@@ -23,6 +23,7 @@ export const GraphRenderer: React.FC = () => {
     activeColorMode,
     groupingData,
     activeGroupingMode,
+    clusterLodData,
     gitMetadata,
     showMultiMembership,
     layeredLodEnabled,
@@ -30,6 +31,7 @@ export const GraphRenderer: React.FC = () => {
     showLodPlanes,
     graphView,
     activeModule,
+    setActiveModule,
     enableMotionOptimizations,
     enablePerformanceMode,
     lodMode,
@@ -48,16 +50,17 @@ export const GraphRenderer: React.FC = () => {
     layoutCacheSeed
   } = useContext(GraphContext);
 
-  const rendererMode = (import.meta.env.VITE_GRAPH_RENDERER || 'svg').toLowerCase();
+  const rendererMode = (import.meta.env.VITE_GRAPH_RENDERER || 'webgl').toLowerCase();
   const useWebglRenderer = rendererMode === 'webgl';
 
-  const allowLod = Boolean(lodData)
-    && graphView === 'unified'
-    && !activeModule
-    && viewMode !== 'hierarchical';
+  const isClusterView = viewMode === 'clusters';
+  const activeLodData = isClusterView ? clusterLodData : lodData;
+  const baseData = isClusterView && clusterLodData?.lod0 ? clusterLodData.lod0 : data;
+  const allowLod = Boolean(activeLodData)
+    && (isClusterView || (graphView === 'unified' && !activeModule));
   const { graphData, toggleCluster, expandedClusters, expandedByDepth, popExpansion, lodLevel } = useGraphLOD({
-    baseData: data,
-    lodData,
+    baseData,
+    lodData: activeLodData,
     zoomLevel,
     allowLod,
     lodMode,
@@ -89,12 +92,33 @@ export const GraphRenderer: React.FC = () => {
       const nextFocusId = nextFocusDepth !== null ? expandedByDepth.get(nextFocusDepth) : null;
       setFocusClusterId(nextFocusId || null);
       popExpansion();
+      if (isClusterView) {
+        if (!nextFocusId) {
+          setActiveModule(null);
+        } else {
+          const nextNode = graphData.nodes.find(node => node.id === nextFocusId || node.cluster_id === nextFocusId);
+          const nextPath = nextNode?.modulePath;
+          setActiveModule(nextPath?.length ? nextPath.join('/') : null);
+        }
+      }
       return;
     }
     if (selectedNode) {
       setSelectedNode(null);
     }
-  }, [expandedByDepth, expandedClusters.size, focusMode, popExpansion, selectedNode, setFocusClusterId, setFocusMode, setSelectedNode]);
+  }, [
+    expandedByDepth,
+    expandedClusters.size,
+    focusMode,
+    graphData.nodes,
+    isClusterView,
+    popExpansion,
+    selectedNode,
+    setActiveModule,
+    setFocusClusterId,
+    setFocusMode,
+    setSelectedNode
+  ]);
 
   const rendererProps = useMemo<GraphRendererProps>(() => ({
     data: graphData,
@@ -136,6 +160,14 @@ export const GraphRenderer: React.FC = () => {
         const clusterId = node.cluster_id || node.id;
         const depth = getNodeDepth(node);
         const isExpanded = expandedClusters.has(clusterId);
+        if (isClusterView && node.modulePath?.length) {
+          if (isExpanded) {
+            const parentPath = node.modulePath.slice(0, -1);
+            setActiveModule(parentPath.length ? parentPath.join('/') : null);
+          } else {
+            setActiveModule(node.modulePath.join('/'));
+          }
+        }
         const isFocused = focusClusterId === clusterId;
         if (isFocused && isExpanded) {
           setFocusClusterId(null);
@@ -185,8 +217,10 @@ export const GraphRenderer: React.FC = () => {
     cameraJumpRequest,
     layoutCacheKey,
     lodLevel,
+    isClusterView,
     setSelectedNode,
     setHoveredNode,
+    setActiveModule,
     setFocusClusterId,
     setFocusMode,
     setZoomLevel,

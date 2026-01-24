@@ -7,6 +7,7 @@ import { GraphData, GraphLODData, Node, GraphContextType, ViewMode, GraphViewMod
 import { Layout, Loader2, AlertCircle, ChevronDown, ChevronUp, GitBranch, MoreVertical } from 'lucide-react';
 
 import { deriveModulePath, getDisplayModule, buildNodePathMap, buildComputedNodePathMap, enhanceComputedGroupingData } from './utils/moduleGrouping';
+import { buildClusterLodData } from './utils/clusterLod';
 import { getNodeLegendItems } from './utils/colorMapping';
 
 const FRONTEND_TYPES = new Set(['route', 'page', 'component', 'hook', 'api_client', 'query_key']);
@@ -16,6 +17,7 @@ const BACKEND_TYPES = new Set(['api_endpoint', 'endpoint', 'handler', 'service',
 export const GraphContext = React.createContext<GraphContextType>({
   data: { nodes: [], edges: [] },
   lodData: null,
+  clusterLodData: null,
   details: null,
   isDetailsLoading: false,
   layoutCacheSeed: '',
@@ -140,10 +142,10 @@ const App: React.FC = () => {
   const [cameraJumpRequest, setCameraJumpRequest] = useState<CameraJumpRequest | null>(null);
 
   useEffect(() => {
-    if (graphView !== 'unified' || activeModule) {
+    if (graphView !== 'unified' || (activeModule && viewMode !== 'clusters')) {
       setFocusClusterId(null);
     }
-  }, [graphView, activeModule]);
+  }, [graphView, activeModule, viewMode]);
 
   useEffect(() => {
     if (!selectedNode && focusMode !== 'off') {
@@ -532,6 +534,10 @@ const App: React.FC = () => {
     };
   }, [rawData, filters, edgeTypeFilters, graphView, selectedNode, activeModule, hideIntraFileEdges, hideTestGeneratedVendor, onlyCrossBoundaryEdges]);
 
+  const clusterLodData = useMemo(() => (
+    buildClusterLodData(rawData, groupingData, activeGroupingMode)
+  ), [rawData, groupingData, activeGroupingMode]);
+
   const layoutCacheSeed = useMemo(() => {
     const serializeToggleMap = (map: Record<string, boolean>) => (
       Object.keys(map)
@@ -578,6 +584,7 @@ const App: React.FC = () => {
   const contextValue: GraphContextType = {
     data: filteredData,
     lodData,
+    clusterLodData,
     details,
     isDetailsLoading,
     layoutCacheSeed,

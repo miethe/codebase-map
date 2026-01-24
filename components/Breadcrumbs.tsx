@@ -12,6 +12,7 @@ export const Breadcrumbs: React.FC = () => {
   const {
     data,
     lodData,
+    clusterLodData,
     selectedNode,
     focusClusterId,
     setFocusClusterId,
@@ -35,8 +36,12 @@ export const Breadcrumbs: React.FC = () => {
     addNodes(lodData?.lod1?.nodes);
     addNodes(lodData?.lod2?.nodes);
     addNodes(lodData?.lod3?.nodes);
+    addNodes(clusterLodData?.lod0?.nodes);
+    addNodes(clusterLodData?.lod1?.nodes);
+    addNodes(clusterLodData?.lod2?.nodes);
+    addNodes(clusterLodData?.lod3?.nodes);
     return { nodeById: byId, nodeByCluster: byCluster };
-  }, [data.nodes, lodData]);
+  }, [data.nodes, lodData, clusterLodData]);
 
   const focusNode = focusClusterId
     ? nodeByCluster.get(focusClusterId) || nodeById.get(focusClusterId)

@@ -350,6 +350,14 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
         return getFocusNodeIds(highlightMode, selectedNode.id, data.edges, focusHopCount);
     }, [selectedNode?.id, data.edges, highlightMode, focusHopCount]);
     const focusActive = Boolean(selectedNode && focusMode !== 'off' && highlightNodeIds);
+    const clusterFocusNodeIds = useMemo(() => {
+        if (viewMode !== 'clusters' || !focusClusterId) return null;
+        const ids = new Set<string>();
+        data.nodes.forEach(node => {
+            if (isNodeInCluster(node, focusClusterId)) ids.add(node.id);
+        });
+        return ids.size ? ids : null;
+    }, [data.nodes, viewMode, focusClusterId]);
     const multiMembershipData = useMemo(() => {
         if (!groupingData) {
             return { map: new Map<string, string[]>(), activeSet: null };
@@ -1034,20 +1042,25 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
 
         // Update Node Opacity
         const shouldDimForSelection = Boolean(selectedNode && selectedNode.kind !== 'cluster' && focusMode === 'off');
+        const shouldDimForClusterFocus = Boolean(viewMode === 'clusters' && focusClusterId && clusterFocusNodeIds);
+        const shouldDim = shouldDimForSelection || shouldDimForClusterFocus;
+        const isVisibleInSelection = (id: string) => !shouldDimForSelection || highlightNodeIds?.has(id);
+        const isVisibleInCluster = (id: string) => !shouldDimForClusterFocus || clusterFocusNodeIds?.has(id);
+        const isNodeVisible = (id: string) => isVisibleInSelection(id) && isVisibleInCluster(id);
 
         svg.selectAll<SVGGElement, Node>(".node-group")
             .transition().duration(200)
             .attr("opacity", (d) => {
-                if (!shouldDimForSelection) return 1;
-                return highlightNodeIds && highlightNodeIds.has(d.id) ? 1 : 0.1;
+                if (!shouldDim) return 1;
+                return isNodeVisible(d.id) ? 1 : 0.1;
             });
 
         // Update Label Visibility
         svg.selectAll<SVGTextElement, Node>(".node-label")
             .transition().duration(200)
             .style("opacity", (d) => {
-                if (!shouldDimForSelection) return 1;
-                return highlightNodeIds && highlightNodeIds.has(d.id) ? 1 : 0;
+                if (!shouldDim) return 1;
+                return isNodeVisible(d.id) ? 1 : 0;
             })
             .style("fill", (d) => d.id === selectedNode?.id ? "#fff" : "#cbd5e1");
 
@@ -1064,22 +1077,22 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
         svg.selectAll<SVGPathElement, any>(".edge-path")
             .transition().duration(200)
             .attr("stroke-opacity", (d) => {
-                if (!shouldDimForSelection) return 0.6;
+                if (!shouldDim) return 0.6;
                 const srcId = d.source.id || d.source;
                 const tgtId = d.target.id || d.target;
-                return (highlightNodeIds?.has(srcId) && highlightNodeIds?.has(tgtId)) ? 0.9 : 0.05;
+                return (isNodeVisible(srcId) && isNodeVisible(tgtId)) ? 0.9 : 0.05;
             });
 
         // Update Group Box Dimming
         svg.selectAll(".group-boxes rect")
             .transition().duration(200)
-            .attr("opacity", shouldDimForSelection ? 0.1 : 0.5);
+            .attr("opacity", shouldDim ? 0.1 : 0.5);
 
         svg.selectAll(".group-boxes text")
             .transition().duration(200)
-            .attr("opacity", shouldDimForSelection ? 0.2 : 0.8);
+            .attr("opacity", shouldDim ? 0.2 : 0.8);
 
-    }, [selectedNode, highlightNodeIds, focusMode]);
+    }, [selectedNode, highlightNodeIds, clusterFocusNodeIds, focusMode, focusClusterId, viewMode]);
 
     // EFFECT: Global Key Helpers (ESC to clear)
     useEffect(() => {

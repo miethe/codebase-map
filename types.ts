@@ -157,7 +157,7 @@ export interface GroupingData {
   groups: Group[];
 }
 
-export type ViewMode = 'force' | 'structured' | 'hierarchical';
+export type ViewMode = 'force' | 'structured' | 'hierarchical' | 'clusters';
 export type GraphViewMode = 'unified' | 'frontend' | 'backend';
 
 export interface NodeDetail {
@@ -188,6 +188,7 @@ export interface DetailsData {
 export interface GraphContextType {
   data: GraphData; // The filtered data shown on canvas
   lodData?: GraphLODData | null;
+  clusterLodData?: GraphLODData | null;
   details: DetailsData | null; // The rich details loaded asynchronously
   isDetailsLoading: boolean;
   layoutCacheSeed: string;

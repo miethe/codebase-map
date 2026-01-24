@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+- **Clusters view UX improvements**: Added camera zoom/pan constraints (`minDistance: 10`, `maxDistance: 10000`) to allow zooming much closer to nodes. Doubled label and bounding box sizes for better visibility (LOD labels: fontSize 28, scale 0.32; cluster labels: fontSize 32, scale 0.36; cluster box padding: 48-240). Added distinctive background colors to differentiate label types: purple/indigo for cluster labels, teal/cyan for LOD labels, dark slate for node labels.
 - Added cluster-aware LOD with focused expansion, sticky cluster toggles, and zoom hysteresis for stable transitions.
 - Added cluster boundary overlays (WebGL) with focus styling and dimming during selection.
 - Added backbone edge aggregation at LOD0/1 plus a density slider for controlling cluster-level edge clutter.
