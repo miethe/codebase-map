@@ -14,8 +14,8 @@ export const Breadcrumbs: React.FC = () => {
     lodData,
     clusterLodData,
     selectedNode,
-    focusClusterId,
-    setFocusClusterId,
+    focusClusterIds,
+    setFocusClusterIds,
     graphView,
     activeModule
   } = useContext(GraphContext);
@@ -43,21 +43,33 @@ export const Breadcrumbs: React.FC = () => {
     return { nodeById: byId, nodeByCluster: byCluster };
   }, [data.nodes, lodData, clusterLodData]);
 
-  const focusNode = focusClusterId
-    ? nodeByCluster.get(focusClusterId) || nodeById.get(focusClusterId)
+  // Get first focused cluster for path navigation
+  const firstFocusClusterId = focusClusterIds ? focusClusterIds.values().next().value ?? null : null;
+
+  const focusNode = firstFocusClusterId
+    ? nodeByCluster.get(firstFocusClusterId) || nodeById.get(firstFocusClusterId)
     : null;
 
   const rootLabel = graphView === 'frontend' ? 'Frontend' : graphView === 'backend' ? 'Backend' : 'System';
+
+  // Get labels for all focused clusters
+  const focusedLabels = useMemo(() => {
+    if (!focusClusterIds || focusClusterIds.size === 0) return [];
+    return Array.from(focusClusterIds).map((id: string) => {
+      const node = nodeByCluster.get(id) || nodeById.get(id);
+      return getNodeLabel(node, id);
+    });
+  }, [focusClusterIds, nodeByCluster, nodeById]);
 
   const crumbs = useMemo(() => {
     const items: Array<{ label: string; id?: string }> = [{ label: rootLabel }];
     let path: string[] | null = null;
 
-    if (focusClusterId) {
+    if (firstFocusClusterId) {
       if (focusNode?.cluster_path?.length) {
         path = focusNode.cluster_path;
       } else {
-        path = [focusClusterId];
+        path = [firstFocusClusterId];
       }
     } else if (selectedNode?.cluster_path?.length) {
       path = selectedNode.cluster_path;
@@ -83,27 +95,28 @@ export const Breadcrumbs: React.FC = () => {
     }
 
     return items.filter(item => item.label);
-  }, [rootLabel, focusClusterId, focusNode, selectedNode, nodeByCluster, activeModule]);
+  }, [rootLabel, firstFocusClusterId, focusNode, selectedNode, nodeByCluster, activeModule]);
 
-  if (!crumbs.length || (crumbs.length === 1 && !focusClusterId && !selectedNode && !activeModule)) {
+  const hasFocus = focusClusterIds && focusClusterIds.size > 0;
+  if (!crumbs.length || (crumbs.length === 1 && !hasFocus && !selectedNode && !activeModule)) {
     return null;
   }
 
   const handleBack = () => {
-    if (!focusClusterId) return;
+    if (!firstFocusClusterId) return;
     const path = focusNode?.cluster_path;
     if (!path || path.length <= 1) {
-      setFocusClusterId(null);
+      setFocusClusterIds(null);
       return;
     }
     const parentId = path[path.length - 2];
-    setFocusClusterId(parentId);
+    setFocusClusterIds(new Set([parentId]));
   };
 
   return (
     <div className="mt-3 rounded border border-slate-800/60 bg-slate-900/60 px-2 py-1.5 text-[10px] text-slate-400">
       <div className="flex items-center gap-2 flex-wrap">
-        {focusClusterId && (
+        {hasFocus && (
           <button
             type="button"
             onClick={handleBack}
@@ -120,7 +133,7 @@ export const Breadcrumbs: React.FC = () => {
               {crumb.id ? (
                 <button
                   type="button"
-                  onClick={() => setFocusClusterId(crumb.id!)}
+                  onClick={() => setFocusClusterIds(new Set([crumb.id!]))}
                   className="hover:text-indigo-300 transition-colors"
                 >
                   {crumb.label}
@@ -130,6 +143,15 @@ export const Breadcrumbs: React.FC = () => {
               )}
             </div>
           ))}
+          {/* Show multi-select indicator when multiple clusters are focused */}
+          {focusedLabels.length > 1 && (
+            <>
+              <ChevronRight size={10} className="text-slate-600" />
+              <span className="text-indigo-300 font-medium" title={focusedLabels.join(', ')}>
+                {focusedLabels.join(', ')}
+              </span>
+            </>
+          )}
         </div>
       </div>
     </div>

@@ -42,8 +42,10 @@ export const GraphContext = React.createContext<GraphContextType>({
   setFocusMode: () => { },
   focusHopCount: 2,
   setFocusHopCount: () => { },
-  focusClusterId: null,
-  setFocusClusterId: () => { },
+  focusClusterIds: null,
+  setFocusClusterIds: () => { },
+  addFocusClusterId: () => { },
+  removeFocusClusterId: () => { },
   drilldownContext: 'all',
   setDrilldownContext: () => { },
   expandDepthMode: 'step',
@@ -121,7 +123,7 @@ const App: React.FC = () => {
   const [hoveredNode, setHoveredNode] = useState<Node | null>(null);
   const [focusMode, setFocusMode] = useState<FocusMode>('off');
   const [focusHopCount, setFocusHopCount] = useState(2);
-  const [focusClusterId, setFocusClusterId] = useState<string | null>(null);
+  const [focusClusterIds, setFocusClusterIds] = useState<Set<string> | null>(null);
   const [drilldownContext, setDrilldownContext] = useState<DrilldownContext>('all');
   const [expandDepthMode, setExpandDepthMode] = useState<ExpandDepthMode>('step');
   const [viewMode, setViewMode] = useState<ViewMode>('force');
@@ -146,7 +148,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (graphView !== 'unified' || (activeModule && viewMode !== 'clusters')) {
-      setFocusClusterId(null);
+      setFocusClusterIds(null);
     }
   }, [graphView, activeModule, viewMode]);
 
@@ -612,8 +614,23 @@ const App: React.FC = () => {
     setFocusMode,
     focusHopCount,
     setFocusHopCount,
-    focusClusterId,
-    setFocusClusterId,
+    focusClusterIds,
+    setFocusClusterIds,
+    addFocusClusterId: (clusterId: string) => {
+      setFocusClusterIds(prev => {
+        const next = new Set(prev ?? []);
+        next.add(clusterId);
+        return next;
+      });
+    },
+    removeFocusClusterId: (clusterId: string) => {
+      setFocusClusterIds(prev => {
+        if (!prev) return null;
+        const next = new Set(prev);
+        next.delete(clusterId);
+        return next.size > 0 ? next : null;
+      });
+    },
     drilldownContext,
     setDrilldownContext,
     expandDepthMode,

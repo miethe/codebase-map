@@ -213,8 +213,10 @@ export interface GraphContextType {
   setFocusMode: (mode: FocusMode) => void;
   focusHopCount: number;
   setFocusHopCount: (count: number) => void;
-  focusClusterId: string | null;
-  setFocusClusterId: (clusterId: string | null) => void;
+  focusClusterIds: Set<string> | null;
+  setFocusClusterIds: (clusterIds: Set<string> | null) => void;
+  addFocusClusterId: (clusterId: string) => void;
+  removeFocusClusterId: (clusterId: string) => void;
   drilldownContext: DrilldownContext;
   setDrilldownContext: (context: DrilldownContext) => void;
   expandDepthMode: ExpandDepthMode;
@@ -351,7 +353,7 @@ export interface GraphRendererViewState {
   viewMode: ViewMode;
   focusMode: FocusMode;
   focusHopCount: number;
-  focusClusterId: string | null;
+  focusClusterIds: Set<string> | null;
   drilldownContext: DrilldownContext;
   expandedClusterIds: Set<string>;
   selectedNode: Node | null;

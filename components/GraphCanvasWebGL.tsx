@@ -205,17 +205,24 @@ const getFocusClusterDepth = (nodes: Node[], clusterId: string) => {
 
 const buildDrilldownContextNodeIds = (
   nodes: Node[],
-  focusClusterId: string | null,
+  focusClusterIds: Set<string> | null,
   mode: DrilldownContext
 ) => {
-  if (!focusClusterId || mode === 'all') return null;
+  if (!focusClusterIds || focusClusterIds.size === 0 || mode === 'all') return null;
   const clusterNodeIds = new Set<string>();
   nodes.forEach(node => {
-    if (isNodeInCluster(node, focusClusterId)) clusterNodeIds.add(node.id);
+    for (const clusterId of focusClusterIds) {
+      if (isNodeInCluster(node, clusterId)) {
+        clusterNodeIds.add(node.id);
+        break;
+      }
+    }
   });
   if (!clusterNodeIds.size) return null;
   if (mode === 'cluster-only') return clusterNodeIds;
-  const focusDepth = getFocusClusterDepth(nodes, focusClusterId);
+  // Get focus depth from the first focused cluster
+  const firstClusterId = focusClusterIds.values().next().value;
+  const focusDepth = getFocusClusterDepth(nodes, firstClusterId);
   if (focusDepth === null) return clusterNodeIds;
   nodes.forEach(node => {
     if (getNodeLodDepth(node) === focusDepth) clusterNodeIds.add(node.id);
@@ -264,31 +271,39 @@ const traverseUndirectedFromSeeds = (startIds: string[], adjacency: Map<string, 
   return visited;
 };
 
-const getClusterAncestorIds = (nodes: Node[], focusClusterId: string) => {
-  const direct = nodes.find(node => node.id === focusClusterId || node.cluster_id === focusClusterId);
+const getClusterAncestorIds = (nodes: Node[], clusterId: string) => {
+  const direct = nodes.find(node => node.id === clusterId || node.cluster_id === clusterId);
   if (direct?.cluster_path?.length) {
-    const index = direct.cluster_path.indexOf(focusClusterId);
+    const index = direct.cluster_path.indexOf(clusterId);
     if (index >= 0) return direct.cluster_path.slice(0, index + 1);
     return direct.cluster_path;
   }
   for (const node of nodes) {
     if (!node.cluster_path?.length) continue;
-    const index = node.cluster_path.indexOf(focusClusterId);
+    const index = node.cluster_path.indexOf(clusterId);
     if (index >= 0) return node.cluster_path.slice(0, index + 1);
   }
-  return [focusClusterId];
+  return [clusterId];
 };
 
-const buildDrilldownFocusNodeIds = (nodes: Node[], edges: Edge[], focusClusterId: string | null) => {
-  if (!focusClusterId) return null;
+const buildDrilldownFocusNodeIds = (nodes: Node[], edges: Edge[], focusClusterIds: Set<string> | null) => {
+  if (!focusClusterIds || focusClusterIds.size === 0) return null;
   const seedIds = new Set<string>();
   nodes.forEach(node => {
-    if (isNodeInCluster(node, focusClusterId)) seedIds.add(node.id);
+    for (const clusterId of focusClusterIds) {
+      if (isNodeInCluster(node, clusterId)) {
+        seedIds.add(node.id);
+        break;
+      }
+    }
   });
   if (!seedIds.size) return null;
   const adjacency = buildUndirectedAdjacency(edges);
   const connected = traverseUndirectedFromSeeds(Array.from(seedIds), adjacency);
-  getClusterAncestorIds(nodes, focusClusterId).forEach(id => connected.add(id));
+  // Add ancestors for all focused clusters
+  for (const clusterId of focusClusterIds) {
+    getClusterAncestorIds(nodes, clusterId).forEach(id => connected.add(id));
+  }
   return connected;
 };
 
@@ -640,7 +655,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     selectedNode,
     focusMode,
     focusHopCount,
-    focusClusterId,
+    focusClusterIds,
     drilldownContext,
     expandedClusterIds,
     viewMode,
@@ -1147,8 +1162,8 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
   }, [selectedNode?.id, data.edges, highlightMode, focusHopCount]);
   const focusActive = Boolean(selectedNode && focusMode !== 'off' && highlightNodeIds);
   const drilldownFocusNodeIds = useMemo(() => {
-    return buildDrilldownFocusNodeIds(data.nodes, data.edges, focusClusterId);
-  }, [data.nodes, data.edges, focusClusterId]);
+    return buildDrilldownFocusNodeIds(data.nodes, data.edges, focusClusterIds);
+  }, [data.nodes, data.edges, focusClusterIds]);
   const layeringActive = layeredLodEnabled && viewMode !== 'structured';
   const effectiveLayerSpacing = clampLayerSpacing(layerSpacing);
   const isExpandedNode = useCallback((node: Node) => {
@@ -1774,7 +1789,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     });
 
     const dimmed = Boolean(selectedNode && focusMode === 'off');
-    const focusActive = Boolean(focusClusterId);
+    const focusActive = focusClusterIds !== null && focusClusterIds.size > 0;
 
     clusterOverlayCache.current.forEach((entry, key) => {
       if (clusterIds.has(key)) return;
@@ -1838,7 +1853,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
         maxZ += padZ;
       }
 
-      const focused = focusClusterId === clusterId;
+      const focused = focusClusterIds?.has(clusterId) ?? false;
       const lineOpacity = focusActive
         ? (focused ? (dimmed ? 0.2 : 0.55) : (dimmed ? 0.06 : 0.18))
         : (dimmed ? 0.1 : 0.3);
@@ -1911,7 +1926,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     if (animationPausedRef.current) {
       graphRef.current?.refresh();
     }
-  }, [ensureOverlayGroups, focusClusterId, focusMode, selectedNode]);
+  }, [ensureOverlayGroups, focusClusterIds, focusMode, selectedNode]);
 
   const updateModuleOverlays = useCallback(() => {
     if (viewMode !== 'hierarchical') {
@@ -2240,7 +2255,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     }
 
     if (!focusActive) {
-      const drilldownNodeIds = buildDrilldownContextNodeIds(nodes, focusClusterId, drilldownContext);
+      const drilldownNodeIds = buildDrilldownContextNodeIds(nodes, focusClusterIds, drilldownContext);
       if (drilldownNodeIds) {
         nodes = nodes.filter(node => drilldownNodeIds.has(node.id));
         edges = edges.filter(edge => drilldownNodeIds.has(edge.from) && drilldownNodeIds.has(edge.to));
@@ -2248,7 +2263,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     }
 
     return { nodes, edges };
-  }, [data, focusMode, focusActive, selectedNode?.id, highlightNodeIds, layoutCacheVersion, focusClusterId, drilldownContext]);
+  }, [data, focusMode, focusActive, selectedNode?.id, highlightNodeIds, layoutCacheVersion, focusClusterIds, drilldownContext]);
 
   const moduleCenters = useMemo(() => {
     if (viewMode !== 'hierarchical') return null;
@@ -2377,7 +2392,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
 
   useEffect(() => {
     updateClusterOverlays();
-  }, [graphData.nodes.length, graphData.links.length, updateClusterOverlays, focusClusterId, selectedNode?.id, focusMode]);
+  }, [graphData.nodes.length, graphData.links.length, updateClusterOverlays, focusClusterIds, selectedNode?.id, focusMode]);
 
   useEffect(() => {
     graphReadyRef.current = false;

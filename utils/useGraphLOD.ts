@@ -383,7 +383,7 @@ interface UseGraphLODOptions {
   zoomLevel: number;
   allowLod: boolean;
   lodMode: LodMode;
-  focusClusterId?: string | null;
+  focusClusterIds?: Set<string> | null;
   backboneEdgeDensity?: number;
   expandDepthMode: ExpandDepthMode;
 }
@@ -394,7 +394,7 @@ export const useGraphLOD = ({
   zoomLevel,
   allowLod,
   lodMode,
-  focusClusterId,
+  focusClusterIds,
   backboneEdgeDensity = 1,
   expandDepthMode
 }: UseGraphLODOptions) => {
@@ -501,7 +501,9 @@ export const useGraphLOD = ({
     let nextGraph = activeData;
 
     const patchTargets = new Set<string>(expandedClusters);
-    if (focusClusterId) patchTargets.add(focusClusterId);
+    if (focusClusterIds) {
+      focusClusterIds.forEach(id => patchTargets.add(id));
+    }
 
     if (lodMode === 'manual') {
       if (lodData && patchTargets.size > 0) {
@@ -517,8 +519,10 @@ export const useGraphLOD = ({
       expandedClusters.forEach(clusterId => {
         if (nodeByClusterId.has(clusterId)) patchClusters.add(clusterId);
       });
-      if (focusClusterId && nodeByClusterId.has(focusClusterId)) {
-        patchClusters.add(focusClusterId);
+      if (focusClusterIds) {
+        focusClusterIds.forEach(id => {
+          if (nodeByClusterId.has(id)) patchClusters.add(id);
+        });
       }
 
       if (lodData && patchClusters.size > 0) {
@@ -572,7 +576,7 @@ export const useGraphLOD = ({
         return canExpand === node.canExpand ? node : { ...node, canExpand };
       })
     };
-  }, [allowLod, baseData, expandedClusters, focusClusterId, lodData, lodLevel, lodMode, backboneEdgeDensity, descendantDepthMap, expandDepthMode]);
+  }, [allowLod, baseData, expandedClusters, focusClusterIds, lodData, lodLevel, lodMode, backboneEdgeDensity, descendantDepthMap, expandDepthMode]);
 
   return {
     graphData,

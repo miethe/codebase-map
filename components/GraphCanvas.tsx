@@ -157,17 +157,23 @@ const getFocusClusterDepth = (nodes: Node[], clusterId: string) => {
 
 const buildDrilldownContextNodeIds = (
     nodes: Node[],
-    focusClusterId: string | null,
+    focusClusterIds: Set<string> | null,
     mode: DrilldownContext
 ) => {
-    if (!focusClusterId || mode === 'all') return null;
+    if (!focusClusterIds || focusClusterIds.size === 0 || mode === 'all') return null;
     const clusterNodeIds = new Set<string>();
     nodes.forEach(node => {
-        if (isNodeInCluster(node, focusClusterId)) clusterNodeIds.add(node.id);
+        for (const clusterId of focusClusterIds) {
+            if (isNodeInCluster(node, clusterId)) {
+                clusterNodeIds.add(node.id);
+                break;
+            }
+        }
     });
     if (!clusterNodeIds.size) return null;
     if (mode === 'cluster-only') return clusterNodeIds;
-    const focusDepth = getFocusClusterDepth(nodes, focusClusterId);
+    const firstClusterId = focusClusterIds.values().next().value;
+    const focusDepth = getFocusClusterDepth(nodes, firstClusterId);
     if (focusDepth === null) return clusterNodeIds;
     nodes.forEach(node => {
         if (getNodeLodDepth(node) === focusDepth) clusterNodeIds.add(node.id);
@@ -216,31 +222,38 @@ const traverseUndirectedFromSeeds = (startIds: string[], adjacency: Map<string, 
     return visited;
 };
 
-const getClusterAncestorIds = (nodes: Node[], focusClusterId: string) => {
-    const direct = nodes.find(node => node.id === focusClusterId || node.cluster_id === focusClusterId);
+const getClusterAncestorIds = (nodes: Node[], clusterId: string) => {
+    const direct = nodes.find(node => node.id === clusterId || node.cluster_id === clusterId);
     if (direct?.cluster_path?.length) {
-        const index = direct.cluster_path.indexOf(focusClusterId);
+        const index = direct.cluster_path.indexOf(clusterId);
         if (index >= 0) return direct.cluster_path.slice(0, index + 1);
         return direct.cluster_path;
     }
     for (const node of nodes) {
         if (!node.cluster_path?.length) continue;
-        const index = node.cluster_path.indexOf(focusClusterId);
+        const index = node.cluster_path.indexOf(clusterId);
         if (index >= 0) return node.cluster_path.slice(0, index + 1);
     }
-    return [focusClusterId];
+    return [clusterId];
 };
 
-const buildDrilldownFocusNodeIds = (nodes: Node[], edges: Edge[], focusClusterId: string | null) => {
-    if (!focusClusterId) return null;
+const buildDrilldownFocusNodeIds = (nodes: Node[], edges: Edge[], focusClusterIds: Set<string> | null) => {
+    if (!focusClusterIds || focusClusterIds.size === 0) return null;
     const seedIds = new Set<string>();
     nodes.forEach(node => {
-        if (isNodeInCluster(node, focusClusterId)) seedIds.add(node.id);
+        for (const clusterId of focusClusterIds) {
+            if (isNodeInCluster(node, clusterId)) {
+                seedIds.add(node.id);
+                break;
+            }
+        }
     });
     if (!seedIds.size) return null;
     const adjacency = buildUndirectedAdjacency(edges);
     const connected = traverseUndirectedFromSeeds(Array.from(seedIds), adjacency);
-    getClusterAncestorIds(nodes, focusClusterId).forEach(id => connected.add(id));
+    for (const clusterId of focusClusterIds) {
+        getClusterAncestorIds(nodes, clusterId).forEach(id => connected.add(id));
+    }
     return connected;
 };
 
@@ -251,7 +264,7 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
         selectedNode,
         focusMode,
         focusHopCount,
-        focusClusterId,
+        focusClusterIds,
         drilldownContext,
         expandedClusterIds,
         viewMode,
@@ -421,8 +434,8 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
     }, [selectedNode?.id, data.edges, highlightMode, focusHopCount]);
     const focusActive = Boolean(selectedNode && focusMode !== 'off' && highlightNodeIds);
     const drilldownFocusNodeIds = useMemo(() => {
-        return buildDrilldownFocusNodeIds(data.nodes, data.edges, focusClusterId);
-    }, [data.nodes, data.edges, focusClusterId]);
+        return buildDrilldownFocusNodeIds(data.nodes, data.edges, focusClusterIds);
+    }, [data.nodes, data.edges, focusClusterIds]);
     const multiMembershipData = useMemo(() => {
         if (!groupingData) {
             return { map: new Map<string, string[]>(), activeSet: null };
@@ -496,7 +509,7 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
         }
 
         if (!focusActive) {
-            const drilldownNodeIds = buildDrilldownContextNodeIds(nodes, focusClusterId, drilldownContext);
+            const drilldownNodeIds = buildDrilldownContextNodeIds(nodes, focusClusterIds, drilldownContext);
             if (drilldownNodeIds) {
                 nodes = nodes.filter(node => drilldownNodeIds.has(node.id));
                 edges = edges.filter(edge => drilldownNodeIds.has(edge.from) && drilldownNodeIds.has(edge.to));
@@ -504,7 +517,7 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
         }
 
         return { visibleNodes: nodes, visibleEdges: edges };
-    }, [data, focusMode, focusActive, viewMode, selectedNode?.id, highlightNodeIds, layoutCacheVersion, focusClusterId, drilldownContext]);
+    }, [data, focusMode, focusActive, viewMode, selectedNode?.id, highlightNodeIds, layoutCacheVersion, focusClusterIds, drilldownContext]);
 
     const labelVisibleIds = useMemo(() => {
         if (!visibleNodes.length) return new Set<string>();
@@ -1107,7 +1120,7 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
 
         // Update Node Opacity
         const shouldDimForSelection = Boolean(selectedNode && selectedNode.kind !== 'cluster' && focusMode === 'off');
-        const shouldDimForClusterFocus = Boolean(focusClusterId && drilldownFocusNodeIds);
+        const shouldDimForClusterFocus = Boolean(focusClusterIds && focusClusterIds.size > 0 && drilldownFocusNodeIds);
         const shouldDimClusterLabels = shouldDimForClusterFocus && dimDrilldownLabels;
         const shouldDim = shouldDimForSelection || shouldDimForClusterFocus;
         const isVisibleInSelection = (id: string) => !shouldDimForSelection || highlightNodeIds?.has(id);
@@ -1160,7 +1173,7 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
             .transition().duration(200)
             .attr("opacity", shouldDim ? 0.2 : 0.8);
 
-    }, [selectedNode, highlightNodeIds, drilldownFocusNodeIds, focusMode, focusClusterId, dimDrilldownLabels]);
+    }, [selectedNode, highlightNodeIds, drilldownFocusNodeIds, focusMode, focusClusterIds, dimDrilldownLabels]);
 
     // EFFECT: Global Key Helpers (ESC to clear)
     useEffect(() => {

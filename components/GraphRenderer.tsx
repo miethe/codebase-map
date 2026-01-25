@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useCallback } from 'react';
+import React, { useContext, useMemo, useCallback, useRef, useEffect } from 'react';
 import { GraphContext } from '../App';
 import { GraphCanvas } from './GraphCanvas';
 import { GraphCanvasWebGL } from './GraphCanvasWebGL';
@@ -14,11 +14,12 @@ export const GraphRenderer: React.FC = () => {
     setHoveredNode,
     focusMode,
     focusHopCount,
-    focusClusterId,
+    focusClusterIds,
     drilldownContext,
     expandDepthMode,
     setFocusMode,
-    setFocusClusterId,
+    setFocusClusterIds,
+    addFocusClusterId,
     viewMode,
     activeColorMode,
     groupingData,
@@ -51,6 +52,23 @@ export const GraphRenderer: React.FC = () => {
     layoutCacheSeed
   } = useContext(GraphContext);
 
+  // Track Ctrl/Cmd key state for multi-select
+  const ctrlKeyRef = useRef(false);
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey || e.metaKey) ctrlKeyRef.current = true;
+    };
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (!e.ctrlKey && !e.metaKey) ctrlKeyRef.current = false;
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, []);
+
   const rendererMode = (import.meta.env.VITE_GRAPH_RENDERER || 'webgl').toLowerCase();
   const useWebglRenderer = rendererMode === 'webgl';
 
@@ -65,7 +83,7 @@ export const GraphRenderer: React.FC = () => {
     zoomLevel,
     allowLod,
     lodMode,
-    focusClusterId,
+    focusClusterIds,
     backboneEdgeDensity,
     expandDepthMode
   });
@@ -91,7 +109,7 @@ export const GraphRenderer: React.FC = () => {
       const depths = Array.from(expandedByDepth.keys()).sort((a, b) => a - b);
       const nextFocusDepth = depths.length > 1 ? depths[depths.length - 2] : null;
       const nextFocusId = nextFocusDepth !== null ? expandedByDepth.get(nextFocusDepth) : null;
-      setFocusClusterId(nextFocusId || null);
+      setFocusClusterIds(nextFocusId ? new Set([nextFocusId]) : null);
       popExpansion();
       if (isClusterView) {
         if (!nextFocusId) {
@@ -116,7 +134,7 @@ export const GraphRenderer: React.FC = () => {
     popExpansion,
     selectedNode,
     setActiveModule,
-    setFocusClusterId,
+    setFocusClusterIds,
     setFocusMode,
     setSelectedNode
   ]);
@@ -127,7 +145,7 @@ export const GraphRenderer: React.FC = () => {
       viewMode,
       focusMode,
       focusHopCount,
-      focusClusterId,
+      focusClusterIds,
       drilldownContext,
       expandedClusterIds: expandedClusters,
       selectedNode,
@@ -170,18 +188,23 @@ export const GraphRenderer: React.FC = () => {
             setActiveModule(node.modulePath.join('/'));
           }
         }
-        const isFocused = focusClusterId === clusterId;
-        if (isFocused && isExpanded) {
-          setFocusClusterId(null);
+        const isFocused = focusClusterIds?.has(clusterId);
+        const isMultiSelect = ctrlKeyRef.current;
+        if (isFocused && isExpanded && !isMultiSelect) {
+          setFocusClusterIds(null);
+        } else if (isMultiSelect) {
+          // Multi-select: add to existing focus
+          addFocusClusterId(clusterId);
         } else {
-          setFocusClusterId(clusterId);
+          // Single-select: replace focus
+          setFocusClusterIds(new Set([clusterId]));
         }
         toggleCluster(clusterId, depth);
       },
       onNodeHover: setHoveredNode,
       onBackgroundClick: () => {
         setSelectedNode(null);
-        setFocusClusterId(null);
+        setFocusClusterIds(null);
       },
       onZoomChange: setZoomLevel,
       onExportStatus: setExportStatus,
@@ -193,7 +216,7 @@ export const GraphRenderer: React.FC = () => {
     viewMode,
     focusMode,
     focusHopCount,
-    focusClusterId,
+    focusClusterIds,
     drilldownContext,
     expandedClusters,
     expandedByDepth,
@@ -224,7 +247,8 @@ export const GraphRenderer: React.FC = () => {
     setSelectedNode,
     setHoveredNode,
     setActiveModule,
-    setFocusClusterId,
+    setFocusClusterIds,
+    addFocusClusterId,
     setFocusMode,
     setZoomLevel,
     setExportRequest,
