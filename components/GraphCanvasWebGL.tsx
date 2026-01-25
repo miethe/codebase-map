@@ -444,12 +444,12 @@ const createModuleLabelSprite = (text: string) => createTextSprite(text, {
   scale: 0.15
 });
 
-const createClusterLabelSprite = (text: string, focused: boolean) => createTextSprite(text, {
+const createClusterLabelSprite = (text: string, focused: boolean, color?: string) => createTextSprite(text, {
   fontSize: 32,
   fontWeight: 700,
   padding: 12,
   textColor: focused ? '#e0f2fe' : '#f3e8ff',
-  backgroundColor: focused ? 'rgba(14, 165, 233, 0.75)' : 'rgba(88, 28, 135, 0.75)',
+  backgroundColor: color ? color : (focused ? 'rgba(14, 165, 233, 0.75)' : 'rgba(88, 28, 135, 0.75)'),
   fontFamily: '"Inter", sans-serif',
   scale: 0.36
 });
@@ -1860,13 +1860,19 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       }
 
       const focused = focusClusterIds?.has(clusterId) ?? false;
+      const isMultiSelect = focusClusterIds && focusClusterIds.size > 1;
+
       const lineOpacity = focusActive
         ? (focused ? (dimmed ? 0.2 : 0.55) : (dimmed ? 0.06 : 0.18))
         : (dimmed ? 0.1 : 0.3);
       const labelOpacity = focusActive
         ? (focused ? (dimmed ? 0.45 : 0.9) : (dimmed ? 0.15 : 0.55))
         : (dimmed ? 0.25 : 0.75);
-      const strokeColor = focused ? 0x38bdf8 : 0x1e293b;
+
+      const activeColor = isMultiSelect ? 0xa855f7 : 0x38bdf8;
+      const labelBgColor = isMultiSelect ? 'rgba(168, 85, 247, 0.75)' : 'rgba(14, 165, 233, 0.75)';
+      const strokeColor = focused ? activeColor : 0x1e293b;
+
       const labelText = clusterNode?.label_short || clusterNode?.label || clusterId;
 
       let entry = clusterOverlayCache.current.get(clusterId);
@@ -1882,20 +1888,23 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
         });
         const box = new THREE.LineSegments(geometry, material);
         box.renderOrder = 1;
-        const label = createClusterLabelSprite(labelText, focused);
+        const label = createClusterLabelSprite(labelText, focused, focused ? labelBgColor : undefined);
         label.renderOrder = 3;
         label.userData.text = labelText;
+        label.userData.isMultiSelect = isMultiSelect;
         clusterGroup.add(box);
         clusterGroup.add(label);
         entry = { box, label, focused };
         clusterOverlayCache.current.set(clusterId, entry);
       } else {
-        if (entry.focused !== focused || entry.label.userData.text !== labelText) {
+        const checkRef = entry.label.userData.isMultiSelect;
+        if (entry.focused !== focused || entry.label.userData.text !== labelText || checkRef !== isMultiSelect) {
           clusterGroup.remove(entry.label);
           disposeSprite(entry.label);
-          const label = createClusterLabelSprite(labelText, focused);
+          const label = createClusterLabelSprite(labelText, focused, focused ? labelBgColor : undefined);
           label.renderOrder = 2;
           label.userData.text = labelText;
+          label.userData.isMultiSelect = isMultiSelect;
           clusterGroup.add(label);
           entry.label = label;
           entry.focused = focused;
