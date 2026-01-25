@@ -52,20 +52,30 @@ export const GraphRenderer: React.FC = () => {
     layoutCacheSeed
   } = useContext(GraphContext);
 
-  // Track Ctrl/Cmd key state for multi-select
+  // Robustly track Ctrl/Cmd key state
   const ctrlKeyRef = useRef(false);
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.ctrlKey || e.metaKey) ctrlKeyRef.current = true;
+    const updateModifierState = (e: KeyboardEvent | MouseEvent) => {
+      ctrlKeyRef.current = e.ctrlKey || e.metaKey;
     };
-    const handleKeyUp = (e: KeyboardEvent) => {
-      if (!e.ctrlKey && !e.metaKey) ctrlKeyRef.current = false;
+
+    // Clear on blur to prevent stuck keys
+    const handleBlur = () => {
+      ctrlKeyRef.current = false;
     };
-    window.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('keyup', handleKeyUp);
+
+    window.addEventListener('keydown', updateModifierState, true);
+    window.addEventListener('keyup', updateModifierState, true);
+    window.addEventListener('mousedown', updateModifierState, true);
+    window.addEventListener('mouseup', updateModifierState, true);
+    window.addEventListener('blur', handleBlur);
+
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      window.removeEventListener('keyup', handleKeyUp);
+      window.removeEventListener('keydown', updateModifierState, true);
+      window.removeEventListener('keyup', updateModifierState, true);
+      window.removeEventListener('mousedown', updateModifierState, true);
+      window.removeEventListener('mouseup', updateModifierState, true);
+      window.removeEventListener('blur', handleBlur);
     };
   }, []);
 

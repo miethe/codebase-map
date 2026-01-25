@@ -1127,7 +1127,12 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
         const isVisibleInCluster = (id: string) => !shouldDimForClusterFocus || drilldownFocusNodeIds?.has(id);
         const isLabelVisibleInCluster = (id: string) => !shouldDimClusterLabels || drilldownFocusNodeIds?.has(id);
         const isNodeVisible = (id: string) => isVisibleInSelection(id) && isVisibleInCluster(id);
-        const isLabelVisible = (id: string) => isVisibleInSelection(id) && isLabelVisibleInCluster(id);
+        const getLabelOpacity = (id: string) => {
+            if (!shouldDimForSelection && !shouldDimClusterLabels) return 1;
+            if (!isVisibleInSelection(id)) return 0;
+            if (!isLabelVisibleInCluster(id)) return shouldDimClusterLabels ? 0.12 : 0;
+            return 1;
+        };
 
         svg.selectAll<SVGGElement, Node>(".node-group")
             .transition().duration(200)
@@ -1140,8 +1145,7 @@ export const GraphCanvas: React.FC<GraphRendererProps> = ({ data, viewState, han
         svg.selectAll<SVGTextElement, Node>(".node-label")
             .transition().duration(200)
             .style("opacity", (d) => {
-                if (!shouldDimForSelection && !shouldDimClusterLabels) return 1;
-                return isLabelVisible(d.id) ? 1 : 0;
+                return getLabelOpacity(d.id);
             })
             .style("fill", (d) => d.id === selectedNode?.id ? "#fff" : "#cbd5e1");
 

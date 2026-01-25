@@ -1218,7 +1218,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
     if (!dataSnapshot) return;
     const shouldShow = exportState ? exportState.showLabels : (!enableMotionOptimizations || !reduceDetail);
     const restrictToHighlight = Boolean(selectedNode && selectedNode.kind !== 'cluster' && focusMode === 'off' && highlightNodeIds);
-    const restrictToCluster = Boolean(drilldownFocusNodeIds && dimDrilldownLabels);
+    const dimClusterLabels = Boolean(drilldownFocusNodeIds && dimDrilldownLabels);
     if (!shouldShow && labelVisibilityModeRef.current === 'hidden') return;
     camera.updateMatrixWorld();
     const projScreenMatrix = projScreenMatrixRef.current;
@@ -1249,8 +1249,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       const sprite = labelCache.current.get(node.id);
       if (!sprite) return;
       const allowLabel = shouldShow
-        && (!restrictToHighlight || highlightNodeIds?.has(node.id))
-        && (!restrictToCluster || drilldownFocusNodeIds?.has(node.id));
+        && (!restrictToHighlight || highlightNodeIds?.has(node.id));
       if (!allowLabel) {
         if (sprite.visible) {
           sprite.visible = false;
@@ -1346,6 +1345,13 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
       }
       if (!sprite.visible) {
         sprite.visible = true;
+        didChange = true;
+      }
+      const material = sprite.material as THREE.SpriteMaterial;
+      const targetOpacity = dimClusterLabels && drilldownFocusNodeIds && !drilldownFocusNodeIds.has(node.id) ? 0.12 : 1;
+      if (material.opacity !== targetOpacity) {
+        material.opacity = targetOpacity;
+        material.needsUpdate = true;
         didChange = true;
       }
       const showGlyph = exportState ? exportState.showNodes : true;
@@ -2202,7 +2208,7 @@ export const GraphCanvasWebGL: React.FC<GraphRendererProps> = ({ data, viewState
 
   useEffect(() => {
     scheduleLabelVisibilityUpdate();
-  }, [selectedNode?.id, focusMode, highlightNodeIds, labelBucket, scheduleLabelVisibilityUpdate]);
+  }, [selectedNode?.id, focusMode, focusClusterIds, highlightNodeIds, drilldownFocusNodeIds, dimDrilldownLabels, labelBucket, scheduleLabelVisibilityUpdate]);
 
   useEffect(() => {
     updateStructuredHeaders();
