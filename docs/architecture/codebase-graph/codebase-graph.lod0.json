@@ -12,17 +12,17 @@
       "from": "package:skillmeat.skillmeat",
       "to": "package:virtual/hook",
       "type": "uses_hook",
-      "weight": 52
+      "weight": 54
     },
     {
       "confidence": "static",
       "from": "package:skillmeat.skillmeat",
       "to": "package:virtual/query_key",
       "type": "hook_registers_query_key",
-      "weight": 194
+      "weight": 204
     }
   ],
-  "generated_at": "2026-01-22T18:07:28Z",
+  "generated_at": "2026-02-01T20:07:32Z",
   "nodes": [
     {
       "cluster_id": "package:virtual/route",
@@ -30,8 +30,8 @@
         "repo:development",
         "package:virtual/route"
       ],
-      "fx": 1089.8217141410353,
-      "fy": 2000.0,
+      "fx": 1192.1636984166282,
+      "fy": 2000.0000000000002,
       "fz": 0.0,
       "id": "package:virtual/route",
       "kind": "package",
@@ -41,8 +41,8 @@
       "member_count": 20,
       "size": 0,
       "type": "package",
-      "x": 1089.8217141410353,
-      "y": 2000.0,
+      "x": 1192.1636984166282,
+      "y": 2000.0000000000002,
       "z": 0.0
     },
     {
@@ -51,19 +51,19 @@
         "repo:development",
         "package:skillmeat.skillmeat"
       ],
-      "fx": -255.01705037413868,
-      "fy": -188.92383954483157,
+      "fx": -262.45568063510757,
+      "fy": -183.85303577882073,
       "fz": 0.0,
       "id": "package:skillmeat.skillmeat",
       "kind": "package",
       "label": "skillmeat.skillmeat",
       "label_short": "skillmeat.skillmeat",
       "layer": "api",
-      "member_count": 1902,
-      "size": 1941270,
+      "member_count": 2016,
+      "size": 2413250,
       "type": "package",
-      "x": -255.01705037413868,
-      "y": -188.92383954483157,
+      "x": -262.45568063510757,
+      "y": -183.85303577882073,
       "z": 0.0
     },
     {
@@ -72,19 +72,19 @@
         "repo:development",
         "package:virtual/hook"
       ],
-      "fx": 452.08495260637375,
-      "fy": -1782.6149980647253,
+      "fx": 381.02934775625874,
+      "fy": -1841.9511009985877,
       "fz": 0.0,
       "id": "package:virtual/hook",
       "kind": "package",
       "label": "virtual/hook",
       "label_short": "hook",
       "layer": "ui",
-      "member_count": 40,
+      "member_count": 41,
       "size": 0,
       "type": "package",
-      "x": 452.08495260637375,
-      "y": -1782.6149980647253,
+      "x": 381.02934775625874,
+      "y": -1841.9511009985877,
       "z": 0.0
     },
     {
@@ -93,19 +93,19 @@
         "repo:development",
         "package:virtual/query_key"
       ],
-      "fx": -1286.8896163732697,
-      "fy": -28.46116239044326,
+      "fx": -1310.7373655377792,
+      "fy": 25.80413677740748,
       "fz": 0.0,
       "id": "package:virtual/query_key",
       "kind": "package",
       "label": "virtual/query_key",
       "label_short": "query_key",
       "layer": "shared",
-      "member_count": 35,
+      "member_count": 36,
       "size": 0,
       "type": "package",
-      "x": -1286.8896163732697,
-      "y": -28.46116239044326,
+      "x": -1310.7373655377792,
+      "y": 25.80413677740748,
       "z": 0.0
     }
   ],

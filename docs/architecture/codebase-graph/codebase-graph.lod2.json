@@ -173,7 +173,7 @@
       "from": "folder:skillmeat/skillmeat/web/app/projects/[id]/manage",
       "to": "package:virtual/hook",
       "type": "uses_hook",
-      "weight": 1
+      "weight": 2
     },
     {
       "confidence": "static",
@@ -215,7 +215,7 @@
       "from": "folder:skillmeat/skillmeat/web/app/marketplace/sources",
       "to": "package:virtual/hook",
       "type": "uses_hook",
-      "weight": 2
+      "weight": 3
     },
     {
       "confidence": "static",
@@ -250,14 +250,14 @@
       "from": "folder:skillmeat/skillmeat/web/hooks",
       "to": "folder:skillmeat/skillmeat/api/routers",
       "type": "calls_api",
-      "weight": 99
+      "weight": 102
     },
     {
       "confidence": "static",
       "from": "folder:skillmeat/skillmeat/web/hooks",
       "to": "package:skillmeat.skillmeat",
       "type": "calls_api",
-      "weight": 275
+      "weight": 279
     },
     {
       "confidence": "static",
@@ -297,9 +297,16 @@
     {
       "confidence": "static",
       "from": "folder:skillmeat/skillmeat/web/app/collection",
+      "to": "folder:skillmeat/skillmeat/web/components/shared",
+      "type": "page_uses_component",
+      "weight": 1
+    },
+    {
+      "confidence": "static",
+      "from": "folder:skillmeat/skillmeat/web/app/collection",
       "to": "folder:skillmeat/skillmeat/web/components/entity",
       "type": "page_uses_component",
-      "weight": 2
+      "weight": 1
     },
     {
       "confidence": "static",
@@ -327,7 +334,7 @@
       "from": "folder:skillmeat/skillmeat/web/app/collection",
       "to": "folder:skillmeat/skillmeat/web/types",
       "type": "page_uses_component",
-      "weight": 4
+      "weight": 3
     },
     {
       "confidence": "static",
@@ -488,7 +495,7 @@
       "from": "folder:skillmeat/skillmeat/web/app/manage",
       "to": "folder:skillmeat/skillmeat/web/components/entity",
       "type": "page_uses_component",
-      "weight": 4
+      "weight": 3
     },
     {
       "confidence": "static",
@@ -496,6 +503,13 @@
       "to": "folder:skillmeat/skillmeat/web/app/manage/components",
       "type": "page_uses_component",
       "weight": 3
+    },
+    {
+      "confidence": "static",
+      "from": "folder:skillmeat/skillmeat/web/app/manage",
+      "to": "folder:skillmeat/skillmeat/web/components/shared",
+      "type": "page_uses_component",
+      "weight": 1
     },
     {
       "confidence": "static",
@@ -537,7 +551,14 @@
       "from": "folder:skillmeat/skillmeat/web/app/projects/[id]",
       "to": "folder:skillmeat/skillmeat/web/components/entity",
       "type": "page_uses_component",
-      "weight": 2
+      "weight": 1
+    },
+    {
+      "confidence": "static",
+      "from": "folder:skillmeat/skillmeat/web/app/projects/[id]",
+      "to": "folder:skillmeat/skillmeat/web/components/shared",
+      "type": "page_uses_component",
+      "weight": 1
     },
     {
       "confidence": "static",
@@ -586,7 +607,7 @@
       "from": "folder:skillmeat/skillmeat/web/app/projects/[id]/manage",
       "to": "folder:skillmeat/skillmeat/web/components/entity",
       "type": "page_uses_component",
-      "weight": 4
+      "weight": 3
     },
     {
       "confidence": "static",
@@ -594,6 +615,13 @@
       "to": "folder:skillmeat/skillmeat/web/app/manage/components",
       "type": "page_uses_component",
       "weight": 2
+    },
+    {
+      "confidence": "static",
+      "from": "folder:skillmeat/skillmeat/web/app/projects/[id]/manage",
+      "to": "folder:skillmeat/skillmeat/web/components/shared",
+      "type": "page_uses_component",
+      "weight": 1
     },
     {
       "confidence": "static",
@@ -607,7 +635,7 @@
       "from": "folder:skillmeat/skillmeat/web/app/projects/[id]/manage",
       "to": "folder:skillmeat/skillmeat/web/types",
       "type": "page_uses_component",
-      "weight": 3
+      "weight": 2
     },
     {
       "confidence": "static",
@@ -656,14 +684,21 @@
       "from": "folder:skillmeat/skillmeat/web/app/marketplace/sources",
       "to": "folder:skillmeat/skillmeat/web/components/marketplace",
       "type": "page_uses_component",
-      "weight": 7
+      "weight": 10
+    },
+    {
+      "confidence": "static",
+      "from": "folder:skillmeat/skillmeat/web/app/marketplace/sources",
+      "to": "folder:skillmeat/skillmeat/web/components",
+      "type": "page_uses_component",
+      "weight": 1
     },
     {
       "confidence": "static",
       "from": "folder:skillmeat/skillmeat/web/app/marketplace/sources",
       "to": "folder:skillmeat/skillmeat/web/types",
       "type": "page_uses_component",
-      "weight": 3
+      "weight": 6
     },
     {
       "confidence": "static",
@@ -684,7 +719,7 @@
       "from": "folder:skillmeat/skillmeat/web/app/marketplace/sources/[id]",
       "to": "folder:skillmeat/skillmeat/web/app/marketplace/sources/[id]/components",
       "type": "page_uses_component",
-      "weight": 4
+      "weight": 5
     },
     {
       "confidence": "static",
@@ -726,14 +761,14 @@
       "from": "folder:skillmeat/skillmeat/web/components",
       "to": "folder:skillmeat/skillmeat/web/components/ui",
       "type": "component_uses_component",
-      "weight": 76
+      "weight": 90
     },
     {
       "confidence": "static",
       "from": "folder:skillmeat/skillmeat/web/components",
       "to": "folder:skillmeat/skillmeat/web/components/entity",
       "type": "component_uses_component",
-      "weight": 2
+      "weight": 3
     },
     {
       "confidence": "static",
@@ -793,6 +828,13 @@
     },
     {
       "confidence": "static",
+      "from": "folder:skillmeat/skillmeat/web/components/ui",
+      "to": "folder:skillmeat/skillmeat/web/types",
+      "type": "uses_type",
+      "weight": 1
+    },
+    {
+      "confidence": "static",
       "from": "folder:skillmeat/skillmeat/web/components/settings",
       "to": "folder:skillmeat/skillmeat/web/components/ui",
       "type": "component_uses_component",
@@ -803,7 +845,7 @@
       "from": "folder:skillmeat/skillmeat/web/components/collection",
       "to": "folder:skillmeat/skillmeat/web/components/ui",
       "type": "component_uses_component",
-      "weight": 224
+      "weight": 214
     },
     {
       "confidence": "static",
@@ -817,7 +859,7 @@
       "from": "folder:skillmeat/skillmeat/web/components/collection",
       "to": "folder:skillmeat/skillmeat/web/components/shared",
       "type": "component_uses_component",
-      "weight": 5
+      "weight": 7
     },
     {
       "confidence": "static",
@@ -894,7 +936,7 @@
       "from": "folder:skillmeat/skillmeat/web/components/entity",
       "to": "folder:skillmeat/skillmeat/web/components/ui",
       "type": "component_uses_component",
-      "weight": 147
+      "weight": 191
     },
     {
       "confidence": "static",
@@ -906,16 +948,16 @@
     {
       "confidence": "static",
       "from": "folder:skillmeat/skillmeat/web/components/entity",
-      "to": "folder:skillmeat/skillmeat/web/sdk/models",
+      "to": "folder:skillmeat/skillmeat/web/components/shared",
       "type": "component_uses_component",
-      "weight": 4
+      "weight": 5
     },
     {
       "confidence": "static",
       "from": "folder:skillmeat/skillmeat/web/components/entity",
-      "to": "folder:skillmeat/skillmeat/web/components/shared",
+      "to": "folder:skillmeat/skillmeat/web/sdk/models",
       "type": "component_uses_component",
-      "weight": 3
+      "weight": 4
     },
     {
       "confidence": "static",
@@ -971,7 +1013,7 @@
       "from": "folder:skillmeat/skillmeat/web/components/marketplace",
       "to": "folder:skillmeat/skillmeat/web/components/ui",
       "type": "component_uses_component",
-      "weight": 201
+      "weight": 214
     },
     {
       "confidence": "static",
@@ -979,6 +1021,13 @@
       "to": "folder:skillmeat/skillmeat/web/types",
       "type": "uses_type",
       "weight": 26
+    },
+    {
+      "confidence": "static",
+      "from": "folder:skillmeat/skillmeat/web/components/marketplace",
+      "to": "folder:skillmeat/skillmeat/web/hooks",
+      "type": "component_uses_component",
+      "weight": 1
     },
     {
       "confidence": "static",
@@ -1025,23 +1074,23 @@
     {
       "confidence": "static",
       "from": "folder:skillmeat/skillmeat/web/components/shared",
-      "to": "folder:skillmeat/skillmeat/web/components/ui",
+      "to": "folder:skillmeat/skillmeat/web/components/entity",
       "type": "component_uses_component",
-      "weight": 20
+      "weight": 2
     },
     {
       "confidence": "static",
       "from": "folder:skillmeat/skillmeat/web/components/shared",
       "to": "folder:skillmeat/skillmeat/web/types",
       "type": "uses_type",
-      "weight": 5
+      "weight": 8
     },
     {
       "confidence": "static",
       "from": "folder:skillmeat/skillmeat/web/components/shared",
-      "to": "folder:skillmeat/skillmeat/web/components/entity",
+      "to": "folder:skillmeat/skillmeat/web/components/ui",
       "type": "component_uses_component",
-      "weight": 1
+      "weight": 38
     },
     {
       "confidence": "static",
@@ -1125,7 +1174,7 @@
       "from": "folder:skillmeat/skillmeat/web/components/sync-status",
       "to": "folder:skillmeat/skillmeat/web/types",
       "type": "uses_type",
-      "weight": 3
+      "weight": 2
     },
     {
       "confidence": "static",
@@ -1209,42 +1258,42 @@
       "from": "folder:skillmeat/skillmeat/web/hooks",
       "to": "package:virtual/query_key",
       "type": "hook_registers_query_key",
-      "weight": 194
+      "weight": 204
     },
     {
       "confidence": "static",
       "from": "folder:skillmeat/skillmeat/web/hooks",
       "to": "folder:skillmeat/skillmeat/web/types",
       "type": "uses_type",
-      "weight": 726
+      "weight": 721
     },
     {
       "confidence": "static",
       "from": "folder:skillmeat/skillmeat/web/hooks",
       "to": "folder:skillmeat/skillmeat/web/lib/api",
       "type": "hook_calls_api_client",
-      "weight": 422
+      "weight": 440
     },
     {
       "confidence": "static",
       "from": "folder:skillmeat/skillmeat/web/hooks",
       "to": "folder:skillmeat/skillmeat/web/lib",
       "type": "hook_calls_api_client",
-      "weight": 141
+      "weight": 147
     },
     {
       "confidence": "static",
       "from": "folder:skillmeat/skillmeat/api/routers",
       "to": "folder:skillmeat/skillmeat/web/lib/api",
       "type": "router_exposes",
-      "weight": 25
+      "weight": 26
     },
     {
       "confidence": "static",
       "from": "folder:skillmeat/skillmeat/web/lib/api",
       "to": "folder:skillmeat/skillmeat/api/routers",
       "type": "handled_by",
-      "weight": 50
+      "weight": 52
     },
     {
       "confidence": "static",
@@ -1258,17 +1307,17 @@
       "from": "folder:skillmeat/skillmeat/api/routers",
       "to": "folder:skillmeat/skillmeat/api/schemas",
       "type": "api_endpoint_uses_schema",
-      "weight": 158
+      "weight": 170
     },
     {
       "confidence": "static",
       "from": "folder:skillmeat/skillmeat/web/lib/api",
       "to": "folder:skillmeat/skillmeat/api/schemas",
       "type": "api_endpoint_uses_schema",
-      "weight": 42
+      "weight": 43
     }
   ],
-  "generated_at": "2026-01-22T18:07:28Z",
+  "generated_at": "2026-02-01T20:07:32Z",
   "nodes": [
     {
       "cluster_id": "package:virtual/route",
@@ -1276,8 +1325,8 @@
         "repo:development",
         "package:virtual/route"
       ],
-      "fx": 61.70618911086537,
-      "fy": 128.58059330298568,
+      "fx": 86.66272891476837,
+      "fy": -4.958984160805051,
       "fz": 0.0,
       "id": "package:virtual/route",
       "kind": "folder",
@@ -1287,8 +1336,8 @@
       "member_count": 20,
       "size": 0,
       "type": "folder",
-      "x": 61.70618911086537,
-      "y": 128.58059330298568,
+      "x": 86.66272891476837,
+      "y": -4.958984160805051,
       "z": 0.0
     },
     {
@@ -1299,8 +1348,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/app"
       ],
-      "fx": 693.5460967137783,
-      "fy": 178.13042635819488,
+      "fx": 694.2484186903611,
+      "fy": -87.85925977179426,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/app",
       "kind": "folder",
@@ -1310,8 +1359,8 @@
       "member_count": 1,
       "size": 22,
       "type": "folder",
-      "x": 693.5460967137783,
-      "y": 178.13042635819488,
+      "x": 694.2484186903611,
+      "y": -87.85925977179426,
       "z": 0.0
     },
     {
@@ -1322,8 +1371,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/app/settings"
       ],
-      "fx": -368.020985241587,
-      "fy": -74.76564519331868,
+      "fx": -356.32936338479135,
+      "fy": -80.26022298505542,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/app/settings",
       "kind": "folder",
@@ -1333,8 +1382,8 @@
       "member_count": 1,
       "size": 56,
       "type": "folder",
-      "x": -368.020985241587,
-      "y": -74.76564519331868,
+      "x": -356.32936338479135,
+      "y": -80.26022298505542,
       "z": 0.0
     },
     {
@@ -1345,8 +1394,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/app/collection"
       ],
-      "fx": -194.64480633108212,
-      "fy": 21.01454682359697,
+      "fx": -184.3245205935544,
+      "fy": 27.083440790091576,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/app/collection",
       "kind": "folder",
@@ -1354,10 +1403,10 @@
       "label_short": "collection",
       "layer": "ui",
       "member_count": 1,
-      "size": 896,
+      "size": 747,
       "type": "folder",
-      "x": -194.64480633108212,
-      "y": 21.01454682359697,
+      "x": -184.3245205935544,
+      "y": 27.083440790091576,
       "z": 0.0
     },
     {
@@ -1366,19 +1415,19 @@
         "repo:development",
         "package:virtual/hook"
       ],
-      "fx": -74.45537851802386,
-      "fy": 30.65568752574739,
+      "fx": -105.44630306717346,
+      "fy": 48.92571860977772,
       "fz": 0.0,
       "id": "package:virtual/hook",
       "kind": "folder",
       "label": "virtual/hook",
       "label_short": "hook",
       "layer": "ui",
-      "member_count": 40,
+      "member_count": 41,
       "size": 0,
       "type": "folder",
-      "x": -74.45537851802386,
-      "y": 30.65568752574739,
+      "x": -105.44630306717346,
+      "y": 48.92571860977772,
       "z": 0.0
     },
     {
@@ -1389,8 +1438,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/app/sharing"
       ],
-      "fx": -11.595907756028573,
-      "fy": 386.2353754897195,
+      "fx": 51.318367457845135,
+      "fy": 373.0115779190826,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/app/sharing",
       "kind": "folder",
@@ -1400,8 +1449,8 @@
       "member_count": 1,
       "size": 182,
       "type": "folder",
-      "x": -11.595907756028573,
-      "y": 386.2353754897195,
+      "x": 51.318367457845135,
+      "y": 373.0115779190826,
       "z": 0.0
     },
     {
@@ -1412,8 +1461,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/app/projects"
       ],
-      "fx": 270.71809429332666,
-      "fy": -37.94462772149202,
+      "fx": 246.11338765207276,
+      "fy": 207.7528331148339,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/app/projects",
       "kind": "folder",
@@ -1423,8 +1472,8 @@
       "member_count": 1,
       "size": 220,
       "type": "folder",
-      "x": 270.71809429332666,
-      "y": -37.94462772149202,
+      "x": 246.11338765207276,
+      "y": 207.7528331148339,
       "z": 0.0
     },
     {
@@ -1435,8 +1484,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/app/marketplace"
       ],
-      "fx": -118.2663535280593,
-      "fy": -196.67130115345424,
+      "fx": -123.69954082277245,
+      "fy": -189.96546260980617,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/app/marketplace",
       "kind": "folder",
@@ -1446,8 +1495,8 @@
       "member_count": 1,
       "size": 194,
       "type": "folder",
-      "x": -118.2663535280593,
-      "y": -196.67130115345424,
+      "x": -123.69954082277245,
+      "y": -189.96546260980617,
       "z": 0.0
     },
     {
@@ -1458,8 +1507,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/app/mcp"
       ],
-      "fx": -182.7844756865449,
-      "fy": 336.6533448635863,
+      "fx": -69.03174296359732,
+      "fy": 372.7580062773957,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/app/mcp",
       "kind": "folder",
@@ -1469,8 +1518,8 @@
       "member_count": 1,
       "size": 144,
       "type": "folder",
-      "x": -182.7844756865449,
-      "y": 336.6533448635863,
+      "x": -69.03174296359732,
+      "y": 372.7580062773957,
       "z": 0.0
     },
     {
@@ -1481,8 +1530,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/app/groups"
       ],
-      "fx": 629.1222241939294,
-      "fy": -337.7332528959646,
+      "fx": 558.9573895503186,
+      "fy": -429.81725743272864,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/app/groups",
       "kind": "folder",
@@ -1492,8 +1541,8 @@
       "member_count": 1,
       "size": 64,
       "type": "folder",
-      "x": 629.1222241939294,
-      "y": -337.7332528959646,
+      "x": 558.9573895503186,
+      "y": -429.81725743272864,
       "z": 0.0
     },
     {
@@ -1504,8 +1553,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/app/context-entities"
       ],
-      "fx": 142.10561634491557,
-      "fy": -167.56162953597644,
+      "fx": 96.56708408275664,
+      "fy": -191.8914062243339,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/app/context-entities",
       "kind": "folder",
@@ -1515,8 +1564,8 @@
       "member_count": 1,
       "size": 337,
       "type": "folder",
-      "x": 142.10561634491557,
-      "y": -167.56162953597644,
+      "x": 96.56708408275664,
+      "y": -191.8914062243339,
       "z": 0.0
     },
     {
@@ -1527,8 +1576,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/app/templates"
       ],
-      "fx": -92.60466329026734,
-      "fy": 434.9786039946922,
+      "fx": -168.0458697883964,
+      "fy": 385.1406532339778,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/app/templates",
       "kind": "folder",
@@ -1538,8 +1587,8 @@
       "member_count": 1,
       "size": 254,
       "type": "folder",
-      "x": -92.60466329026734,
-      "y": 434.9786039946922,
+      "x": -168.0458697883964,
+      "y": 385.1406532339778,
       "z": 0.0
     },
     {
@@ -1550,8 +1599,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/app/manage"
       ],
-      "fx": -305.7921215146266,
-      "fy": 265.8472003441831,
+      "fx": -331.8715573193271,
+      "fy": 137.4592074736617,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/app/manage",
       "kind": "folder",
@@ -1559,10 +1608,10 @@
       "label_short": "manage",
       "layer": "ui",
       "member_count": 1,
-      "size": 263,
+      "size": 295,
       "type": "folder",
-      "x": -305.7921215146266,
-      "y": 265.8472003441831,
+      "x": -331.8715573193271,
+      "y": 137.4592074736617,
       "z": 0.0
     },
     {
@@ -1573,8 +1622,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/app/deployments"
       ],
-      "fx": -220.13609560570035,
-      "fy": 98.25235021465988,
+      "fx": -211.48667507893023,
+      "fy": 114.14556734517089,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/app/deployments",
       "kind": "folder",
@@ -1584,8 +1633,8 @@
       "member_count": 1,
       "size": 403,
       "type": "folder",
-      "x": -220.13609560570035,
-      "y": 98.25235021465988,
+      "x": -211.48667507893023,
+      "y": 114.14556734517089,
       "z": 0.0
     },
     {
@@ -1596,8 +1645,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/app/projects/[id]"
       ],
-      "fx": -95.78450362716325,
-      "fy": -98.34882137057939,
+      "fx": -122.2854600637001,
+      "fy": -80.53913280343312,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/app/projects/[id]",
       "kind": "folder",
@@ -1605,10 +1654,10 @@
       "label_short": "[id]",
       "layer": "ui",
       "member_count": 1,
-      "size": 577,
+      "size": 585,
       "type": "folder",
-      "x": -95.78450362716325,
-      "y": -98.34882137057939,
+      "x": -122.2854600637001,
+      "y": -80.53913280343312,
       "z": 0.0
     },
     {
@@ -1619,8 +1668,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/app/projects/[id]/settings"
       ],
-      "fx": -3.3719728311033985,
-      "fy": -192.0521912182926,
+      "fx": 4.627451101993068,
+      "fy": -157.60072720867893,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/app/projects/[id]/settings",
       "kind": "folder",
@@ -1630,8 +1679,8 @@
       "member_count": 1,
       "size": 300,
       "type": "folder",
-      "x": -3.3719728311033985,
-      "y": -192.0521912182926,
+      "x": 4.627451101993068,
+      "y": -157.60072720867893,
       "z": 0.0
     },
     {
@@ -1642,8 +1691,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/app/projects/[id]/manage"
       ],
-      "fx": -363.7712846577762,
-      "fy": 116.20903317681861,
+      "fx": -373.50921224570016,
+      "fy": 72.47318606425699,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/app/projects/[id]/manage",
       "kind": "folder",
@@ -1651,10 +1700,10 @@
       "label_short": "manage",
       "layer": "ui",
       "member_count": 1,
-      "size": 318,
+      "size": 357,
       "type": "folder",
-      "x": -363.7712846577762,
-      "y": 116.20903317681861,
+      "x": -373.50921224570016,
+      "y": 72.47318606425699,
       "z": 0.0
     },
     {
@@ -1665,8 +1714,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/app/marketplace/[listing_id]"
       ],
-      "fx": 124.17605251586406,
-      "fy": 471.48989017389357,
+      "fx": 28.61772746933445,
+      "fy": 483.23021276726575,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/app/marketplace/[listing_id]",
       "kind": "folder",
@@ -1676,8 +1725,8 @@
       "member_count": 1,
       "size": 81,
       "type": "folder",
-      "x": 124.17605251586406,
-      "y": 471.48989017389357,
+      "x": 28.61772746933445,
+      "y": 483.23021276726575,
       "z": 0.0
     },
     {
@@ -1688,8 +1737,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/app/marketplace/publish"
       ],
-      "fx": -42.27479864839981,
-      "fy": -269.72398334562934,
+      "fx": -43.30879969378563,
+      "fy": -267.1967054328773,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/app/marketplace/publish",
       "kind": "folder",
@@ -1699,8 +1748,8 @@
       "member_count": 1,
       "size": 167,
       "type": "folder",
-      "x": -42.27479864839981,
-      "y": -269.72398334562934,
+      "x": -43.30879969378563,
+      "y": -267.1967054328773,
       "z": 0.0
     },
     {
@@ -1711,8 +1760,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/app/marketplace/sources"
       ],
-      "fx": 169.88287194797525,
-      "fy": 269.2743592536668,
+      "fx": 123.65125958481497,
+      "fy": 246.12798829015475,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/app/marketplace/sources",
       "kind": "folder",
@@ -1720,10 +1769,10 @@
       "label_short": "sources",
       "layer": "ui",
       "member_count": 1,
-      "size": 782,
+      "size": 1071,
       "type": "folder",
-      "x": 169.88287194797525,
-      "y": 269.2743592536668,
+      "x": 123.65125958481497,
+      "y": 246.12798829015475,
       "z": 0.0
     },
     {
@@ -1734,8 +1783,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/app/marketplace/sources/[id]"
       ],
-      "fx": 9.808595130670787,
-      "fy": -111.81227481933432,
+      "fx": -34.59487524504992,
+      "fy": -100.66083427697912,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/app/marketplace/sources/[id]",
       "kind": "folder",
@@ -1743,10 +1792,10 @@
       "label_short": "[id]",
       "layer": "ui",
       "member_count": 1,
-      "size": 1523,
+      "size": 1643,
       "type": "folder",
-      "x": 9.808595130670787,
-      "y": -111.81227481933432,
+      "x": -34.59487524504992,
+      "y": -100.66083427697912,
       "z": 0.0
     },
     {
@@ -1757,8 +1806,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/app/mcp/[name]"
       ],
-      "fx": -201.19947154952433,
-      "fy": 162.5407034158104,
+      "fx": -189.34945834049486,
+      "fy": 194.18687472230735,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/app/mcp/[name]",
       "kind": "folder",
@@ -1768,8 +1817,8 @@
       "member_count": 1,
       "size": 409,
       "type": "folder",
-      "x": -201.19947154952433,
-      "y": 162.5407034158104,
+      "x": -189.34945834049486,
+      "y": 194.18687472230735,
       "z": 0.0
     },
     {
@@ -1780,19 +1829,19 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/hooks"
       ],
-      "fx": 159.45341403532163,
-      "fy": 108.44348860618796,
+      "fx": 177.93529805809726,
+      "fy": 55.45687868227363,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/hooks",
       "kind": "folder",
       "label": "skillmeat/skillmeat/web/hooks",
       "label_short": "hooks",
       "layer": "ui",
-      "member_count": 154,
-      "size": 46704,
+      "member_count": 161,
+      "size": 48267,
       "type": "folder",
-      "x": 159.45341403532163,
-      "y": 108.44348860618796,
+      "x": 177.93529805809726,
+      "y": 55.45687868227363,
       "z": 0.0
     },
     {
@@ -1803,19 +1852,19 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/api/routers"
       ],
-      "fx": 268.9071897156319,
-      "fy": 166.53195003882183,
+      "fx": 299.18887131270503,
+      "fy": 71.51069349642515,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/api/routers",
       "kind": "folder",
       "label": "skillmeat/skillmeat/api/routers",
       "label_short": "routers",
       "layer": "api",
-      "member_count": 575,
-      "size": 1340108,
+      "member_count": 615,
+      "size": 1720404,
       "type": "folder",
-      "x": 268.9071897156319,
-      "y": 166.53195003882183,
+      "x": 299.18887131270503,
+      "y": 71.51069349642515,
       "z": 0.0
     },
     {
@@ -1824,19 +1873,19 @@
         "repo:development",
         "package:skillmeat.skillmeat"
       ],
-      "fx": 197.43866794305626,
-      "fy": 67.78248908291404,
+      "fx": 208.01743642320778,
+      "fy": 16.267533541938175,
       "fz": 0.0,
       "id": "package:skillmeat.skillmeat",
       "kind": "folder",
       "label": "skillmeat.skillmeat",
       "label_short": "skillmeat.skillmeat",
       "layer": "api",
-      "member_count": 39,
+      "member_count": 40,
       "size": 0,
       "type": "folder",
-      "x": 197.43866794305626,
-      "y": 67.78248908291404,
+      "x": 208.01743642320778,
+      "y": 16.267533541938175,
       "z": 0.0
     },
     {
@@ -1847,19 +1896,19 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/lib/api"
       ],
-      "fx": 207.06390113065177,
-      "fy": 141.287349335097,
+      "fx": 234.7394106128382,
+      "fy": 70.54238661904733,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/lib/api",
       "kind": "folder",
       "label": "skillmeat/skillmeat/web/lib/api",
       "label_short": "api",
       "layer": "api",
-      "member_count": 159,
-      "size": 27681,
+      "member_count": 173,
+      "size": 34057,
       "type": "folder",
-      "x": 207.06390113065177,
-      "y": 141.287349335097,
+      "x": 234.7394106128382,
+      "y": 70.54238661904733,
       "z": 0.0
     },
     {
@@ -1870,8 +1919,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/components"
       ],
-      "fx": 113.93737915585936,
-      "fy": 103.4395731981465,
+      "fx": 107.17110999811486,
+      "fy": 128.29126833555875,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/components",
       "kind": "folder",
@@ -1879,10 +1928,10 @@
       "label_short": "components",
       "layer": "ui",
       "member_count": 75,
-      "size": 17929,
+      "size": 18413,
       "type": "folder",
-      "x": 113.93737915585936,
-      "y": 103.4395731981465,
+      "x": 107.17110999811486,
+      "y": 128.29126833555875,
       "z": 0.0
     },
     {
@@ -1893,19 +1942,19 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/components/ui"
       ],
-      "fx": -22.368527421119268,
-      "fy": 82.31044234633288,
+      "fx": -24.533603821142325,
+      "fy": 94.91298847521426,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/components/ui",
       "kind": "folder",
       "label": "skillmeat/skillmeat/web/components/ui",
       "label_short": "ui",
       "layer": "ui",
-      "member_count": 92,
-      "size": 9510,
+      "member_count": 98,
+      "size": 10242,
       "type": "folder",
-      "x": -22.368527421119268,
-      "y": 82.31044234633288,
+      "x": -24.533603821142325,
+      "y": 94.91298847521426,
       "z": 0.0
     },
     {
@@ -1916,8 +1965,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/components/settings"
       ],
-      "fx": -370.6387011783797,
-      "fy": 197.7678049284655,
+      "fx": -373.38377158650434,
+      "fy": 211.31128922652255,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/components/settings",
       "kind": "folder",
@@ -1927,8 +1976,8 @@
       "member_count": 1,
       "size": 297,
       "type": "folder",
-      "x": -370.6387011783797,
-      "y": 197.7678049284655,
+      "x": -373.38377158650434,
+      "y": 211.31128922652255,
       "z": 0.0
     },
     {
@@ -1939,8 +1988,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/components/collection"
       ],
-      "fx": -38.23226481491926,
-      "fy": 108.275921040639,
+      "fx": 3.617213725551343,
+      "fy": 110.48320771452016,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/components/collection",
       "kind": "folder",
@@ -1948,10 +1997,10 @@
       "label_short": "collection",
       "layer": "ui",
       "member_count": 24,
-      "size": 7143,
+      "size": 7080,
       "type": "folder",
-      "x": -38.23226481491926,
-      "y": 108.275921040639,
+      "x": 3.617213725551343,
+      "y": 110.48320771452016,
       "z": 0.0
     },
     {
@@ -1962,8 +2011,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/components/context"
       ],
-      "fx": 55.55792518833168,
-      "fy": -15.14493531843186,
+      "fx": 35.597316550274726,
+      "fy": 4.6477923119665,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/components/context",
       "kind": "folder",
@@ -1973,8 +2022,8 @@
       "member_count": 7,
       "size": 1876,
       "type": "folder",
-      "x": 55.55792518833168,
-      "y": -15.14493531843186,
+      "x": 35.597316550274726,
+      "y": 4.6477923119665,
       "z": 0.0
     },
     {
@@ -1985,8 +2034,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/components/sharing"
       ],
-      "fx": -15.207686907349963,
-      "fy": 201.09295772395376,
+      "fx": 25.688955569125905,
+      "fy": 210.74204204694706,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/components/sharing",
       "kind": "folder",
@@ -1996,8 +2045,8 @@
       "member_count": 7,
       "size": 1782,
       "type": "folder",
-      "x": -15.207686907349963,
-      "y": 201.09295772395376,
+      "x": 25.688955569125905,
+      "y": 210.74204204694706,
       "z": 0.0
     },
     {
@@ -2008,8 +2057,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/components/merge"
       ],
-      "fx": 31.17447206096508,
-      "fy": 191.0491077189487,
+      "fx": 50.04935291825029,
+      "fy": 177.56564339997064,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/components/merge",
       "kind": "folder",
@@ -2019,8 +2068,8 @@
       "member_count": 10,
       "size": 1683,
       "type": "folder",
-      "x": 31.17447206096508,
-      "y": 191.0491077189487,
+      "x": 50.04935291825029,
+      "y": 177.56564339997064,
       "z": 0.0
     },
     {
@@ -2031,19 +2080,19 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/components/entity"
       ],
-      "fx": -106.11841374702091,
-      "fy": 66.97990161083167,
+      "fx": -86.54085612751713,
+      "fy": 99.96248596236515,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/components/entity",
       "kind": "folder",
       "label": "skillmeat/skillmeat/web/components/entity",
       "label_short": "entity",
       "layer": "ui",
-      "member_count": 29,
-      "size": 10016,
+      "member_count": 39,
+      "size": 12816,
       "type": "folder",
-      "x": -106.11841374702091,
-      "y": 66.97990161083167,
+      "x": -86.54085612751713,
+      "y": 99.96248596236515,
       "z": 0.0
     },
     {
@@ -2054,19 +2103,19 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/components/marketplace"
       ],
-      "fx": 61.475945683239836,
-      "fy": 64.84851639589921,
+      "fx": 52.52218817222716,
+      "fy": 96.96274136451562,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/components/marketplace",
       "kind": "folder",
       "label": "skillmeat/skillmeat/web/components/marketplace",
       "label_short": "marketplace",
       "layer": "ui",
-      "member_count": 34,
-      "size": 10939,
+      "member_count": 37,
+      "size": 12362,
       "type": "folder",
-      "x": 61.475945683239836,
-      "y": 64.84851639589921,
+      "x": 52.52218817222716,
+      "y": 96.96274136451562,
       "z": 0.0
     },
     {
@@ -2077,8 +2126,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/components/discovery"
       ],
-      "fx": -17.92680794769532,
-      "fy": 20.410235168586937,
+      "fx": -27.593229488381773,
+      "fy": 40.08418298712779,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/components/discovery",
       "kind": "folder",
@@ -2088,8 +2137,8 @@
       "member_count": 29,
       "size": 7516,
       "type": "folder",
-      "x": -17.92680794769532,
-      "y": 20.410235168586937,
+      "x": -27.593229488381773,
+      "y": 40.08418298712779,
       "z": 0.0
     },
     {
@@ -2100,8 +2149,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/components/mcp"
       ],
-      "fx": -89.49583138198801,
-      "fy": 173.39353100250287,
+      "fx": -26.746759843555783,
+      "fy": 222.42536456143992,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/components/mcp",
       "kind": "folder",
@@ -2111,8 +2160,8 @@
       "member_count": 5,
       "size": 920,
       "type": "folder",
-      "x": -89.49583138198801,
-      "y": 173.39353100250287,
+      "x": -26.746759843555783,
+      "y": 222.42536456143992,
       "z": 0.0
     },
     {
@@ -2123,19 +2172,19 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/components/shared"
       ],
-      "fx": -90.37151106280699,
-      "fy": 240.39302739823148,
+      "fx": -103.15874644717043,
+      "fy": 152.05506832624337,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/components/shared",
       "kind": "folder",
       "label": "skillmeat/skillmeat/web/components/shared",
       "label_short": "shared",
       "layer": "ui",
-      "member_count": 5,
-      "size": 1598,
+      "member_count": 9,
+      "size": 2463,
       "type": "folder",
-      "x": -90.37151106280699,
-      "y": 240.39302739823148,
+      "x": -103.15874644717043,
+      "y": 152.05506832624337,
       "z": 0.0
     },
     {
@@ -2146,8 +2195,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/components/dashboard"
       ],
-      "fx": 161.1586617075859,
-      "fy": -29.526359089087315,
+      "fx": 131.76386040692944,
+      "fy": -66.14227144015504,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/components/dashboard",
       "kind": "folder",
@@ -2157,8 +2206,8 @@
       "member_count": 8,
       "size": 1567,
       "type": "folder",
-      "x": 161.1586617075859,
-      "y": -29.526359089087315,
+      "x": 131.76386040692944,
+      "y": -66.14227144015504,
       "z": 0.0
     },
     {
@@ -2169,8 +2218,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/components/history"
       ],
-      "fx": -75.29136824158927,
-      "fy": -26.47498719198524,
+      "fx": -66.18786003170892,
+      "fy": -14.104965951900397,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/components/history",
       "kind": "folder",
@@ -2180,8 +2229,8 @@
       "member_count": 15,
       "size": 2381,
       "type": "folder",
-      "x": -75.29136824158927,
-      "y": -26.47498719198524,
+      "x": -66.18786003170892,
+      "y": -14.104965951900397,
       "z": 0.0
     },
     {
@@ -2192,8 +2241,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/components/templates"
       ],
-      "fx": -25.101580359710738,
-      "fy": 279.1186604879498,
+      "fx": -82.09916321028668,
+      "fy": 276.8912810098842,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/components/templates",
       "kind": "folder",
@@ -2203,8 +2252,8 @@
       "member_count": 4,
       "size": 1282,
       "type": "folder",
-      "x": -25.101580359710738,
-      "y": 279.1186604879498,
+      "x": -82.09916321028668,
+      "y": 276.8912810098842,
       "z": 0.0
     },
     {
@@ -2215,8 +2264,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/components/sync"
       ],
-      "fx": 138.5003155477842,
-      "fy": -254.48432626378357,
+      "fx": 138.03958996504892,
+      "fy": -263.57711024125206,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/components/sync",
       "kind": "folder",
@@ -2226,8 +2275,8 @@
       "member_count": 6,
       "size": 462,
       "type": "folder",
-      "x": 138.5003155477842,
-      "y": -254.48432626378357,
+      "x": 138.03958996504892,
+      "y": -263.57711024125206,
       "z": 0.0
     },
     {
@@ -2238,8 +2287,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/components/sync-status"
       ],
-      "fx": -186.80165347941934,
-      "fy": -55.69285067067799,
+      "fx": -204.42545464337655,
+      "fy": -29.359259731116744,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/components/sync-status",
       "kind": "folder",
@@ -2247,10 +2296,10 @@
       "label_short": "sync-status",
       "layer": "ui",
       "member_count": 8,
-      "size": 1774,
+      "size": 1738,
       "type": "folder",
-      "x": -186.80165347941934,
-      "y": -55.69285067067799,
+      "x": -204.42545464337655,
+      "y": -29.359259731116744,
       "z": 0.0
     },
     {
@@ -2261,8 +2310,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/components/notifications"
       ],
-      "fx": 128.5432356030844,
-      "fy": 337.5501908783547,
+      "fx": 194.88669517892845,
+      "fy": 300.21549491038377,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/components/notifications",
       "kind": "folder",
@@ -2272,8 +2321,8 @@
       "member_count": 1,
       "size": 994,
       "type": "folder",
-      "x": 128.5432356030844,
-      "y": 337.5501908783547,
+      "x": 194.88669517892845,
+      "y": 300.21549491038377,
       "z": 0.0
     },
     {
@@ -2284,8 +2333,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/components/editor"
       ],
-      "fx": 490.31458919368185,
-      "fy": -74.28129375005263,
+      "fx": 438.03902679061144,
+      "fy": 337.1924887898953,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/components/editor",
       "kind": "folder",
@@ -2295,8 +2344,8 @@
       "member_count": 2,
       "size": 279,
       "type": "folder",
-      "x": 490.31458919368185,
-      "y": -74.28129375005263,
+      "x": 438.03902679061144,
+      "y": 337.1924887898953,
       "z": 0.0
     },
     {
@@ -2307,8 +2356,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/components/deployments"
       ],
-      "fx": -149.59289676476888,
-      "fy": 211.847385682469,
+      "fx": -123.25793433828112,
+      "fy": 227.2563706617885,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/components/deployments",
       "kind": "folder",
@@ -2318,8 +2367,8 @@
       "member_count": 11,
       "size": 2913,
       "type": "folder",
-      "x": -149.59289676476888,
-      "y": 211.847385682469,
+      "x": -123.25793433828112,
+      "y": 227.2563706617885,
       "z": 0.0
     },
     {
@@ -2330,19 +2379,19 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/types"
       ],
-      "fx": 77.86342053914079,
-      "fy": 98.75712646498584,
+      "fx": 94.83749789937131,
+      "fy": 71.20077836772134,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/types",
       "kind": "folder",
       "label": "skillmeat/skillmeat/web/types",
       "label_short": "types",
       "layer": "shared",
-      "member_count": 201,
-      "size": 40165,
+      "member_count": 205,
+      "size": 49005,
       "type": "folder",
-      "x": 77.86342053914079,
-      "y": 98.75712646498584,
+      "x": 94.83749789937131,
+      "y": 71.20077836772134,
       "z": 0.0
     },
     {
@@ -2353,8 +2402,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/app/projects/components"
       ],
-      "fx": 428.26975726593076,
-      "fy": -249.85147652920773,
+      "fx": 491.3547230734644,
+      "fy": -96.0873331439602,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/app/projects/components",
       "kind": "folder",
@@ -2364,8 +2413,8 @@
       "member_count": 3,
       "size": 541,
       "type": "folder",
-      "x": 428.26975726593076,
-      "y": -249.85147652920773,
+      "x": 491.3547230734644,
+      "y": -96.0873331439602,
       "z": 0.0
     },
     {
@@ -2376,8 +2425,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/app/groups/components"
       ],
-      "fx": 1148.5964778891453,
-      "fy": -751.0524007517388,
+      "fx": 1061.623610463894,
+      "fy": -847.6519650311377,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/app/groups/components",
       "kind": "folder",
@@ -2387,8 +2436,8 @@
       "member_count": 1,
       "size": 250,
       "type": "folder",
-      "x": 1148.5964778891453,
-      "y": -751.0524007517388,
+      "x": 1061.623610463894,
+      "y": -847.6519650311377,
       "z": 0.0
     },
     {
@@ -2399,8 +2448,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/app/manage/components"
       ],
-      "fx": -673.9885039339936,
-      "fy": 352.5672046895245,
+      "fx": -712.6218151168166,
+      "fy": 199.16874065668418,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/app/manage/components",
       "kind": "folder",
@@ -2410,8 +2459,8 @@
       "member_count": 3,
       "size": 279,
       "type": "folder",
-      "x": -673.9885039339936,
-      "y": 352.5672046895245,
+      "x": -712.6218151168166,
+      "y": 199.16874065668418,
       "z": 0.0
     },
     {
@@ -2422,8 +2471,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/sdk"
       ],
-      "fx": -384.59712647048536,
-      "fy": 23.140604397892897,
+      "fx": -310.9947193770933,
+      "fy": 262.4706208356712,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/sdk",
       "kind": "folder",
@@ -2433,8 +2482,8 @@
       "member_count": 9,
       "size": 2592,
       "type": "folder",
-      "x": -384.59712647048536,
-      "y": 23.140604397892897,
+      "x": -310.9947193770933,
+      "y": 262.4706208356712,
       "z": 0.0
     },
     {
@@ -2445,8 +2494,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/app/projects/[id]/manage/components"
       ],
-      "fx": -897.1164793351045,
-      "fy": 25.603191470339734,
+      "fx": -920.5666972233773,
+      "fy": 63.52575692160538,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/app/projects/[id]/manage/components",
       "kind": "folder",
@@ -2454,10 +2503,10 @@
       "label_short": "components",
       "layer": "ui",
       "member_count": 2,
-      "size": 513,
+      "size": 521,
       "type": "folder",
-      "x": -897.1164793351045,
-      "y": 25.603191470339734,
+      "x": -920.5666972233773,
+      "y": 63.52575692160538,
       "z": 0.0
     },
     {
@@ -2468,19 +2517,19 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/app/marketplace/sources/[id]/components"
       ],
-      "fx": -25.65477780882652,
-      "fy": -551.7458116804125,
+      "fx": -107.23062870859692,
+      "fy": -499.2331362421532,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/app/marketplace/sources/[id]/components",
       "kind": "folder",
       "label": "skillmeat/skillmeat/web/app/marketplace/sources/[id]/components",
       "label_short": "components",
       "layer": "ui",
-      "member_count": 4,
-      "size": 1488,
+      "member_count": 5,
+      "size": 1752,
       "type": "folder",
-      "x": -25.65477780882652,
-      "y": -551.7458116804125,
+      "x": -107.23062870859692,
+      "y": -499.2331362421532,
       "z": 0.0
     },
     {
@@ -2491,8 +2540,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/lib"
       ],
-      "fx": 253.29929621637936,
-      "fy": 109.04279080251366,
+      "fx": 266.3750695340765,
+      "fy": 31.046720290065707,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/lib",
       "kind": "folder",
@@ -2502,8 +2551,8 @@
       "member_count": 5,
       "size": 643,
       "type": "folder",
-      "x": 253.29929621637936,
-      "y": 109.04279080251366,
+      "x": 266.3750695340765,
+      "y": 31.046720290065707,
       "z": 0.0
     },
     {
@@ -2514,8 +2563,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/context"
       ],
-      "fx": 572.4247144632183,
-      "fy": -552.126286712653,
+      "fx": 674.919648715329,
+      "fy": -468.40556923456774,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/context",
       "kind": "folder",
@@ -2525,8 +2574,8 @@
       "member_count": 1,
       "size": 163,
       "type": "folder",
-      "x": 572.4247144632183,
-      "y": -552.126286712653,
+      "x": 674.919648715329,
+      "y": -468.40556923456774,
       "z": 0.0
     },
     {
@@ -2537,8 +2586,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/sdk/models"
       ],
-      "fx": -429.41572173881434,
-      "fy": -199.19331940584937,
+      "fx": -448.0998738840598,
+      "fy": -135.98769810582374,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/sdk/models",
       "kind": "folder",
@@ -2548,8 +2597,8 @@
       "member_count": 4,
       "size": 150,
       "type": "folder",
-      "x": -429.41572173881434,
-      "y": -199.19331940584937,
+      "x": -448.0998738840598,
+      "y": -135.98769810582374,
       "z": 0.0
     },
     {
@@ -2560,8 +2609,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/lib/utils"
       ],
-      "fx": 742.9541811807165,
-      "fy": 504.7266050641694,
+      "fx": 690.553991111516,
+      "fy": 578.8587752751874,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/lib/utils",
       "kind": "folder",
@@ -2571,8 +2620,8 @@
       "member_count": 1,
       "size": 359,
       "type": "folder",
-      "x": 742.9541811807165,
-      "y": 504.7266050641694,
+      "x": 690.553991111516,
+      "y": 578.8587752751874,
       "z": 0.0
     },
     {
@@ -2583,8 +2632,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/components/__tests__"
       ],
-      "fx": 457.4530946506495,
-      "fy": 608.8894598480922,
+      "fx": 410.42211227853437,
+      "fy": 642.1398022305927,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/components/__tests__",
       "kind": "folder",
@@ -2594,8 +2643,8 @@
       "member_count": 1,
       "size": 116,
       "type": "folder",
-      "x": 457.4530946506495,
-      "y": 608.8894598480922,
+      "x": 410.42211227853437,
+      "y": 642.1398022305927,
       "z": 0.0
     },
     {
@@ -2606,8 +2655,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/web/components/marketplace/__tests__"
       ],
-      "fx": 867.9108798045304,
-      "fy": -41.661628294757996,
+      "fx": 865.2940013793809,
+      "fy": -27.221011477948867,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/web/components/marketplace/__tests__",
       "kind": "folder",
@@ -2617,8 +2666,8 @@
       "member_count": 1,
       "size": 915,
       "type": "folder",
-      "x": 867.9108798045304,
-      "y": -41.661628294757996,
+      "x": 865.2940013793809,
+      "y": -27.221011477948867,
       "z": 0.0
     },
     {
@@ -2627,19 +2676,19 @@
         "repo:development",
         "package:virtual/query_key"
       ],
-      "fx": 223.90134484599025,
-      "fy": 91.40132146332748,
+      "fx": 236.7625923692743,
+      "fy": 6.325330840732648,
       "fz": 0.0,
       "id": "package:virtual/query_key",
       "kind": "folder",
       "label": "virtual/query_key",
       "label_short": "query_key",
       "layer": "shared",
-      "member_count": 35,
+      "member_count": 36,
       "size": 0,
       "type": "folder",
-      "x": 223.90134484599025,
-      "y": 91.40132146332748,
+      "x": 236.7625923692743,
+      "y": 6.325330840732648,
       "z": 0.0
     },
     {
@@ -2650,8 +2699,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/api"
       ],
-      "fx": 1247.9050680403525,
-      "fy": 1706.2721113518237,
+      "fx": 1247.8792071682528,
+      "fy": 1672.9727828588364,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/api",
       "kind": "folder",
@@ -2659,10 +2708,10 @@
       "label_short": "api",
       "layer": "api",
       "member_count": 3,
-      "size": 64218,
+      "size": 68933,
       "type": "folder",
-      "x": 1247.9050680403525,
-      "y": 1706.2721113518237,
+      "x": 1247.8792071682528,
+      "y": 1672.9727828588364,
       "z": 0.0
     },
     {
@@ -2673,7 +2722,7 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/core/services"
       ],
-      "fx": -206.70565472909587,
+      "fx": -183.14822727931926,
       "fy": -2000.0,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/core/services",
@@ -2684,7 +2733,7 @@
       "member_count": 19,
       "size": 8675,
       "type": "folder",
-      "x": -206.70565472909587,
+      "x": -183.14822727931926,
       "y": -2000.0,
       "z": 0.0
     },
@@ -2696,19 +2745,19 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/api/services"
       ],
-      "fx": -1797.7658084767324,
-      "fy": -442.27768510501005,
+      "fx": -1760.3276221501771,
+      "fy": -465.7287571095368,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/api/services",
       "kind": "folder",
       "label": "skillmeat/skillmeat/api/services",
       "label_short": "services",
       "layer": "api",
-      "member_count": 4,
-      "size": 524,
+      "member_count": 8,
+      "size": 2285,
       "type": "folder",
-      "x": -1797.7658084767324,
-      "y": -442.27768510501005,
+      "x": -1760.3276221501771,
+      "y": -465.7287571095368,
       "z": 0.0
     },
     {
@@ -2719,19 +2768,19 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/api/schemas"
       ],
-      "fx": 323.9843500675566,
-      "fy": 190.9382790233146,
+      "fx": 357.1908800814237,
+      "fy": 75.50269318087136,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/api/schemas",
       "kind": "folder",
       "label": "skillmeat/skillmeat/api/schemas",
       "label_short": "schemas",
       "layer": "api",
-      "member_count": 275,
-      "size": 254942,
+      "member_count": 288,
+      "size": 309096,
       "type": "folder",
-      "x": 323.9843500675566,
-      "y": 190.9382790233146,
+      "x": 357.1908800814237,
+      "y": 75.50269318087136,
       "z": 0.0
     },
     {
@@ -2742,8 +2791,8 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/cache"
       ],
-      "fx": -1333.212837310314,
-      "fy": -1322.379591338051,
+      "fx": -1297.2829758518324,
+      "fy": -1333.1387251441256,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/cache",
       "kind": "folder",
@@ -2751,10 +2800,10 @@
       "label_short": "cache",
       "layer": "domain",
       "member_count": 24,
-      "size": 57444,
+      "size": 63858,
       "type": "folder",
-      "x": -1333.212837310314,
-      "y": -1322.379591338051,
+      "x": -1297.2829758518324,
+      "y": -1333.1387251441256,
       "z": 0.0
     },
     {
@@ -2765,19 +2814,19 @@
         "module:skillmeat/skillmeat",
         "folder:skillmeat/skillmeat/cache/migrations/versions"
       ],
-      "fx": -1248.8470502841099,
-      "fy": -1321.2166628021469,
+      "fx": -1213.7501565242205,
+      "fy": -1332.8966747297873,
       "fz": 0.0,
       "id": "folder:skillmeat/skillmeat/cache/migrations/versions",
       "kind": "folder",
       "label": "skillmeat/skillmeat/cache/migrations/versions",
       "label_short": "versions",
       "layer": "data",
-      "member_count": 21,
-      "size": 2747,
+      "member_count": 28,
+      "size": 3792,
       "type": "folder",
-      "x": -1248.8470502841099,
-      "y": -1321.2166628021469,
+      "x": -1213.7501565242205,
+      "y": -1332.8966747297873,
       "z": 0.0
     }
   ],

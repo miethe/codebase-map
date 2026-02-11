@@ -138,33 +138,57 @@
     "unique_authors": 1
   },
   ".gitignore": {
-    "change_count": 2,
-    "change_count_30d": 2,
-    "last_modified": 1768675770000,
+    "change_count": 3,
+    "change_count_30d": 3,
+    "last_modified": 1769106116000,
     "unique_authors": 1
   },
   "AGENTS.md": {
-    "change_count": 2,
-    "change_count_30d": 2,
-    "last_modified": 1768676570000,
+    "change_count": 3,
+    "change_count_30d": 3,
+    "last_modified": 1769282629000,
     "unique_authors": 1
   },
   "App.tsx": {
-    "change_count": 21,
-    "change_count_30d": 21,
-    "last_modified": 1768942990000,
+    "change_count": 26,
+    "change_count_30d": 26,
+    "last_modified": 1769367051000,
     "unique_authors": 1
   },
   "CHANGELOG.md": {
-    "change_count": 3,
-    "change_count_30d": 3,
-    "last_modified": 1768851020000,
+    "change_count": 4,
+    "change_count_30d": 4,
+    "last_modified": 1769283802000,
+    "unique_authors": 1
+  },
+  "CLAUDE.md": {
+    "change_count": 1,
+    "change_count_30d": 1,
+    "last_modified": 1769282629000,
+    "unique_authors": 1
+  },
+  "GEMINI.md": {
+    "change_count": 1,
+    "change_count_30d": 1,
+    "last_modified": 1769282629000,
     "unique_authors": 1
   },
   "README.md": {
-    "change_count": 3,
-    "change_count_30d": 3,
-    "last_modified": 1768851020000,
+    "change_count": 4,
+    "change_count_30d": 4,
+    "last_modified": 1769106116000,
+    "unique_authors": 1
+  },
+  "code_map/AGENTS.md": {
+    "change_count": 2,
+    "change_count_30d": 2,
+    "last_modified": 1769283802000,
+    "unique_authors": 1
+  },
+  "code_map/README.md": {
+    "change_count": 1,
+    "change_count_30d": 1,
+    "last_modified": 1769106116000,
     "unique_authors": 1
   },
   "code_map/__init__.py": {
@@ -347,100 +371,136 @@
     "last_modified": 1768505024000,
     "unique_authors": 1
   },
+  "codebase-graph.backend.json": {
+    "change_count": 1,
+    "change_count_30d": 1,
+    "last_modified": 1769106116000,
+    "unique_authors": 1
+  },
   "codebase-graph.dependencies.json": {
-    "change_count": 2,
-    "change_count_30d": 2,
-    "last_modified": 1768511267000,
+    "change_count": 3,
+    "change_count_30d": 3,
+    "last_modified": 1769106116000,
     "unique_authors": 1
   },
   "codebase-graph.details.json": {
-    "change_count": 6,
-    "change_count_30d": 6,
-    "last_modified": 1768927841000,
+    "change_count": 7,
+    "change_count_30d": 7,
+    "last_modified": 1769106116000,
+    "unique_authors": 1
+  },
+  "codebase-graph.frontend.json": {
+    "change_count": 1,
+    "change_count_30d": 1,
+    "last_modified": 1769106116000,
     "unique_authors": 1
   },
   "codebase-graph.git-metadata.json": {
-    "change_count": 6,
-    "change_count_30d": 6,
-    "last_modified": 1768927841000,
+    "change_count": 7,
+    "change_count_30d": 7,
+    "last_modified": 1769106116000,
+    "unique_authors": 1
+  },
+  "codebase-graph.groupings.base.json": {
+    "change_count": 2,
+    "change_count_30d": 2,
+    "last_modified": 1769111366000,
     "unique_authors": 1
   },
   "codebase-graph.groupings.json": {
-    "change_count": 6,
-    "change_count_30d": 6,
-    "last_modified": 1768927841000,
+    "change_count": 8,
+    "change_count_30d": 8,
+    "last_modified": 1769111366000,
     "unique_authors": 1
   },
   "codebase-graph.groupings.overrides.json": {
-    "change_count": 1,
-    "change_count_30d": 1,
-    "last_modified": 1769093867000,
+    "change_count": 3,
+    "change_count_30d": 3,
+    "last_modified": 1769111366000,
+    "unique_authors": 1
+  },
+  "codebase-graph.groupings.summary.json": {
+    "change_count": 2,
+    "change_count_30d": 2,
+    "last_modified": 1769111366000,
     "unique_authors": 1
   },
   "codebase-graph.lod0.json": {
-    "change_count": 3,
-    "change_count_30d": 3,
-    "last_modified": 1768927841000,
+    "change_count": 4,
+    "change_count_30d": 4,
+    "last_modified": 1769106116000,
     "unique_authors": 1
   },
   "codebase-graph.lod1.json": {
-    "change_count": 3,
-    "change_count_30d": 3,
-    "last_modified": 1768927841000,
+    "change_count": 4,
+    "change_count_30d": 4,
+    "last_modified": 1769106116000,
     "unique_authors": 1
   },
   "codebase-graph.lod2.json": {
-    "change_count": 3,
-    "change_count_30d": 3,
-    "last_modified": 1768927841000,
+    "change_count": 4,
+    "change_count_30d": 4,
+    "last_modified": 1769106116000,
     "unique_authors": 1
   },
   "codebase-graph.lod3.json": {
-    "change_count": 3,
-    "change_count_30d": 3,
-    "last_modified": 1768927841000,
+    "change_count": 4,
+    "change_count_30d": 4,
+    "last_modified": 1769106116000,
     "unique_authors": 1
   },
   "codebase-graph.lod4.json": {
+    "change_count": 2,
+    "change_count_30d": 2,
+    "last_modified": 1769106116000,
+    "unique_authors": 1
+  },
+  "codebase-graph.overrides.yaml": {
     "change_count": 1,
     "change_count_30d": 1,
-    "last_modified": 1768927841000,
+    "last_modified": 1769106116000,
     "unique_authors": 1
   },
   "codebase-graph.unified.json": {
-    "change_count": 4,
-    "change_count_30d": 4,
-    "last_modified": 1768927841000,
+    "change_count": 5,
+    "change_count_30d": 5,
+    "last_modified": 1769106116000,
+    "unique_authors": 1
+  },
+  "components/AGENTS.md": {
+    "change_count": 1,
+    "change_count_30d": 1,
+    "last_modified": 1769282629000,
     "unique_authors": 1
   },
   "components/Breadcrumbs.tsx": {
-    "change_count": 1,
-    "change_count_30d": 1,
-    "last_modified": 1768770444000,
+    "change_count": 3,
+    "change_count_30d": 3,
+    "last_modified": 1769367051000,
     "unique_authors": 1
   },
   "components/GraphCanvas.tsx": {
-    "change_count": 21,
-    "change_count_30d": 21,
-    "last_modified": 1769027166000,
+    "change_count": 25,
+    "change_count_30d": 25,
+    "last_modified": 1769369351000,
     "unique_authors": 1
   },
   "components/GraphCanvasWebGL.tsx": {
-    "change_count": 23,
-    "change_count_30d": 23,
-    "last_modified": 1769027166000,
+    "change_count": 28,
+    "change_count_30d": 28,
+    "last_modified": 1769373555000,
     "unique_authors": 1
   },
   "components/GraphRenderer.tsx": {
-    "change_count": 18,
-    "change_count_30d": 18,
-    "last_modified": 1769027166000,
+    "change_count": 23,
+    "change_count_30d": 23,
+    "last_modified": 1769369351000,
     "unique_authors": 1
   },
   "components/Sidebar.tsx": {
-    "change_count": 15,
-    "change_count_30d": 15,
-    "last_modified": 1768942990000,
+    "change_count": 16,
+    "change_count_30d": 16,
+    "last_modified": 1769283802000,
     "unique_authors": 1
   },
   "constants.ts": {
@@ -503,10 +563,22 @@
     "last_modified": 1768677200000,
     "unique_authors": 1
   },
+  "docs/project_plans/ideas/grouping-strategy-recovery-and-tuning.md": {
+    "change_count": 1,
+    "change_count_30d": 1,
+    "last_modified": 1769115586000,
+    "unique_authors": 1
+  },
   "docs/project_plans/implementations/cluster-cages-3d-implementation-plan.md": {
     "change_count": 1,
     "change_count_30d": 1,
     "last_modified": 1768861711000,
+    "unique_authors": 1
+  },
+  "docs/project_plans/implementations/cluster-lod-view-implementation-plan.md": {
+    "change_count": 1,
+    "change_count_30d": 1,
+    "last_modified": 1769115586000,
     "unique_authors": 1
   },
   "docs/project_plans/implementations/cross-layer-edge-routing-implementation-plan.md": {
@@ -678,9 +750,15 @@
     "unique_authors": 1
   },
   "package.json": {
-    "change_count": 2,
-    "change_count_30d": 2,
-    "last_modified": 1768537921000,
+    "change_count": 3,
+    "change_count_30d": 3,
+    "last_modified": 1769106116000,
+    "unique_authors": 1
+  },
+  "scripts/AGENTS.md": {
+    "change_count": 1,
+    "change_count_30d": 1,
+    "last_modified": 1769282629000,
     "unique_authors": 1
   },
   "scripts/extract_git_metadata.js": {
@@ -707,6 +785,12 @@
     "last_modified": 1768505024000,
     "unique_authors": 1
   },
+  "skillmeat": {
+    "change_count": 1,
+    "change_count_30d": 1,
+    "last_modified": 1769106116000,
+    "unique_authors": 1
+  },
   "tsconfig.json": {
     "change_count": 1,
     "change_count_30d": 1,
@@ -714,15 +798,27 @@
     "unique_authors": 1
   },
   "types.ts": {
-    "change_count": 27,
-    "change_count_30d": 27,
-    "last_modified": 1769027166000,
+    "change_count": 30,
+    "change_count_30d": 30,
+    "last_modified": 1769367051000,
+    "unique_authors": 1
+  },
+  "utils/AGENTS.md": {
+    "change_count": 1,
+    "change_count_30d": 1,
+    "last_modified": 1769282629000,
     "unique_authors": 1
   },
   "utils/clusterLayout.ts": {
     "change_count": 3,
     "change_count_30d": 3,
     "last_modified": 1768667602000,
+    "unique_authors": 1
+  },
+  "utils/clusterLod.ts": {
+    "change_count": 1,
+    "change_count_30d": 1,
+    "last_modified": 1769283802000,
     "unique_authors": 1
   },
   "utils/colorMapping.ts": {
@@ -756,9 +852,9 @@
     "unique_authors": 1
   },
   "utils/moduleGrouping.ts": {
-    "change_count": 3,
-    "change_count_30d": 3,
-    "last_modified": 1768942990000,
+    "change_count": 5,
+    "change_count_30d": 5,
+    "last_modified": 1769111366000,
     "unique_authors": 1
   },
   "utils/rulesGenerator.ts": {
@@ -768,9 +864,9 @@
     "unique_authors": 1
   },
   "utils/useGraphLOD.ts": {
-    "change_count": 15,
-    "change_count_30d": 15,
-    "last_modified": 1769027166000,
+    "change_count": 16,
+    "change_count_30d": 16,
+    "last_modified": 1769367051000,
     "unique_authors": 1
   },
   "vite.config.ts": {
